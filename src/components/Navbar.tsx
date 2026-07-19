@@ -12,10 +12,10 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-baseline gap-2">
           <span className="font-display text-xl font-semibold tracking-tight text-ink">
-            Bonjour
+            Français
           </span>
           <span className="font-display text-xl italic text-bordeaux">
-            Français
+            avec Céline 
           </span>
         </Link>
 

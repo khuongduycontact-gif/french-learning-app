@@ -1,4 +1,4 @@
-# Bonjour Français — Nền tảng học tiếng Pháp trực tuyến
+# Français avec Céline  — Nền tảng học tiếng Pháp trực tuyến
 
 Dự án Next.js (App Router) viết bằng TypeScript (.tsx), gồm 2 phía:
 

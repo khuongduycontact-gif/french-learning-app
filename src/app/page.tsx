@@ -23,7 +23,7 @@ export default async function HomePage() {
           </h1>
           <div className="ribbon-rule my-6" />
           <p className="max-w-md text-ink/70">
-            Français avec Céline là nền tảng học tiếng Pháp trực tuyến với giáo
+            Français là nền tảng học tiếng Pháp trực tuyến với giáo
             trình được biên soạn theo khung tham chiếu Châu Âu (CEFR). Đăng
             nhập bằng Google, chọn khoá học phù hợp và bắt đầu hành trình chinh
             phục Pháp ngữ ngay hôm nay.
