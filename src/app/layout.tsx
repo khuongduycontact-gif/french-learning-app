@@ -17,7 +17,7 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Bonjour Français — Học tiếng Pháp trực tuyến",
+  title: "Français avec Céline — Học tiếng Pháp cùng Céline",
   description:
     "Nền tảng học tiếng Pháp trực tuyến: khoá học từ A1 đến C1, đăng ký nhanh, học theo lộ trình rõ ràng.",
 };
@@ -36,7 +36,7 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="border-t border-mist py-8 text-center text-sm text-ink/60">
-            © {new Date().getFullYear()} Bonjour Français. Học tiếng Pháp mỗi ngày.
+            © {new Date().getFullYear()} Français avec Céline. Học tiếng Pháp cùng Céline
           </footer>
         </Providers>
       </body>

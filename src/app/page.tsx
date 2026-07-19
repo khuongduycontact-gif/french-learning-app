@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import CourseCard from "@/components/CourseCard";
@@ -18,11 +19,11 @@ export default async function HomePage() {
             Apprendre, c'est grandir
           </span>
           <h1 className="mt-3 font-display text-4xl font-semibold leading-tight text-ink md:text-5xl">
-            Học tiếng Pháp theo lộ trình rõ ràng, từ A1 đến C1
+            Học tiếng Pháp theo lộ trình rõ ràng, từ A1 đến B2
           </h1>
           <div className="ribbon-rule my-6" />
           <p className="max-w-md text-ink/70">
-            Bonjour Français là nền tảng học tiếng Pháp trực tuyến với giáo
+            Français avec Céline là nền tảng học tiếng Pháp trực tuyến với giáo
             trình được biên soạn theo khung tham chiếu Châu Âu (CEFR). Đăng
             nhập bằng Google, chọn khoá học phù hợp và bắt đầu hành trình chinh
             phục Pháp ngữ ngay hôm nay.
