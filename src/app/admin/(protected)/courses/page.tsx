@@ -196,7 +196,14 @@ export default function AdminCoursesPage() {
             ) : (
               pageCourses.map((c) => (
                 <tr key={c.id} className="border-b border-mist last:border-0">
-                  <td className="px-4 py-3 font-medium text-ink">{c.title}</td>
+                  <td className="px-4 py-3 font-medium text-ink">
+                    <Link
+                      href={`/admin/courses/${c.id}/edit`}
+                      className="hover:underline"
+                    >
+                      {c.title}
+                    </Link>
+                  </td>
                   <td className="px-4 py-3">{c.level}</td>
                   <td className="px-4 py-3">
                     {c.price > 0 ? c.price.toLocaleString("vi-VN") + " đ" : "Miễn phí"}

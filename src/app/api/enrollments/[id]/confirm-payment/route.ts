@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { notifyAdmins } from "@/lib/notifications";
+import { notifyAdmins, notifyUser } from "@/lib/notifications";
 
 // POST /api/enrollments/:id/confirm-payment
-// Học viên bấm "Tôi đã thanh toán" -> chuyển trạng thái sang chờ admin xác nhận
+// Học viên bấm "Tôi đã thanh toán" -> mở khoá học luôn, không cần chờ admin duyệt
 export async function POST(
   _req: NextRequest,
   { params }: { params: { id: string } }
@@ -33,12 +33,20 @@ export async function POST(
 
   const updated = await prisma.enrollment.update({
     where: { id: enrollment.id },
-    data: { status: "AWAITING_CONFIRMATION" },
+    data: { status: "CONFIRMED", confirmedAt: new Date() },
+  });
+
+  await notifyUser({
+    userId: enrollment.userId,
+    type: "ENROLLMENT_CONFIRMED",
+    title: "Đăng ký khoá học thành công",
+    message: `Khoá học "${enrollment.course.title}" của bạn đã được mở khoá. Chúc bạn học tốt!`,
+    link: `/courses/${enrollment.courseId}`,
   });
 
   await notifyAdmins({
-    title: "Có học viên báo đã thanh toán",
-    message: `${session.user.name || "Một học viên"} đã xác nhận thanh toán khoá học "${enrollment.course.title}". Vui lòng kiểm tra và duyệt.`,
+    title: "Học viên vừa thanh toán khoá học",
+    message: `${session.user.name || "Một học viên"} đã báo thanh toán và được mở khoá học "${enrollment.course.title}" tự động.`,
     link: "/admin/enrollments",
   });
 

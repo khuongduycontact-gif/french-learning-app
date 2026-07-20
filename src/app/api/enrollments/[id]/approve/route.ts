@@ -33,7 +33,7 @@ export async function POST(
     type: "ENROLLMENT_CONFIRMED",
     title: "Đăng ký khoá học thành công",
     message: `Khoá học "${enrollment.course.title}" của bạn đã được xác nhận thanh toán và mở khoá. Chúc bạn học tốt!`,
-    link: "/account",
+    link: `/courses/${enrollment.courseId}`,
   });
 
   return NextResponse.json(updated);

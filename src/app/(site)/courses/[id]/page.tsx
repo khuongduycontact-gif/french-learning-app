@@ -75,33 +75,35 @@ export default async function CourseDetailPage({
         <RichText content={course.description} className="text-ink/80" />
       </div>
 
-      <aside className="h-fit rounded-2xl border border-mist bg-white/60 p-6">
-        <div className="mb-4 flex flex-col gap-2 text-sm text-ink">
-          <p className="text-lg font-semibold text-ink">
-            Giá tiền:{" "}
-            {course.price > 0
-              ? course.price.toLocaleString("vi-VN") + " vnđ"
-              : "Miễn phí"}
-          </p>
-          <p>
-            <span className="font-medium text-ink/70">Số giờ học:</span>{" "}
-            {course.duration} giờ
-          </p>
-          <p>
-            <span className="font-medium text-ink/70">Số bài giảng:</span>{" "}
-            {course.lessons} bài
-          </p>
-        </div>
-        <EnrollButton
-          courseId={course.id}
-          courseTitle={course.title}
-          initialEnrollmentId={enrollment?.id ?? null}
-          initialStatus={(enrollment?.status as any) ?? null}
-          initialPayment={payment}
-        />
+      <div className="flex flex-col gap-6">
+        <aside className="h-fit rounded-2xl border border-mist bg-white/60 p-6">
+          <div className="mb-4 flex flex-col gap-2 text-sm text-ink">
+            <p className="text-lg font-semibold text-ink">
+              Giá tiền:{" "}
+              {course.price > 0
+                ? course.price.toLocaleString("vi-VN") + " vnđ"
+                : "Miễn phí"}
+            </p>
+            <p>
+              <span className="font-medium text-ink/70">Số giờ học:</span>{" "}
+              {course.duration} giờ
+            </p>
+            <p>
+              <span className="font-medium text-ink/70">Số bài giảng:</span>{" "}
+              {course.lessons} bài
+            </p>
+          </div>
+          <EnrollButton
+            courseId={course.id}
+            courseTitle={course.title}
+            initialEnrollmentId={enrollment?.id ?? null}
+            initialStatus={(enrollment?.status as any) ?? null}
+            initialPayment={payment}
+          />
+        </aside>
 
         {enrollment?.status === "CONFIRMED" && course.materials.length > 0 && (
-          <div className="mt-8">
+          <div className="h-fit rounded-2xl border border-mist bg-white/60 p-6">
             <h2 className="font-display text-xl font-semibold text-ink">
               Tài liệu học
             </h2>
@@ -143,7 +145,7 @@ export default async function CourseDetailPage({
             </ul>
           </div>
         )}
-      </aside>
+      </div>
     </div>
   );
 }
