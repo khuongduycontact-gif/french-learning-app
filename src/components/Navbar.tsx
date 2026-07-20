@@ -17,11 +17,14 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b border-mist bg-parchment shadow-sm">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <div className="flex min-w-0 items-center gap-8">
-          <Link href="/" className="flex shrink-0 items-baseline gap-2">
+          <Link
+            href="/"
+            className="flex shrink-0 flex-col leading-tight sm:flex-row sm:items-baseline sm:gap-2"
+          >
             <span className="font-display text-lg font-semibold tracking-tight text-ink sm:text-xl">
               Français
             </span>
-            <span className="font-display text-lg italic text-bordeaux sm:text-xl">
+            <span className="font-display text-base italic text-bordeaux sm:text-xl">
               avec Céline
             </span>
           </Link>

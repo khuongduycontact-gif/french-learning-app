@@ -35,9 +35,10 @@ export default function AuthButton() {
     return (
       <button
         onClick={() => signIn("google")}
-        className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-parchment transition hover:bg-ink/90"
+        className="shrink-0 whitespace-nowrap rounded-full bg-ink px-3 py-2 text-xs font-medium text-parchment transition hover:bg-ink/90 sm:px-4 sm:text-sm"
       >
-        Đăng nhập với Google
+        <span className="sm:hidden">Đăng nhập</span>
+        <span className="hidden sm:inline">Đăng nhập với Google</span>
       </button>
     );
   }
@@ -68,7 +69,7 @@ export default function AuthButton() {
       {open && (
         <div
           role="menu"
-          className="absolute left-0 top-12 z-[60] w-56 overflow-hidden rounded-2xl border border-mist bg-white shadow-lg"
+          className="absolute right-0 top-12 z-[60] w-56 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-mist bg-white shadow-lg"
         >
           <div className="border-b border-mist px-4 py-3">
             <p className="truncate text-sm font-semibold text-ink">
