@@ -2,29 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const links = [
-  { href: "/admin", label: "Tổng quan", exact: true },
-  { href: "/admin/courses", label: "Khoá học", exact: false },
-  { href: "/admin/enrollments", label: "Đăng ký & thanh toán", exact: false },
-];
+import { adminNavLinks, isAdminNavActive } from "@/lib/adminNav";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
 
-  function isActive(href: string, exact: boolean) {
-    if (exact) return pathname === href;
-    return pathname === href || pathname?.startsWith(`${href}/`);
-  }
-
   return (
-    <aside className="h-fit rounded-2xl border border-mist bg-white/60 p-4">
+    <aside className="hidden h-fit rounded-2xl border border-mist bg-white/60 p-4 md:block">
       <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wide text-ink/50">
         Quản trị
       </p>
       <nav className="flex flex-col gap-1 text-sm">
-        {links.map((link) => {
-          const active = isActive(link.href, link.exact);
+        {adminNavLinks.map((link) => {
+          const active = isAdminNavActive(pathname, link.href, link.exact);
           return (
             <Link
               key={link.href}

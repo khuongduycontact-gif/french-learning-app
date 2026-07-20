@@ -89,14 +89,29 @@ model Course {
   level       Level        @default(A1)
   price       Int          @default(0)
   duration    Int          @default(0) // số giờ học
-  sessions    Int          @default(0) // số buổi học
+  sessions    Int          @default(0) // số buổi học (không còn nhập ở form quản trị, giữ lại cho dữ liệu cũ)
   lessons     Int          @default(0) // số bài giảng
   imageUrl    String?      @db.Text // ảnh bìa lưu trên Cloudinary
   videoUrl    String?      @db.Text // video giới thiệu lưu trên Cloudinary
   published   Boolean      @default(true)
   enrollments Enrollment[]
+  materials   CourseMaterial[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+}
+
+model CourseMaterial {
+  id          String   @id @default(cuid())
+  courseId    String
+  name        String
+  description String?  @db.Text
+  files       Json     // Danh sách tệp đính kèm: [{ url, type, name }]
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
 }
 
 model Enrollment {

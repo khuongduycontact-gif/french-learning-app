@@ -7,7 +7,10 @@ export default async function EditCoursePage({
 }: {
   params: { id: string };
 }) {
-  const course = await prisma.course.findUnique({ where: { id: params.id } });
+  const course = await prisma.course.findUnique({
+    where: { id: params.id },
+    include: { materials: { orderBy: { order: "asc" } } },
+  });
   if (!course) notFound();
 
   return (

@@ -9,12 +9,14 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q")?.trim() || "";
   const level = searchParams.get("level") || undefined;
-  const sort = searchParams.get("sort") || "price_asc";
+  const sort = searchParams.get("sort") || "newest";
 
   const session = await getServerSession(authOptions);
   const isAdmin = session?.user?.role === "ADMIN";
 
   const orderByMap: Record<string, any> = {
+    newest: { createdAt: "desc" },
+    oldest: { createdAt: "asc" },
     price_asc: { price: "asc" },
     price_desc: { price: "desc" },
     popular_desc: { enrollments: { _count: "desc" } },
@@ -35,7 +37,7 @@ export async function GET(req: NextRequest) {
           }
         : {}),
     },
-    orderBy: orderByMap[sort] || orderByMap.price_asc,
+    orderBy: orderByMap[sort] || orderByMap.newest,
     include: { _count: { select: { enrollments: true } } },
   });
 
@@ -56,11 +58,11 @@ export async function POST(req: NextRequest) {
     level,
     price,
     duration,
-    sessions,
     lessons,
     imageUrl,
     videoUrl,
     published,
+    materials,
   } = body;
 
   if (
@@ -69,8 +71,6 @@ export async function POST(req: NextRequest) {
     !level ||
     !duration ||
     Number(duration) <= 0 ||
-    !sessions ||
-    Number(sessions) <= 0 ||
     !lessons ||
     Number(lessons) <= 0 ||
     !imageUrl
@@ -78,11 +78,35 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Vui lòng nhập đầy đủ tất cả các trường bắt buộc (tiêu đề, mô tả, trình độ, thời lượng, số buổi học, số bài giảng, ảnh bìa).",
+          "Vui lòng nhập đầy đủ tất cả các trường bắt buộc (tiêu đề, mô tả, trình độ, thời lượng, số bài giảng, ảnh bìa).",
       },
       { status: 400 }
     );
   }
+
+  const validMaterials: {
+    name: string;
+    description: string;
+    files: { url: string; type: string; name: string }[];
+    order: number;
+  }[] = Array.isArray(materials)
+    ? materials
+        .map((m: any) => ({
+          name: String(m?.name || ""),
+          description: String(m?.description || ""),
+          files: Array.isArray(m?.files)
+            ? m.files
+                .filter((f: any) => f?.url)
+                .map((f: any) => ({
+                  url: String(f.url),
+                  type: String(f.type || ""),
+                  name: String(f.name || ""),
+                }))
+            : [],
+        }))
+        .filter((m) => m.name && m.files.length > 0)
+        .map((m, i) => ({ ...m, order: i }))
+    : [];
 
   let slug = slugify(title);
   const existing = await prisma.course.findUnique({ where: { slug } });
@@ -96,12 +120,15 @@ export async function POST(req: NextRequest) {
       level,
       price: Number(price) || 0,
       duration: Number(duration) || 0,
-      sessions: Number(sessions) || 0,
       lessons: Number(lessons) || 0,
       imageUrl: imageUrl || null,
       videoUrl: videoUrl || null,
       published: published ?? true,
+      ...(validMaterials.length > 0
+        ? { materials: { create: validMaterials } }
+        : {}),
     },
+    include: { materials: true },
   });
 
   return NextResponse.json(course, { status: 201 });

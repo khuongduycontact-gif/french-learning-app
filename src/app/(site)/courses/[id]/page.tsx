@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildPaymentInfo } from "@/lib/vietqr";
 import EnrollButton from "@/components/EnrollButton";
+import { RichText } from "@/lib/richtext";
 
 const levelLabel: Record<string, string> = {
   A1: "A1 · Mới bắt đầu",
@@ -19,7 +20,10 @@ export default async function CourseDetailPage({
 }: {
   params: { id: string };
 }) {
-  const course = await prisma.course.findUnique({ where: { id: params.id } });
+  const course = await prisma.course.findUnique({
+    where: { id: params.id },
+    include: { materials: { orderBy: { order: "asc" } } },
+  });
   if (!course) notFound();
 
   const session = await getServerSession(authOptions);
@@ -62,9 +66,7 @@ export default async function CourseDetailPage({
           {course.title}
         </h1>
         <div className="ribbon-rule my-4" />
-        <p className="whitespace-pre-line leading-relaxed text-ink/80">
-          {course.description}
-        </p>
+        <RichText content={course.description} className="text-ink/80" />
       </div>
 
       <aside className="h-fit rounded-2xl border border-mist bg-white/60 p-6">
@@ -80,10 +82,6 @@ export default async function CourseDetailPage({
             {course.duration} giờ
           </p>
           <p>
-            <span className="font-medium text-ink/70">Số buổi học:</span>{" "}
-            {course.sessions} buổi
-          </p>
-          <p>
             <span className="font-medium text-ink/70">Số bài giảng:</span>{" "}
             {course.lessons} bài
           </p>
@@ -95,6 +93,50 @@ export default async function CourseDetailPage({
           initialStatus={(enrollment?.status as any) ?? null}
           initialPayment={payment}
         />
+
+        {enrollment?.status === "CONFIRMED" && course.materials.length > 0 && (
+          <div className="mt-8">
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Tài liệu học
+            </h2>
+            <div className="ribbon-rule my-3" />
+            <ul className="flex flex-col gap-3">
+              {course.materials.map((m) => (
+                <li
+                  key={m.id}
+                  className="flex flex-col gap-3 rounded-2xl border border-mist bg-white/60 p-4"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-ink">{m.name}</p>
+                    {m.description && (
+                      <p className="mt-0.5 text-sm text-ink/60">{m.description}</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {m.files.map((f, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between gap-4 rounded-xl border border-mist bg-white px-3 py-2"
+                      >
+                        <span className="min-w-0 truncate text-sm text-ink">
+                          {f.name || `Tệp ${i + 1}`}
+                        </span>
+                        <a
+                          href={f.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="shrink-0 rounded-full bg-bordeaux px-4 py-1.5 text-xs font-medium text-parchment transition hover:bg-bordeaux/90"
+                        >
+                          Tải xuống
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </aside>
     </div>
   );

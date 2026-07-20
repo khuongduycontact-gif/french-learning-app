@@ -9,7 +9,10 @@ export async function GET(
 ) {
   const course = await prisma.course.findUnique({
     where: { id: params.id },
-    include: { _count: { select: { enrollments: true } } },
+    include: {
+      _count: { select: { enrollments: true } },
+      materials: { orderBy: { order: "asc" } },
+    },
   });
   if (!course) {
     return NextResponse.json({ error: "Không tìm thấy khoá học" }, { status: 404 });
@@ -33,12 +36,41 @@ export async function PUT(
     level,
     price,
     duration,
-    sessions,
     lessons,
     imageUrl,
     videoUrl,
     published,
+    materials,
   } = body;
+
+  // materials chỉ được đồng bộ (xoá hết + tạo lại) khi client có gửi mảng này lên,
+  // để tránh vô tình xoá tài liệu nếu một client cũ nào đó gọi PUT mà không có trường này.
+  if (Array.isArray(materials)) {
+    const validMaterials = materials
+      .map((m: any) => ({
+        courseId: params.id,
+        name: String(m?.name || ""),
+        description: String(m?.description || ""),
+        files: Array.isArray(m?.files)
+          ? m.files
+              .filter((f: any) => f?.url)
+              .map((f: any) => ({
+                url: String(f.url),
+                type: String(f.type || ""),
+                name: String(f.name || ""),
+              }))
+          : [],
+      }))
+      .filter((m) => m.name && m.files.length > 0)
+      .map((m, i) => ({ ...m, order: i }));
+
+    await prisma.$transaction([
+      prisma.courseMaterial.deleteMany({ where: { courseId: params.id } }),
+      ...(validMaterials.length > 0
+        ? [prisma.courseMaterial.createMany({ data: validMaterials })]
+        : []),
+    ]);
+  }
 
   const course = await prisma.course.update({
     where: { id: params.id },
@@ -48,12 +80,12 @@ export async function PUT(
       ...(level !== undefined ? { level } : {}),
       ...(price !== undefined ? { price: Number(price) } : {}),
       ...(duration !== undefined ? { duration: Number(duration) } : {}),
-      ...(sessions !== undefined ? { sessions: Number(sessions) } : {}),
       ...(lessons !== undefined ? { lessons: Number(lessons) } : {}),
       ...(imageUrl !== undefined ? { imageUrl } : {}),
       ...(videoUrl !== undefined ? { videoUrl } : {}),
       ...(published !== undefined ? { published } : {}),
     },
+    include: { materials: { orderBy: { order: "asc" } } },
   });
 
   return NextResponse.json(course);

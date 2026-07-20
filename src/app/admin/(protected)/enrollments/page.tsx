@@ -130,8 +130,8 @@ export default function AdminEnrollmentsPage() {
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-mist bg-white/60">
-        <table className="w-full text-left text-sm">
+      <div className="scroll-x-fancy overflow-x-auto rounded-2xl border border-mist bg-white/60">
+        <table className="w-full min-w-[760px] text-left text-sm">
           <thead className="border-b border-mist text-ink/60">
             <tr>
               <th className="px-4 py-3 font-medium">Học viên</th>

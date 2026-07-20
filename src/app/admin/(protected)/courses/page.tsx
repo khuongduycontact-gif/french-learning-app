@@ -9,10 +9,30 @@ import Pagination from "@/components/Pagination";
 
 const PAGE_SIZE = 15;
 
+const LEVEL_OPTIONS = [
+  { value: "", label: "Tất cả trình độ" },
+  { value: "A1", label: "A1 · Mới bắt đầu" },
+  { value: "A2", label: "A2 · Sơ cấp" },
+  { value: "B1", label: "B1 · Trung cấp" },
+  { value: "B2", label: "B2 · Trung cao cấp" },
+  { value: "C1", label: "C1 · Cao cấp" },
+];
+
+const SORT_OPTIONS = [
+  { value: "newest", label: "Mới nhất" },
+  { value: "oldest", label: "Cũ nhất" },
+  { value: "popular_desc", label: "Số người đăng ký: nhiều nhất" },
+  { value: "popular_asc", label: "Số người đăng ký: ít nhất" },
+  { value: "price_asc", label: "Học phí: thấp đến cao" },
+  { value: "price_desc", label: "Học phí: cao đến thấp" },
+];
+
 export default function AdminCoursesPage() {
   const { showToast } = useToast();
   const [courses, setCourses] = useState<Course[]>([]);
   const [q, setQ] = useState("");
+  const [level, setLevel] = useState("");
+  const [sort, setSort] = useState("newest");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
@@ -24,6 +44,8 @@ export default function AdminCoursesPage() {
     const controller = new AbortController();
     const params = new URLSearchParams();
     if (q) params.set("q", q);
+    if (level) params.set("level", level);
+    params.set("sort", sort);
 
     function run() {
       setLoading(true);
@@ -57,7 +79,7 @@ export default function AdminCoursesPage() {
       clearTimeout(t);
       controller.abort();
     };
-  }, [q, reloadKey]);
+  }, [q, level, sort, reloadKey]);
 
   const totalPages = Math.max(1, Math.ceil(courses.length / PAGE_SIZE));
   const pageCourses = courses.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -101,13 +123,37 @@ export default function AdminCoursesPage() {
         </Link>
       </div>
 
-      <input
-        type="search"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder="Tìm khoá học..."
-        className="max-w-sm rounded-full border border-mist bg-white px-5 py-2.5 text-sm"
-      />
+      <div className="flex flex-wrap items-center gap-3">
+        <input
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Tìm khoá học..."
+          className="max-w-sm flex-1 rounded-full border border-mist bg-white px-5 py-2.5 text-sm"
+        />
+        <select
+          value={level}
+          onChange={(e) => setLevel(e.target.value)}
+          className="rounded-full border border-mist bg-white px-5 py-2.5 text-sm"
+        >
+          {LEVEL_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="rounded-full border border-mist bg-white px-5 py-2.5 text-sm"
+        >
+          {SORT_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div className="overflow-x-auto rounded-2xl border border-mist bg-white/60">
         <table className="w-full text-left text-sm">

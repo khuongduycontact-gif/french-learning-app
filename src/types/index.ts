@@ -1,5 +1,21 @@
 export type Level = "A1" | "A2" | "B1" | "B2" | "C1";
 
+export interface CourseMaterialFile {
+  url: string;
+  type: string | null;
+  name: string | null;
+}
+
+export interface CourseMaterial {
+  id: string;
+  courseId: string;
+  name: string;
+  description: string | null;
+  files: CourseMaterialFile[];
+  order: number;
+  createdAt: string;
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -15,7 +31,14 @@ export interface Course {
   published: boolean;
   createdAt: string;
   updatedAt: string;
+  materials?: CourseMaterial[];
   _count?: { enrollments: number };
+}
+
+export interface CourseMaterialInput {
+  name: string;
+  description?: string;
+  files: CourseMaterialFile[];
 }
 
 export interface CourseInput {
@@ -24,11 +47,11 @@ export interface CourseInput {
   level: Level;
   price: number;
   duration: number;
-  sessions: number;
   lessons: number;
   imageUrl?: string;
   videoUrl?: string;
   published?: boolean;
+  materials?: CourseMaterialInput[];
 }
 
 export interface Enrollment {

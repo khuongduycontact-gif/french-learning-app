@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Course } from "@/types";
+import { stripRichText } from "@/lib/richtext";
 
 const levelLabel: Record<string, string> = {
   A1: "A1 · Mới bắt đầu",
@@ -62,7 +63,7 @@ export default function CourseCard({
         <h3 className="font-display text-lg font-semibold text-ink">
           {course.title}
         </h3>
-        <p className="line-clamp-2 text-sm text-ink/70">{course.description}</p>
+        <p className="line-clamp-2 text-sm text-ink/70">{stripRichText(course.description)}</p>
         <div className="mt-auto flex items-center justify-between pt-3 text-sm">
           <span className="font-semibold text-ink">
             {course.price > 0

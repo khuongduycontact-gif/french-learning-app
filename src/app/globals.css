@@ -36,6 +36,27 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
+/* Thanh scroll ngang mảnh, bo tròn, hợp tông màu trang - dùng cho các bảng
+   dữ liệu tràn màn hình trên mobile (vd. bảng đăng ký ở trang quản trị) */
+.scroll-x-fancy {
+  scrollbar-width: thin;
+  scrollbar-color: theme("colors.bordeaux/0.35") transparent;
+}
+.scroll-x-fancy::-webkit-scrollbar {
+  height: 8px;
+}
+.scroll-x-fancy::-webkit-scrollbar-track {
+  background: theme("colors.mist/0.5");
+  border-radius: 999px;
+}
+.scroll-x-fancy::-webkit-scrollbar-thumb {
+  background-color: theme("colors.bordeaux/0.35");
+  border-radius: 999px;
+}
+.scroll-x-fancy::-webkit-scrollbar-thumb:hover {
+  background-color: theme("colors.bordeaux/0.55");
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;

@@ -8,6 +8,10 @@ export const runtime = "nodejs";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_BYTES = 200 * 1024 * 1024; // 200MB
+const MAX_DOC_BYTES = 50 * 1024 * 1024; // 50MB
+
+// Các định dạng tài liệu học được phép: Word, PowerPoint, PDF, file nén
+const DOC_EXTENSIONS = /\.(pdf|docx?|pptx?|zip|rar|7z)$/i;
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -24,15 +28,16 @@ export async function POST(req: NextRequest) {
 
   const isImage = file.type.startsWith("image/");
   const isVideo = file.type.startsWith("video/");
+  const isDoc = !isImage && !isVideo && DOC_EXTENSIONS.test(file.name);
 
-  if (!isImage && !isVideo) {
+  if (!isImage && !isVideo && !isDoc) {
     return NextResponse.json(
-      { error: "Chỉ hỗ trợ định dạng ảnh hoặc video" },
+      { error: "Định dạng tệp không được hỗ trợ" },
       { status: 400 }
     );
   }
 
-  const maxBytes = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+  const maxBytes = isVideo ? MAX_VIDEO_BYTES : isDoc ? MAX_DOC_BYTES : MAX_IMAGE_BYTES;
   if (file.size > maxBytes) {
     return NextResponse.json(
       {
@@ -43,14 +48,18 @@ export async function POST(req: NextRequest) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const resourceType = isVideo ? "video" : "image";
+  const resourceType = isVideo ? "video" : isDoc ? "raw" : "image";
 
   try {
     const result = await new Promise<any>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: "bonjour-francais/courses",
+          folder: isDoc
+            ? "bonjour-francais/materials"
+            : "bonjour-francais/courses",
           resource_type: resourceType,
+          use_filename: true,
+          unique_filename: true,
         },
         (error, uploadResult) => {
           if (error) reject(error);
@@ -64,6 +73,8 @@ export async function POST(req: NextRequest) {
       url: result.secure_url,
       publicId: result.public_id,
       resourceType: result.resource_type,
+      fileName: file.name,
+      fileType: file.type,
     });
   } catch (err) {
     console.error("Lỗi tải lên Cloudinary:", err);
