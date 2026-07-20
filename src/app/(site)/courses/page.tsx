@@ -17,6 +17,7 @@ export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [q, setQ] = useState("");
   const [level, setLevel] = useState("");
+  const [sort, setSort] = useState("newest");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const isFirstLoad = useRef(true);
@@ -35,6 +36,7 @@ export default function CoursesPage() {
     const params = new URLSearchParams();
     if (q) params.set("q", q);
     if (level) params.set("level", level);
+    if (sort) params.set("sort", sort);
 
     function run() {
       setLoading(true);
@@ -70,7 +72,7 @@ export default function CoursesPage() {
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [q, level, reloadKey]);
+  }, [q, level, sort, reloadKey]);
 
   const totalPages = Math.max(1, Math.ceil(courses.length / PAGE_SIZE));
   const pageCourses = courses.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -84,7 +86,14 @@ export default function CoursesPage() {
         <div className="ribbon-rule mt-3" />
       </div>
 
-      <SearchBar value={q} onChange={setQ} level={level} onLevelChange={setLevel} />
+      <SearchBar
+        value={q}
+        onChange={setQ}
+        level={level}
+        onLevelChange={setLevel}
+        sort={sort}
+        onSortChange={setSort}
+      />
 
       {loading ? (
         <Loader label="Đang tải khoá học..." />

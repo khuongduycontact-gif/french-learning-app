@@ -9,9 +9,17 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q")?.trim() || "";
   const level = searchParams.get("level") || undefined;
+  const sort = searchParams.get("sort") || "newest";
 
   const session = await getServerSession(authOptions);
   const isAdmin = session?.user?.role === "ADMIN";
+
+  const orderByMap: Record<string, any> = {
+    newest: { createdAt: "desc" },
+    price_asc: { price: "asc" },
+    price_desc: { price: "desc" },
+    title_asc: { title: "asc" },
+  };
 
   const courses = await prisma.course.findMany({
     where: {
@@ -27,7 +35,7 @@ export async function GET(req: NextRequest) {
           }
         : {}),
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: orderByMap[sort] || orderByMap.newest,
     include: { _count: { select: { enrollments: true } } },
   });
 
