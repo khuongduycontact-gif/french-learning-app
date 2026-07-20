@@ -5,13 +5,13 @@ import Providers from "./providers";
 import ScrollToTop from "@/components/ScrollToTop";
 
 const display = Playfair_Display({
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
   variable: "--font-display",
   display: "swap",
 });
 
 const body = Inter({
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
   variable: "--font-body",
   display: "swap",
 });
