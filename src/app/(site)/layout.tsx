@@ -12,7 +12,13 @@ export default function SiteLayout({
         {children}
       </main>
       <footer className="border-t border-mist py-8 text-center text-sm text-ink/60">
-        © {new Date().getFullYear()} Français avec Céline. Học tiếng Pháp cùng Céline
+        <p className="sm:hidden">
+          © {new Date().getFullYear()} Français avec Céline.
+          <br />♥ Học tiếng Pháp cùng Céline ♥
+        </p>
+        <p className="hidden sm:block">
+          © {new Date().getFullYear()} Français avec Céline. Học tiếng Pháp cùng Céline
+        </p>
       </footer>
     </>
   );
