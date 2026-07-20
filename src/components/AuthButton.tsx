@@ -66,7 +66,7 @@ export default function AuthButton({
             className="h-9 w-9 object-cover"
           />
         ) : (
-          <span className="flex h-9 w-9 items-center justify-center bg-mist font-display text-sm font-semibold leading-none text-ink">
+          <span className="flex h-9 w-9 items-center justify-center bg-mist font-body text-sm font-semibold leading-none text-ink">
             {session.user.name?.[0]?.toUpperCase() || "?"}
           </span>
         )}
