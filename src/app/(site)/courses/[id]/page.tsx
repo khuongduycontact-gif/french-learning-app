@@ -7,6 +7,12 @@ import { buildPaymentInfo } from "@/lib/vietqr";
 import EnrollButton from "@/components/EnrollButton";
 import { RichText } from "@/lib/richtext";
 
+type MaterialFile = { url: string; name?: string; type?: string };
+
+function getMaterialFiles(files: unknown): MaterialFile[] {
+  return Array.isArray(files) ? (files as MaterialFile[]) : [];
+}
+
 const levelLabel: Record<string, string> = {
   A1: "A1 · Mới bắt đầu",
   A2: "A2 · Sơ cấp",
@@ -113,7 +119,7 @@ export default async function CourseDetailPage({
                     )}
                   </div>
                   <div className="flex flex-col gap-2">
-                    {m.files.map((f, i) => (
+                    {getMaterialFiles(m.files).map((f, i) => (
                       <div
                         key={i}
                         className="flex items-center justify-between gap-4 rounded-xl border border-mist bg-white px-3 py-2"
