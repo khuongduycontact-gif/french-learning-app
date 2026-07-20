@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { buildPaymentInfo } from "@/lib/vietqr";
 import EnrollButton from "@/components/EnrollButton";
 import { RichText } from "@/lib/richtext";
+import { isVideoUrl } from "@/lib/media";
 
 type MaterialFile = { url: string; name?: string; type?: string };
 
@@ -52,16 +53,15 @@ export default async function CourseDetailPage({
     <div className="grid gap-10 md:grid-cols-3">
       <div className="md:col-span-2">
         <div className="relative mb-6 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-mist">
-          {course.videoUrl ? (
+          {course.videoUrl && isVideoUrl(course.videoUrl) ? (
             <video
               src={course.videoUrl}
               controls
-              poster={course.imageUrl || undefined}
               className="h-full w-full object-cover"
             />
           ) : (
-            course.imageUrl && (
-              <Image src={course.imageUrl} alt={course.title} fill className="object-cover" />
+            course.videoUrl && (
+              <Image src={course.videoUrl} alt={course.title} fill className="object-cover" />
             )
           )}
         </div>

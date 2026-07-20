@@ -14,9 +14,8 @@ async function main() {
       duration: 30,
       sessions: 15,
       lessons: 24,
-      imageUrl:
+      videoUrl:
         "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800",
-      videoUrl: null,
     },
     {
       title: "Giao Tiếp Pháp Ngữ A2",
@@ -28,9 +27,8 @@ async function main() {
       duration: 36,
       sessions: 18,
       lessons: 28,
-      imageUrl:
+      videoUrl:
         "https://images.unsplash.com/photo-1431274172761-fca41d930114?w=800",
-      videoUrl: null,
     },
     {
       title: "Pháp Ngữ Trung Cấp B1",
@@ -42,9 +40,8 @@ async function main() {
       duration: 40,
       sessions: 20,
       lessons: 32,
-      imageUrl:
+      videoUrl:
         "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800",
-      videoUrl: null,
     },
     {
       title: "Luyện Thi DELF B2",
@@ -56,9 +53,8 @@ async function main() {
       duration: 48,
       sessions: 24,
       lessons: 36,
-      imageUrl:
+      videoUrl:
         "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=800",
-      videoUrl: null,
     },
   ];
 

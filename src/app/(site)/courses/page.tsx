@@ -17,7 +17,7 @@ export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [q, setQ] = useState("");
   const [level, setLevel] = useState("");
-  const [sort, setSort] = useState("price_asc");
+  const [sort, setSort] = useState("newest");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const isFirstLoad = useRef(true);

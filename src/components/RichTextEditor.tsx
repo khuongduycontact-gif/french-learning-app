@@ -191,10 +191,6 @@ export default function RichTextEditor({
           )}
         </div>
       )}
-
-      <p className="border-t border-mist bg-parchment/40 px-4 py-1.5 text-xs text-ink/50">
-        Hỗ trợ: # tiêu đề lớn, ## tiêu đề vừa, **đậm**, *nghiêng*, {"> "}trích dẫn, - gạch đầu dòng, [chữ](link).
-      </p>
     </div>
   );
 }

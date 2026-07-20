@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Course } from "@/types";
 import { stripRichText } from "@/lib/richtext";
+import { isVideoUrl } from "@/lib/media";
 
 const levelLabel: Record<string, string> = {
   A1: "A1 · Mới bắt đầu",
@@ -31,9 +32,17 @@ export default function CourseCard({
       className="group flex flex-col overflow-hidden rounded-2xl border border-mist bg-white/60 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
     >
       <div className="relative h-40 w-full overflow-hidden bg-mist">
-        {course.imageUrl ? (
+        {course.videoUrl && isVideoUrl(course.videoUrl) ? (
+          <video
+            src={course.videoUrl}
+            muted
+            playsInline
+            preload="metadata"
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+          />
+        ) : course.videoUrl ? (
           <Image
-            src={course.imageUrl}
+            src={course.videoUrl}
             alt={course.title}
             fill
             className="object-cover transition duration-300 group-hover:scale-105"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { isVideoUrl } from "@/lib/media";
 
 type Kind = "image" | "video" | "image-or-video";
 
@@ -12,11 +13,6 @@ type Props = {
   // Lỗi validate từ form cha (VD: bắt buộc phải chọn tệp), hiển thị ngay bên dưới ô này
   error?: string;
 };
-
-// Đoán loại tệp (ảnh/video) dựa vào URL, dùng cho chế độ "image-or-video"
-function isVideoUrl(url: string) {
-  return /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(url) || url.includes("/video/upload/");
-}
 
 const acceptByKind: Record<Kind, string> = {
   image: "image/*",

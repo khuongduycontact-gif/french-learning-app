@@ -21,16 +21,26 @@ export default function Loader({ label = "Đang tải..." }: { label?: string })
                 ry="6"
                 fill="url(#loaderFlame)"
               />
+              {/* Thân tên lửa sơn 3 màu cờ Pháp: xanh dương - trắng - đỏ */}
+              <g clipPath="url(#rocketBodyClip)">
+                <rect x="9" y="2" width="7.3" height="26" fill="#0055A4" />
+                <rect x="16.3" y="2" width="7.4" height="26" fill="#FFFFFF" />
+                <rect x="23.7" y="2" width="7.3" height="26" fill="#EF4135" />
+              </g>
               <path
                 d="M20 4c5 4 6.5 9.5 6.5 16 0 4-1.2 8-2 10h-9c-.8-2-2-6-2-10 0-6.5 1.5-12 6.5-16z"
-                fill="#1B2A4A"
+                fill="none"
+                stroke="#1B2A4A"
+                strokeWidth="0.6"
               />
-              <path d="M20 4c3 2.5 4.6 6 5.4 9.5H14.6C15.4 10 17 6.5 20 4z" fill="#C9A227" />
               <circle cx="20" cy="16.5" r="2.6" fill="#F7F3EC" stroke="#1B2A4A" strokeWidth="1" />
-              <path d="M14.5 22 9 27.5l3-.4 2.2-3.6z" fill="#8C2F35" />
-              <path d="M25.5 22 31 27.5l-3-.4-2.2-3.6z" fill="#8C2F35" />
+              <path d="M14.5 22 9 27.5l3-.4 2.2-3.6z" fill="#0055A4" />
+              <path d="M25.5 22 31 27.5l-3-.4-2.2-3.6z" fill="#EF4135" />
             </g>
             <defs>
+              <clipPath id="rocketBodyClip">
+                <path d="M20 4c5 4 6.5 9.5 6.5 16 0 4-1.2 8-2 10h-9c-.8-2-2-6-2-10 0-6.5 1.5-12 6.5-16z" />
+              </clipPath>
               <radialGradient id="loaderFlame" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(20 32) scale(4.5 6)">
                 <stop stopColor="#F7F3EC" />
                 <stop offset="0.5" stopColor="#C9A227" />
@@ -41,7 +51,18 @@ export default function Loader({ label = "Đang tải..." }: { label?: string })
         </div>
       </div>
 
-      <p className="text-sm font-semibold tracking-wide text-ink">{label}</p>
+      <p
+        className="font-body text-sm font-semibold tracking-wide"
+        style={{
+          background: "linear-gradient(90deg, #0055A4 0%, #1B2A4A 50%, #EF4135 100%)",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          color: "transparent",
+        }}
+      >
+        {label}
+      </p>
 
       <div className="h-3 w-full max-w-xs overflow-hidden rounded-full bg-ink/10">
         <div

@@ -23,6 +23,8 @@ const levelOptions: Option[] = [
 ];
 
 const sortOptions: Option[] = [
+  { value: "newest", label: "Mới nhất" },
+  { value: "oldest", label: "Cũ nhất" },
   { value: "price_asc", label: "Giá: Thấp đến cao" },
   { value: "price_desc", label: "Giá: Cao đến thấp" },
   { value: "popular_desc", label: "Đăng ký: Nhiều nhất" },

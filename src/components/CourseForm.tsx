@@ -28,7 +28,6 @@ export default function CourseForm({
     price: initial?.price ?? 0,
     duration: initial?.duration ?? 0,
     lessons: initial?.lessons ?? 0,
-    imageUrl: initial?.imageUrl || "",
     videoUrl: initial?.videoUrl || "",
     published: initial?.published ?? true,
   });
@@ -98,7 +97,6 @@ export default function CourseForm({
       nextErrors.duration = "Vui lòng nhập thời lượng lớn hơn 0.";
     if (!form.lessons || form.lessons <= 0)
       nextErrors.lessons = "Vui lòng nhập số bài giảng lớn hơn 0.";
-    if (!form.imageUrl) nextErrors.imageUrl = "Vui lòng chọn ảnh bìa khoá học.";
     if (!form.videoUrl) nextErrors.videoUrl = "Vui lòng chọn ảnh hoặc video giới thiệu.";
     return nextErrors;
   }
@@ -272,35 +270,29 @@ export default function CourseForm({
             />
           </div>
         </div>
-      </div>
 
-      {/* Cột phụ (phải trên desktop, dính khi cuộn): ảnh bìa + giới thiệu */}
-      <div className="flex flex-col gap-3 lg:col-span-1 lg:row-span-2 lg:sticky lg:top-24">
-        <label className="block text-sm font-medium text-ink">Hình ảnh &amp; video</label>
-        <div className="flex flex-col gap-5 rounded-2xl border border-mist bg-white/60 p-5">
-          <MediaUploader
-            label="Ảnh bìa khoá học (bắt buộc)"
-            kind="image"
-            value={form.imageUrl || ""}
-            onChange={(url) => update("imageUrl", url)}
-            error={fieldErrors.imageUrl}
-          />
-
-          <MediaUploader
-            label="Giới thiệu (ảnh hoặc video, bắt buộc)"
-            kind="image-or-video"
-            value={form.videoUrl || ""}
-            onChange={(url) => update("videoUrl", url)}
-            error={fieldErrors.videoUrl}
-          />
+        <div className="flex flex-col gap-3">
+          <label className="block text-sm font-medium text-ink">Hình ảnh &amp; video</label>
+          <div className="rounded-2xl border border-mist bg-white/60 p-5">
+            <MediaUploader
+              label="Giới thiệu (ảnh hoặc video, bắt buộc)"
+              kind="image-or-video"
+              value={form.videoUrl || ""}
+              onChange={(url) => update("videoUrl", url)}
+              error={fieldErrors.videoUrl}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Tiếp nối cột chính: tài liệu, xuất bản, nút hành động */}
-      <div className="flex flex-col gap-5 lg:col-span-2">
+      {/* Cột phụ (phải trên desktop, dính khi cuộn): tài liệu học */}
+      <div className="flex flex-col gap-3 lg:col-span-1 lg:row-span-2 lg:sticky lg:top-24">
         <CourseMaterialsEditor value={materials} onChange={setMaterials} />
         {materialsError && <p className="text-xs text-bordeaux">{materialsError}</p>}
+      </div>
 
+      {/* Tiếp nối cột chính: xuất bản, nút hành động */}
+      <div className="flex flex-col gap-5 lg:col-span-2">
         <label className="flex items-center gap-2 text-sm text-ink">
           <input
             type="checkbox"

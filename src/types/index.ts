@@ -26,7 +26,6 @@ export interface Course {
   duration: number;
   sessions: number;
   lessons: number;
-  imageUrl: string | null;
   videoUrl: string | null;
   published: boolean;
   createdAt: string;
@@ -48,7 +47,6 @@ export interface CourseInput {
   price: number;
   duration: number;
   lessons: number;
-  imageUrl?: string;
   videoUrl?: string;
   published?: boolean;
   materials?: CourseMaterialInput[];

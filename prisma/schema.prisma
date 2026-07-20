@@ -91,8 +91,7 @@ model Course {
   duration    Int          @default(0) // số giờ học
   sessions    Int          @default(0) // số buổi học (không còn nhập ở form quản trị, giữ lại cho dữ liệu cũ)
   lessons     Int          @default(0) // số bài giảng
-  imageUrl    String?      @db.Text // ảnh bìa lưu trên Cloudinary
-  videoUrl    String?      @db.Text // video giới thiệu lưu trên Cloudinary
+  videoUrl    String?      @db.Text // ảnh hoặc video giới thiệu, lưu trên Cloudinary
   published   Boolean      @default(true)
   enrollments Enrollment[]
   materials   CourseMaterial[]
