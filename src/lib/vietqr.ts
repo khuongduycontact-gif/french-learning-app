@@ -37,6 +37,16 @@ const BANK_DEEPLINK_MAP: Record<string, { appId: string; shortCode: string }> = 
   "970431": { appId: "eib", shortCode: "eib" }, // Eximbank
 };
 
+// URLSearchParams mã hoá dấu cách thành "+" (kiểu form-urlencoded), nhưng một
+// số app ngân hàng khi đọc deeplink lại không hiểu "+" là dấu cách (chỉ hiểu
+// chuẩn %20) nên bỏ qua việc tự điền sẵn thông tin. Dùng encodeURIComponent
+// (luôn ra %20) để tương thích rộng hơn.
+function toQueryString(params: Record<string, string>) {
+  return Object.entries(params)
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join("&");
+}
+
 // Sinh nội dung chuyển khoản ngắn gọn, duy nhất cho từng lượt đăng ký
 // để đối chiếu khi admin xác nhận thanh toán.
 export function buildPaymentNote(enrollmentId: string) {
@@ -59,12 +69,12 @@ export function buildPaymentInfo({
 
   let qrUrl: string | null = null;
   if (bankId && accountNo) {
-    const params = new URLSearchParams({
+    const query = toQueryString({
       amount: String(Math.max(0, Math.round(amount))),
       addInfo,
       accountName,
     });
-    qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?${params.toString()}`;
+    qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?${query}`;
   }
 
   // Deeplink mở thẳng app ngân hàng trên điện thoại, điền sẵn số tiền/nội dung
@@ -82,13 +92,13 @@ export function buildPaymentInfo({
     // ngân hàng mà người trả tiền chọn mở -> dùng được để build link cho
     // BẤT KỲ app ngân hàng nào (xem BANK_APPS ở PaymentQrModal), không chỉ
     // riêng app của ngân hàng nhận tiền.
-    const params = new URLSearchParams({
+    const paramsObj: Record<string, string> = {
       ba: `${accountNo}@${shortCode}`,
       am: String(Math.max(0, Math.round(amount))),
       tn: addInfo,
-    });
-    if (accountName) params.set("bn", accountName);
-    bankTransferParams = params.toString();
+    };
+    if (accountName) paramsObj.bn = accountName;
+    bankTransferParams = toQueryString(paramsObj);
 
     if (appId) {
       deeplinkUrl = `https://dl.vietqr.io/pay?app=${appId}&${bankTransferParams}`;
