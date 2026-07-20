@@ -5,6 +5,28 @@ import Image from "next/image";
 import type { PaymentInfo } from "@/types";
 import { useToast } from "./Toast";
 
+// Danh sách app ngân hàng phổ biến để người trả tiền tự chọn đúng app của họ
+// (khớp appId với https://api.vietqr.io/v2/android-app-deeplinks). Link luôn
+// trỏ tới tài khoản NGƯỜI NHẬN (payment.bankTransferParams), chỉ khác app nào
+// được mở trên máy người trả tiền.
+// autofill: true = VietQR xác nhận app này tự điền sẵn STK/số tiền/nội dung
+// khi mở deeplink (theo changelog vietqr.io); false = chỉ mở app, khách có
+// thể cần tự nhập lại thông tin bên trong app.
+const BANK_APPS: { appId: string; label: string; autofill?: boolean }[] = [
+  { appId: "acb", label: "ACB", autofill: true },
+  { appId: "ocb", label: "OCB", autofill: true },
+  { appId: "bidv", label: "BIDV", autofill: true },
+  { appId: "vcb", label: "Vietcombank" },
+  { appId: "icb", label: "VietinBank" },
+  { appId: "tcb", label: "Techcombank" },
+  { appId: "mb", label: "MB Bank" },
+  { appId: "vpb", label: "VPBank" },
+  { appId: "tpb", label: "TPBank" },
+  { appId: "stb", label: "Sacombank" },
+  { appId: "msb", label: "MSB" },
+  { appId: "shb", label: "SHB" },
+];
+
 export default function PaymentQrModal({
   open,
   onClose,
@@ -92,18 +114,39 @@ export default function PaymentQrModal({
             </p>
           )}
 
-          {/* Chỉ hiện trên điện thoại: mở thẳng app ngân hàng, điền sẵn STK/số tiền/nội dung */}
-          {payment.deeplinkUrl && (
-            <a
-              href={payment.deeplinkUrl}
-              className="mb-4 flex items-center justify-center gap-2 rounded-2xl bg-ink px-5 py-3.5 text-sm font-semibold text-parchment shadow-sm transition hover:bg-ink/90 sm:hidden"
-            >
-              <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="none">
-                <rect x="5" y="2" width="10" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M9 15h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-              Mở app ngân hàng để thanh toán
-            </a>
+          {/* Chỉ hiện trên điện thoại: chọn đúng app ngân hàng của mình để
+              chuyển khoản, thông tin người nhận/số tiền/nội dung đã điền sẵn */}
+          {payment.bankTransferParams && (
+            <div className="mb-4 rounded-2xl border border-mist bg-mist/20 p-3.5 sm:hidden">
+              <p className="mb-2.5 text-xs font-semibold text-ink/70">
+                Chuyển khoản nhanh — chọn app ngân hàng của bạn
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {BANK_APPS.map((bank) => (
+                  <a
+                    key={bank.appId}
+                    href={`https://dl.vietqr.io/pay?app=${bank.appId}&${payment.bankTransferParams}`}
+                    className="relative rounded-xl bg-white px-2 py-2.5 text-center text-xs font-medium text-ink shadow-sm ring-1 ring-mist transition active:scale-95 active:bg-mist/60"
+                  >
+                    {bank.autofill && (
+                      <span className="absolute -right-1 -top-1 rounded-full bg-green-600 px-1.5 py-[1px] text-[9px] font-semibold leading-tight text-white">
+                        Auto
+                      </span>
+                    )}
+                    {bank.label}
+                  </a>
+                ))}
+              </div>
+              <p className="mt-2.5 text-center text-[11px] text-ink/50">
+                <span className="mr-1 inline-block rounded-full bg-green-600 px-1.5 py-[1px] text-[9px] font-semibold leading-tight text-white">
+                  Auto
+                </span>
+                = tự điền sẵn thông tin. Ngân hàng khác vẫn mở app, có thể cần nhập lại.
+              </p>
+              <p className="mt-1.5 text-center text-[11px] text-ink/50">
+                Không thấy ngân hàng của bạn? Quét mã QR ở trên thay thế.
+              </p>
+            </div>
           )}
 
           <div className="mb-5 flex flex-col gap-2 rounded-2xl bg-mist/40 p-4 text-sm">

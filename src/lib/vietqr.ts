@@ -4,6 +4,7 @@
 export interface PaymentInfo {
   qrUrl: string | null;
   deeplinkUrl: string | null;
+  bankTransferParams: string | null;
   amount: number;
   addInfo: string;
   bankName: string;
@@ -70,21 +71,38 @@ export function buildPaymentInfo({
   // (một số app hỗ trợ tự điền, số còn lại chỉ mở app). Ưu tiên override từ env,
   // nếu không có thì tra trong bảng ánh xạ theo mã BIN.
   let deeplinkUrl: string | null = null;
+  let bankTransferParams: string | null = null;
   const appIdOverride = process.env.VIETQR_APP_ID;
   const bankCodeOverride = process.env.VIETQR_BANK_CODE;
   const mapped = BANK_DEEPLINK_MAP[bankId];
   const appId = appIdOverride || mapped?.appId;
   const shortCode = bankCodeOverride || mapped?.shortCode;
-  if (accountNo && appId && shortCode) {
+  if (accountNo && shortCode) {
+    // ba/am/tn/bn: số tài khoản người NHẬN tiền (cố định), không đổi theo app
+    // ngân hàng mà người trả tiền chọn mở -> dùng được để build link cho
+    // BẤT KỲ app ngân hàng nào (xem BANK_APPS ở PaymentQrModal), không chỉ
+    // riêng app của ngân hàng nhận tiền.
     const params = new URLSearchParams({
-      app: appId,
       ba: `${accountNo}@${shortCode}`,
       am: String(Math.max(0, Math.round(amount))),
       tn: addInfo,
     });
     if (accountName) params.set("bn", accountName);
-    deeplinkUrl = `https://dl.vietqr.io/pay?${params.toString()}`;
+    bankTransferParams = params.toString();
+
+    if (appId) {
+      deeplinkUrl = `https://dl.vietqr.io/pay?app=${appId}&${bankTransferParams}`;
+    }
   }
 
-  return { qrUrl, deeplinkUrl, amount, addInfo, bankName, accountNo, accountName };
+  return {
+    qrUrl,
+    deeplinkUrl,
+    bankTransferParams,
+    amount,
+    addInfo,
+    bankName,
+    accountNo,
+    accountName,
+  };
 }

@@ -22,16 +22,16 @@ const statusLabel: Record<EnrollmentStatus, { label: string; className: string }
     className: "bg-mist text-ink/60",
   },
   CONFIRMED: {
-    label: "Đã kích hoạt",
+    label: "Đã mở khoá",
     className: "bg-green-100 text-green-700",
   },
 };
 
 const filters: { value: string; label: string }[] = [
-  { value: "AWAITING_CONFIRMATION", label: "Chờ xác nhận" },
   { value: "", label: "Tất cả" },
   { value: "PENDING_PAYMENT", label: "Chờ thanh toán" },
-  { value: "CONFIRMED", label: "Đã kích hoạt" },
+  { value: "AWAITING_CONFIRMATION", label: "Chờ xác nhận" },
+  { value: "CONFIRMED", label: "Đã mở khoá" },
 ];
 
 export default function AdminEnrollmentsPage() {
@@ -139,7 +139,7 @@ export default function AdminEnrollmentsPage() {
               <th className="px-4 py-3 font-medium">Số tiền</th>
               <th className="px-4 py-3 font-medium">Nội dung CK</th>
               <th className="px-4 py-3 font-medium">Trạng thái</th>
-              <th className="px-4 py-3 font-medium text-right">Thao tác</th>
+              <th className="px-4 py-3 font-medium">Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -216,9 +216,9 @@ export default function AdminEnrollmentsPage() {
                       {statusLabel[e.status].label}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3">
                     {e.status === "AWAITING_CONFIRMATION" ? (
-                      <div className="flex justify-end gap-3">
+                      <div className="flex justify-start gap-3">
                         <button
                           onClick={() => handleAction(e.id, "reject")}
                           disabled={actingId === e.id}

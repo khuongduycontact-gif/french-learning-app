@@ -30,7 +30,7 @@ export default function AdminSidebar() {
               key={link.href}
               href={link.href}
               aria-current={active ? "page" : undefined}
-              className={`rounded-lg px-3 py-2 font-medium transition ${
+              className={`block min-w-0 truncate rounded-lg px-3 py-2 font-medium transition ${
                 active ? "bg-bordeaux text-parchment" : "text-ink hover:bg-mist"
               }`}
             >

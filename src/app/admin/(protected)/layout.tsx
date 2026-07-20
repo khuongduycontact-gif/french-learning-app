@@ -18,7 +18,7 @@ export default async function AdminLayout({
     <div className="min-h-screen">
       <AdminHeader />
 
-      <div className="mx-auto grid max-w-6xl gap-8 px-6 py-10 md:grid-cols-[200px_1fr]">
+      <div className="grid gap-8 px-6 py-10 md:grid-cols-[minmax(220px,auto)_1fr] md:px-10">
         <AdminSidebar />
         <div>{children}</div>
       </div>

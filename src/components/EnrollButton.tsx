@@ -90,7 +90,7 @@ export default function EnrollButton({
       setStatus("AWAITING_CONFIRMATION");
       setModalOpen(false);
       showToast(
-        "Đã ghi nhận thanh toán! Vui lòng chờ admin xác nhận để mở khoá học.",
+        "Đã ghi nhận thanh toán! Vui lòng chờ cô giáo Céline xác nhận để mở khoá học.",
         "success"
       );
     } catch {
@@ -115,7 +115,7 @@ export default function EnrollButton({
           <circle cx="10" cy="10" r="7.25" stroke="currentColor" strokeWidth="1.5" />
           <path d="M10 6v4l2.5 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
-        Đã gửi yêu cầu, đang chờ admin xác nhận thanh toán
+        Đã gửi yêu cầu, đang chờ cô giáo Céline xác nhận thanh toán
       </div>
     );
   }
@@ -137,7 +137,7 @@ export default function EnrollButton({
       </button>
       {status === "PENDING_PAYMENT" && (
         <p className="mt-2 text-center text-xs text-ink/50">
-          Bạn đã đăng ký nhưng chưa hoàn tất thanh toán
+          Bạn chưa hoàn tất thanh toán nên khoá học chưa được mở khoá
         </p>
       )}
       {error && <p className="mt-2 text-sm text-bordeaux">{error}</p>}

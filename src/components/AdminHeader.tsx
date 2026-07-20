@@ -7,7 +7,7 @@ import NotificationBell from "./NotificationBell";
 export default function AdminHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-mist bg-parchment shadow-sm">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <div className="flex items-center justify-between px-6 py-4 md:px-10">
         <Link
           href="/admin"
           className="font-display text-xl font-semibold tracking-tight text-ink transition hover:text-bordeaux"

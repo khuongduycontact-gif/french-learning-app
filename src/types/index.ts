@@ -52,6 +52,7 @@ export type EnrollmentStatus =
 export interface PaymentInfo {
   qrUrl: string | null;
   deeplinkUrl: string | null;
+  bankTransferParams: string | null;
   amount: number;
   addInfo: string;
   bankName: string;
