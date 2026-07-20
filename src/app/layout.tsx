@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
-import Navbar from "@/components/Navbar";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const display = Playfair_Display({
   subsets: ["latin"],
@@ -31,13 +31,8 @@ export default function RootLayout({
     <html lang="vi" className={`${display.variable} ${body.variable}`}>
       <body>
         <Providers>
-          <Navbar />
-          <main className="mx-auto min-h-[calc(100vh-64px)] max-w-6xl px-6 py-10">
-            {children}
-          </main>
-          <footer className="border-t border-mist py-8 text-center text-sm text-ink/60">
-            © {new Date().getFullYear()} Français avec Céline. Học tiếng Pháp cùng Céline
-          </footer>
+          <ScrollToTop />
+          {children}
         </Providers>
       </body>
     </html>

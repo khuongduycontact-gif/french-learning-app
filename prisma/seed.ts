@@ -12,6 +12,8 @@ async function main() {
       level: "A1" as const,
       price: 990000,
       duration: 30,
+      sessions: 15,
+      lessons: 24,
       imageUrl:
         "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800",
       videoUrl: null,
@@ -24,6 +26,8 @@ async function main() {
       level: "A2" as const,
       price: 1290000,
       duration: 36,
+      sessions: 18,
+      lessons: 28,
       imageUrl:
         "https://images.unsplash.com/photo-1431274172761-fca41d930114?w=800",
       videoUrl: null,
@@ -36,6 +40,8 @@ async function main() {
       level: "B1" as const,
       price: 1590000,
       duration: 40,
+      sessions: 20,
+      lessons: 32,
       imageUrl:
         "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800",
       videoUrl: null,
@@ -48,6 +54,8 @@ async function main() {
       level: "B2" as const,
       price: 2190000,
       duration: 48,
+      sessions: 24,
+      lessons: 36,
       imageUrl:
         "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=800",
       videoUrl: null,

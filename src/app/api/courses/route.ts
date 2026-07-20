@@ -42,11 +42,36 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { title, description, level, price, duration, imageUrl, videoUrl, published } = body;
+  const {
+    title,
+    description,
+    level,
+    price,
+    duration,
+    sessions,
+    lessons,
+    imageUrl,
+    videoUrl,
+    published,
+  } = body;
 
-  if (!title || !description || !level) {
+  if (
+    !title ||
+    !description ||
+    !level ||
+    !duration ||
+    Number(duration) <= 0 ||
+    !sessions ||
+    Number(sessions) <= 0 ||
+    !lessons ||
+    Number(lessons) <= 0 ||
+    !imageUrl
+  ) {
     return NextResponse.json(
-      { error: "Thiếu thông tin bắt buộc (tiêu đề, mô tả, trình độ)" },
+      {
+        error:
+          "Vui lòng nhập đầy đủ tất cả các trường bắt buộc (tiêu đề, mô tả, trình độ, thời lượng, số buổi học, số bài giảng, ảnh bìa).",
+      },
       { status: 400 }
     );
   }
@@ -63,6 +88,8 @@ export async function POST(req: NextRequest) {
       level,
       price: Number(price) || 0,
       duration: Number(duration) || 0,
+      sessions: Number(sessions) || 0,
+      lessons: Number(lessons) || 0,
       imageUrl: imageUrl || null,
       videoUrl: videoUrl || null,
       published: published ?? true,

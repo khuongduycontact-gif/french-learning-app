@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -22,6 +22,7 @@ export default async function CourseDetailPage({
   if (!course) notFound();
 
   const session = await getServerSession(authOptions);
+  if (session?.user?.role === "ADMIN") redirect("/admin");
   let alreadyEnrolled = false;
   if (session?.user) {
     const existing = await prisma.enrollment.findUnique({
@@ -60,11 +61,25 @@ export default async function CourseDetailPage({
       </div>
 
       <aside className="h-fit rounded-2xl border border-mist bg-white/60 p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <span className="font-display text-2xl font-semibold text-ink">
-            {course.price > 0 ? course.price.toLocaleString("vi-VN") + " đ" : "Miễn phí"}
-          </span>
-          <span className="text-sm text-ink/60">{course.duration} giờ học</span>
+        <div className="mb-4 flex flex-col gap-2 text-sm text-ink">
+          <p className="text-lg font-semibold text-ink">
+            Giá tiền:{" "}
+            {course.price > 0
+              ? course.price.toLocaleString("vi-VN") + " vnđ"
+              : "Miễn phí"}
+          </p>
+          <p>
+            <span className="font-medium text-ink/70">Số giờ học:</span>{" "}
+            {course.duration} giờ
+          </p>
+          <p>
+            <span className="font-medium text-ink/70">Số buổi học:</span>{" "}
+            {course.sessions} buổi
+          </p>
+          <p>
+            <span className="font-medium text-ink/70">Số bài giảng:</span>{" "}
+            {course.lessons} bài
+          </p>
         </div>
         <EnrollButton courseId={course.id} alreadyEnrolled={alreadyEnrolled} />
       </aside>

@@ -2,18 +2,35 @@
 
 import { useRef, useState } from "react";
 
+type Kind = "image" | "video" | "image-or-video";
+
 type Props = {
   label: string;
-  kind: "image" | "video";
+  kind: Kind;
   value: string;
   onChange: (url: string) => void;
+  // Lỗi validate từ form cha (VD: bắt buộc phải chọn tệp), hiển thị ngay bên dưới ô này
+  error?: string;
 };
 
-export default function MediaUploader({ label, kind, value, onChange }: Props) {
+// Đoán loại tệp (ảnh/video) dựa vào URL, dùng cho chế độ "image-or-video"
+function isVideoUrl(url: string) {
+  return /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(url) || url.includes("/video/upload/");
+}
+
+const acceptByKind: Record<Kind, string> = {
+  image: "image/*",
+  video: "video/*",
+  "image-or-video": "image/*,video/*",
+};
+
+export default function MediaUploader({ label, kind, value, onChange, error: externalError }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
+  const shownError = error || externalError;
+  const isVideo = kind === "video" || (kind === "image-or-video" && isVideoUrl(value));
 
   function handlePick() {
     inputRef.current?.click();
@@ -66,7 +83,7 @@ export default function MediaUploader({ label, kind, value, onChange }: Props) {
     <div>
       <label className="mb-1 block text-sm font-medium text-ink">{label}</label>
 
-      {value && kind === "image" && (
+      {value && !isVideo && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={value}
@@ -74,7 +91,7 @@ export default function MediaUploader({ label, kind, value, onChange }: Props) {
           className="mb-2 h-32 w-full rounded-lg border border-mist object-cover"
         />
       )}
-      {value && kind === "video" && (
+      {value && isVideo && (
         <video
           src={value}
           controls
@@ -105,12 +122,12 @@ export default function MediaUploader({ label, kind, value, onChange }: Props) {
       <input
         ref={inputRef}
         type="file"
-        accept={kind === "image" ? "image/*" : "video/*"}
+        accept={acceptByKind[kind]}
         onChange={handleFile}
         className="hidden"
       />
 
-      {error && <p className="mt-1 text-xs text-bordeaux">{error}</p>}
+      {shownError && <p className="mt-1 text-xs text-bordeaux">{shownError}</p>}
     </div>
   );
 }

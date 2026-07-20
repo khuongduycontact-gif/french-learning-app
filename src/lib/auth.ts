@@ -20,7 +20,7 @@ export const authOptions: AuthOptions = {
     strategy: "database",
   },
   pages: {
-    signIn: "/dang-nhap",
+    signIn: "/login",
   },
   callbacks: {
     async session({ session, user }) {

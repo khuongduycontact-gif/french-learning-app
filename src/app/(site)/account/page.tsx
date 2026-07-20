@@ -6,7 +6,8 @@ import CourseCard from "@/components/CourseCard";
 
 export default async function TaiKhoanPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/dang-nhap");
+  if (!session?.user) redirect("/login");
+  if (session.user.role === "ADMIN") redirect("/admin");
 
   const enrollments = await prisma.enrollment.findMany({
     where: { userId: session.user.id },

@@ -8,6 +8,8 @@ export interface Course {
   level: Level;
   price: number;
   duration: number;
+  sessions: number;
+  lessons: number;
   imageUrl: string | null;
   videoUrl: string | null;
   published: boolean;
@@ -22,6 +24,8 @@ export interface CourseInput {
   level: Level;
   price: number;
   duration: number;
+  sessions: number;
+  lessons: number;
   imageUrl?: string;
   videoUrl?: string;
   published?: boolean;

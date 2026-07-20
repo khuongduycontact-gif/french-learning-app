@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
+import { useToast } from "./Toast";
 
 export default function EnrollButton({
   courseId,
@@ -11,6 +12,7 @@ export default function EnrollButton({
   alreadyEnrolled: boolean;
 }) {
   const { data: session } = useSession();
+  const { showToast } = useToast();
   const [enrolled, setEnrolled] = useState(alreadyEnrolled);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -30,10 +32,15 @@ export default function EnrollButton({
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Đăng ký thất bại, vui lòng thử lại.");
+        const message = data.error || "Đăng ký thất bại, vui lòng thử lại.";
+        setError(message);
+        showToast(message, "error");
         return;
       }
       setEnrolled(true);
+      showToast("Đăng ký khoá học thành công!", "success");
+    } catch {
+      showToast("Đăng ký thất bại, vui lòng thử lại.", "error");
     } finally {
       setLoading(false);
     }

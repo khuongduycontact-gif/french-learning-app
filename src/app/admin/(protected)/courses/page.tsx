@@ -1,37 +1,89 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Course } from "@/types";
+import { useToast } from "@/components/Toast";
+import Loader from "@/components/Loader";
+import Pagination from "@/components/Pagination";
+
+const PAGE_SIZE = 15;
 
 export default function AdminCoursesPage() {
+  const { showToast } = useToast();
   const [courses, setCourses] = useState<Course[]>([]);
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [reloadKey, setReloadKey] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  async function load() {
-    setLoading(true);
-    const params = new URLSearchParams();
-    if (q) params.set("q", q);
-    const res = await fetch(`/api/courses?${params.toString()}`);
-    const data = await res.json();
-    setCourses(data);
-    setLoading(false);
-  }
+  const [page, setPage] = useState(1);
+  const isFirstLoad = useRef(true);
 
   useEffect(() => {
-    const t = setTimeout(load, 250);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q]);
+    const controller = new AbortController();
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+
+    function run() {
+      setLoading(true);
+      setError("");
+      fetch(`/api/courses?${params.toString()}`, { signal: controller.signal })
+        .then((res) => {
+          if (!res.ok) throw new Error("Không tải được danh sách khoá học.");
+          return res.json();
+        })
+        .then((data) => {
+          setCourses(data);
+          setPage(1);
+          setLoading(false);
+        })
+        .catch((err) => {
+          // Yêu cầu cũ bị huỷ (do gõ tìm kiếm mới) -> bỏ qua, không ghi đè state của yêu cầu mới hơn
+          if (err?.name === "AbortError" || controller.signal.aborted) return;
+          setError("Không tải được danh sách khoá học, vui lòng thử lại.");
+          setLoading(false);
+        });
+    }
+
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+      run();
+      return () => controller.abort();
+    }
+
+    const t = setTimeout(run, 250);
+    return () => {
+      clearTimeout(t);
+      controller.abort();
+    };
+  }, [q, reloadKey]);
+
+  const totalPages = Math.max(1, Math.ceil(courses.length / PAGE_SIZE));
+  const pageCourses = courses.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   async function handleDelete(id: string, title: string) {
     if (!confirm(`Xoá khoá học "${title}"? Hành động này không thể hoàn tác.`)) return;
     setDeletingId(id);
-    await fetch(`/api/courses/${id}`, { method: "DELETE" });
-    setCourses((prev) => prev.filter((c) => c.id !== id));
-    setDeletingId(null);
+    try {
+      const res = await fetch(`/api/courses/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        showToast(data.error || "Xoá khoá học thất bại, vui lòng thử lại.", "error");
+        return;
+      }
+      setCourses((prev) => {
+        const next = prev.filter((c) => c.id !== id);
+        const nextTotalPages = Math.max(1, Math.ceil(next.length / PAGE_SIZE));
+        setPage((p) => Math.min(p, nextTotalPages));
+        return next;
+      });
+      showToast("Đã xoá khoá học thành công!", "success");
+    } catch {
+      showToast("Xoá khoá học thất bại, vui lòng thử lại.", "error");
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   return (
@@ -72,8 +124,21 @@ export default function AdminCoursesPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-ink/50">
-                  Đang tải...
+                <td colSpan={6} className="px-4 py-2">
+                  <Loader label="Đang tải danh sách khoá học..." />
+                </td>
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan={6} className="px-4 py-8 text-center">
+                  <p className="text-bordeaux">{error}</p>
+                  <button
+                    type="button"
+                    onClick={() => setReloadKey((k) => k + 1)}
+                    className="mt-3 rounded-full border border-bordeaux/40 px-4 py-2 text-sm font-medium text-bordeaux hover:bg-bordeaux/5"
+                  >
+                    Thử lại
+                  </button>
                 </td>
               </tr>
             ) : courses.length === 0 ? (
@@ -83,7 +148,7 @@ export default function AdminCoursesPage() {
                 </td>
               </tr>
             ) : (
-              courses.map((c) => (
+              pageCourses.map((c) => (
                 <tr key={c.id} className="border-b border-mist last:border-0">
                   <td className="px-4 py-3 font-medium text-ink">{c.title}</td>
                   <td className="px-4 py-3">{c.level}</td>
@@ -123,6 +188,8 @@ export default function AdminCoursesPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </div>
   );
 }

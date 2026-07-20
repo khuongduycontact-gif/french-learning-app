@@ -76,6 +76,8 @@ model Course {
   level       Level        @default(A1)
   price       Int          @default(0)
   duration    Int          @default(0) // số giờ học
+  sessions    Int          @default(0) // số buổi học
+  lessons     Int          @default(0) // số bài giảng
   imageUrl    String?      @db.Text // ảnh bìa lưu trên Cloudinary
   videoUrl    String?      @db.Text // video giới thiệu lưu trên Cloudinary
   published   Boolean      @default(true)
