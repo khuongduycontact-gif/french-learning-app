@@ -4,6 +4,12 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import CourseCard from "@/components/CourseCard";
 
+const statusMap = {
+  PENDING_PAYMENT: { label: "Chờ thanh toán", tone: "pending" as const },
+  AWAITING_CONFIRMATION: { label: "Chờ xác nhận", tone: "waiting" as const },
+  CONFIRMED: { label: "Đã kích hoạt", tone: "confirmed" as const },
+};
+
 export default async function TaiKhoanPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
@@ -35,7 +41,11 @@ export default async function TaiKhoanPage() {
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {enrollments.map((e) => (
-            <CourseCard key={e.id} course={e.course as any} />
+            <CourseCard
+              key={e.id}
+              course={e.course as any}
+              statusBadge={statusMap[e.status as keyof typeof statusMap]}
+            />
           ))}
         </div>
       )}

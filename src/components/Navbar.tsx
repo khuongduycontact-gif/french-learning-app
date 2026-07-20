@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import AuthButton from "./AuthButton";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -53,7 +54,10 @@ export default function Navbar() {
           </nav>
         </div>
 
-        <AuthButton />
+        <div className="flex items-center gap-3">
+          <NotificationBell />
+          <AuthButton />
+        </div>
       </div>
     </header>
   );

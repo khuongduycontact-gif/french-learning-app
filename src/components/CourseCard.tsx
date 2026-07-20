@@ -10,7 +10,20 @@ const levelLabel: Record<string, string> = {
   C1: "C1 · Cao cấp",
 };
 
-export default function CourseCard({ course }: { course: Course }) {
+export default function CourseCard({
+  course,
+  statusBadge,
+}: {
+  course: Course;
+  statusBadge?: { label: string; tone: "pending" | "waiting" | "confirmed" };
+}) {
+  const toneClass =
+    statusBadge?.tone === "confirmed"
+      ? "bg-green-600 text-white"
+      : statusBadge?.tone === "waiting"
+      ? "bg-gold text-white"
+      : "bg-ink/80 text-parchment";
+
   return (
     <Link
       href={`/courses/${course.id}`}
@@ -32,6 +45,13 @@ export default function CourseCard({ course }: { course: Course }) {
         {!course.published && (
           <span className="absolute left-3 top-3 rounded-full bg-ink/80 px-2 py-0.5 text-xs font-medium text-parchment">
             Bản nháp
+          </span>
+        )}
+        {statusBadge && (
+          <span
+            className={`absolute right-3 top-3 rounded-full px-2 py-0.5 text-xs font-medium ${toneClass}`}
+          >
+            {statusBadge.label}
           </span>
         )}
       </div>

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/admin", label: "Tổng quan", exact: true },
   { href: "/admin/courses", label: "Khoá học", exact: false },
+  { href: "/admin/enrollments", label: "Đăng ký & thanh toán", exact: false },
 ];
 
 export default function AdminSidebar() {

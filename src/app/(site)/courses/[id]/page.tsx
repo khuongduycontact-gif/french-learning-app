@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { buildPaymentInfo } from "@/lib/vietqr";
 import EnrollButton from "@/components/EnrollButton";
 
 const levelLabel: Record<string, string> = {
@@ -23,13 +24,19 @@ export default async function CourseDetailPage({
 
   const session = await getServerSession(authOptions);
   if (session?.user?.role === "ADMIN") redirect("/admin");
-  let alreadyEnrolled = false;
+
+  let enrollment: { id: string; status: string } | null = null;
   if (session?.user) {
-    const existing = await prisma.enrollment.findUnique({
+    enrollment = await prisma.enrollment.findUnique({
       where: { userId_courseId: { userId: session.user.id, courseId: course.id } },
+      select: { id: true, status: true },
     });
-    alreadyEnrolled = !!existing;
   }
+
+  const payment =
+    enrollment && enrollment.status === "PENDING_PAYMENT"
+      ? buildPaymentInfo({ enrollmentId: enrollment.id, amount: course.price })
+      : null;
 
   return (
     <div className="grid gap-10 md:grid-cols-3">
@@ -81,7 +88,13 @@ export default async function CourseDetailPage({
             {course.lessons} bài
           </p>
         </div>
-        <EnrollButton courseId={course.id} alreadyEnrolled={alreadyEnrolled} />
+        <EnrollButton
+          courseId={course.id}
+          courseTitle={course.title}
+          initialEnrollmentId={enrollment?.id ?? null}
+          initialStatus={(enrollment?.status as any) ?? null}
+          initialPayment={payment}
+        />
       </aside>
     </div>
   );

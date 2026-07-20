@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import AuthButton from "./AuthButton";
+import NotificationBell from "./NotificationBell";
 
 export default function AdminHeader() {
   return (
@@ -16,7 +17,10 @@ export default function AdminHeader() {
             Français avec Céline
           </span>
         </Link>
-        <AuthButton />
+        <div className="flex items-center gap-3">
+          <NotificationBell />
+          <AuthButton />
+        </div>
       </div>
     </header>
   );

@@ -9,16 +9,16 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q")?.trim() || "";
   const level = searchParams.get("level") || undefined;
-  const sort = searchParams.get("sort") || "newest";
+  const sort = searchParams.get("sort") || "price_asc";
 
   const session = await getServerSession(authOptions);
   const isAdmin = session?.user?.role === "ADMIN";
 
   const orderByMap: Record<string, any> = {
-    newest: { createdAt: "desc" },
     price_asc: { price: "asc" },
     price_desc: { price: "desc" },
-    title_asc: { title: "asc" },
+    popular_desc: { enrollments: { _count: "desc" } },
+    popular_asc: { enrollments: { _count: "asc" } },
   };
 
   const courses = await prisma.course.findMany({
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
           }
         : {}),
     },
-    orderBy: orderByMap[sort] || orderByMap.newest,
+    orderBy: orderByMap[sort] || orderByMap.price_asc,
     include: { _count: { select: { enrollments: true } } },
   });
 
