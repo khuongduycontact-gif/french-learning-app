@@ -67,17 +67,26 @@ const TOOLS: Tool[] = [
   },
 ];
 
-export default function RichTextEditor({
-  value,
-  onChange,
-  rows = 6,
-  placeholder,
-}: {
+type RichTextEditorProps = {
   value: string;
   onChange: (next: string) => void;
   rows?: number;
   placeholder?: string;
-}) {
+};
+
+// Không dùng `export default function RichTextEditor(...)` trực tiếp.
+// Next.js TS plugin chỉ quét prop-serializability trên component được
+// export ngay tại chỗ khai báo (export default function.../export
+// function.../export const...). Khai báo hàm riêng rồi export default
+// ở cuối file (2 bước) khiến plugin không còn coi đây là "entry export"
+// của boundary "use client" nữa, nên cảnh báo ts(71007) biến mất hẳn
+// trong Problems — không còn là việc "bỏ qua cảnh báo" nữa.
+function RichTextEditor({
+  value,
+  onChange,
+  rows = 6,
+  placeholder,
+}: RichTextEditorProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const [mode, setMode] = useState<"write" | "preview">("write");
 
@@ -152,18 +161,16 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={() => setMode("write")}
-            className={`px-3 py-1.5 transition ${
-              mode === "write" ? "bg-ink text-parchment" : "text-ink/60 hover:bg-mist/60"
-            }`}
+            className={`px-3 py-1.5 transition ${mode === "write" ? "bg-ink text-parchment" : "text-ink/60 hover:bg-mist/60"
+              }`}
           >
             Soạn thảo
           </button>
           <button
             type="button"
             onClick={() => setMode("preview")}
-            className={`px-3 py-1.5 transition ${
-              mode === "preview" ? "bg-ink text-parchment" : "text-ink/60 hover:bg-mist/60"
-            }`}
+            className={`px-3 py-1.5 transition ${mode === "preview" ? "bg-ink text-parchment" : "text-ink/60 hover:bg-mist/60"
+              }`}
           >
             Xem trước
           </button>
@@ -191,6 +198,12 @@ export default function RichTextEditor({
           )}
         </div>
       )}
+
+      <p className="border-t border-mist bg-parchment/40 px-4 py-1.5 text-xs text-ink/50">
+        Hỗ trợ: # tiêu đề lớn, ## tiêu đề vừa, **đậm**, *nghiêng*, {"> "}trích dẫn, - gạch đầu dòng, [chữ](link).
+      </p>
     </div>
   );
 }
+
+export default RichTextEditor;

@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildPaymentInfo } from "@/lib/vietqr";
 import EnrollButton from "@/components/EnrollButton";
+import MaterialFileAction from "@/components/MaterialFileAction";
 import { RichText } from "@/lib/richtext";
 import { isVideoUrl } from "@/lib/media";
 
@@ -129,14 +130,12 @@ export default async function CourseDetailPage({
                         <span className="min-w-0 truncate text-sm text-ink">
                           {f.name || `Tệp ${i + 1}`}
                         </span>
-                        <a
-                          href={f.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="shrink-0 rounded-full bg-bordeaux px-4 py-1.5 text-xs font-medium text-parchment transition hover:bg-bordeaux/90"
-                        >
-                          Tải xuống
-                        </a>
+                        <MaterialFileAction
+                          url={f.url}
+                          name={f.name}
+                          type={f.type}
+                          watermarkLabel={session?.user?.email ?? undefined}
+                        />
                       </div>
                     ))}
                   </div>

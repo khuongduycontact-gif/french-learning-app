@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { Enrollment, EnrollmentStatus } from "@/types";
 import { useToast } from "@/components/Toast";
 import Loader from "@/components/Loader";
@@ -37,7 +38,7 @@ const filters: { value: string; label: string }[] = [
 export default function AdminEnrollmentsPage() {
   const { showToast } = useToast();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [filter, setFilter] = useState("AWAITING_CONFIRMATION");
+  const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
@@ -193,7 +194,16 @@ export default function AdminEnrollmentsPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3 font-medium text-ink">
-                    {e.course?.title}
+                    {e.course?.id ? (
+                      <Link
+                        href={`/admin/courses/${e.course.id}/edit`}
+                        className="hover:underline"
+                      >
+                        {e.course?.title}
+                      </Link>
+                    ) : (
+                      e.course?.title
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     {e.paidAmount > 0

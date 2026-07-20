@@ -6,6 +6,16 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Biến chung cho các nút nổi (từ điển, về-đầu-trang...) để chúng luôn xếp
+   chồng đúng khoảng cách trên mọi kích thước màn hình (desktop & mobile).
+   --fab-size/--fab-offset khớp với nút từ điển (h-12/w-12, bottom-5/right-5);
+   --fab-gap là khoảng cách 16px giữa hai nút khi xếp chồng lên nhau. */
+:root {
+  --fab-size: 3rem;
+  --fab-offset: 1.25rem;
+  --fab-gap: 1rem;
+}
+
 body {
   @apply bg-parchment text-ink font-body;
 }

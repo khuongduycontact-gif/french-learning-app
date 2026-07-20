@@ -3,6 +3,8 @@ import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import ScrollToTop from "@/components/ScrollToTop";
+import DictionaryLookup from "@/components/DictionaryLookup";
+import BackToTop from "@/components/BackToTop";
 
 const display = Playfair_Display({
   subsets: ["latin", "vietnamese"],
@@ -33,6 +35,8 @@ export default function RootLayout({
         <Providers>
           <ScrollToTop />
           {children}
+          <BackToTop />
+          <DictionaryLookup />
         </Providers>
       </body>
     </html>
