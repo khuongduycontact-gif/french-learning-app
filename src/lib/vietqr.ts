@@ -3,12 +3,38 @@
 
 export interface PaymentInfo {
   qrUrl: string | null;
+  deeplinkUrl: string | null;
   amount: number;
   addInfo: string;
   bankName: string;
   accountNo: string;
   accountName: string;
 }
+
+// Ánh xạ mã BIN ngân hàng -> { appId, shortCode } dùng cho deeplink mở app
+// ngân hàng (https://dl.vietqr.io/pay?app=...&ba=SO_TK@shortCode...).
+// Chỉ liệt kê các ngân hàng phổ biến; nếu ngân hàng của bạn không có trong
+// danh sách, hãy set VIETQR_APP_ID và VIETQR_BANK_CODE trong .env để ghi đè
+// (tra cứu tại https://api.vietqr.io/v2/banks và
+// https://api.vietqr.io/v2/android-app-deeplinks).
+const BANK_DEEPLINK_MAP: Record<string, { appId: string; shortCode: string }> = {
+  "970436": { appId: "vcb", shortCode: "vcb" }, // Vietcombank
+  "970415": { appId: "icb", shortCode: "icb" }, // VietinBank
+  "970418": { appId: "bidv", shortCode: "bidv" }, // BIDV
+  "970407": { appId: "tcb", shortCode: "tcb" }, // Techcombank
+  "970422": { appId: "mb", shortCode: "mb" }, // MB Bank
+  "970416": { appId: "acb", shortCode: "acb" }, // ACB
+  "970432": { appId: "vpb", shortCode: "vpb" }, // VPBank
+  "970403": { appId: "stb", shortCode: "stb" }, // Sacombank
+  "970437": { appId: "hdb", shortCode: "hdb" }, // HDBank
+  "970443": { appId: "shb", shortCode: "shb" }, // SHB
+  "970441": { appId: "vib", shortCode: "vib" }, // VIB
+  "970423": { appId: "tpb", shortCode: "tpb" }, // TPBank
+  "970426": { appId: "msb", shortCode: "msb" }, // MSB
+  "970448": { appId: "ocb", shortCode: "ocb" }, // OCB
+  "970429": { appId: "scb", shortCode: "scb" }, // SCB
+  "970431": { appId: "eib", shortCode: "eib" }, // Eximbank
+};
 
 // Sinh nội dung chuyển khoản ngắn gọn, duy nhất cho từng lượt đăng ký
 // để đối chiếu khi admin xác nhận thanh toán.
@@ -40,5 +66,25 @@ export function buildPaymentInfo({
     qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?${params.toString()}`;
   }
 
-  return { qrUrl, amount, addInfo, bankName, accountNo, accountName };
+  // Deeplink mở thẳng app ngân hàng trên điện thoại, điền sẵn số tiền/nội dung
+  // (một số app hỗ trợ tự điền, số còn lại chỉ mở app). Ưu tiên override từ env,
+  // nếu không có thì tra trong bảng ánh xạ theo mã BIN.
+  let deeplinkUrl: string | null = null;
+  const appIdOverride = process.env.VIETQR_APP_ID;
+  const bankCodeOverride = process.env.VIETQR_BANK_CODE;
+  const mapped = BANK_DEEPLINK_MAP[bankId];
+  const appId = appIdOverride || mapped?.appId;
+  const shortCode = bankCodeOverride || mapped?.shortCode;
+  if (accountNo && appId && shortCode) {
+    const params = new URLSearchParams({
+      app: appId,
+      ba: `${accountNo}@${shortCode}`,
+      am: String(Math.max(0, Math.round(amount))),
+      tn: addInfo,
+    });
+    if (accountName) params.set("bn", accountName);
+    deeplinkUrl = `https://dl.vietqr.io/pay?${params.toString()}`;
+  }
+
+  return { qrUrl, deeplinkUrl, amount, addInfo, bankName, accountNo, accountName };
 }
