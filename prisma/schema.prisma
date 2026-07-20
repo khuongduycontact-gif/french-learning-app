@@ -20,17 +20,30 @@ enum Level {
   C1
 }
 
+enum EnrollmentStatus {
+  PENDING_PAYMENT     // vừa đăng ký, đang chờ học viên thanh toán
+  AWAITING_CONFIRMATION // học viên đã bấm "Tôi đã thanh toán", chờ admin xác nhận
+  CONFIRMED            // admin đã xác nhận, khoá học được mở
+}
+
+enum NotificationType {
+  PAYMENT_SUBMITTED    // gửi cho admin: học viên báo đã thanh toán
+  ENROLLMENT_CONFIRMED // gửi cho học viên: admin đã xác nhận mở khoá học
+  PAYMENT_REJECTED     // gửi cho học viên: admin từ chối xác nhận thanh toán
+}
+
 model User {
-  id            String       @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?      @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
-  role          Role         @default(USER)
+  role          Role           @default(USER)
   accounts      Account[]
   sessions      Session[]
   enrollments   Enrollment[]
-  createdAt     DateTime     @default(now())
+  notifications Notification[]
+  createdAt     DateTime       @default(now())
 }
 
 model Account {
@@ -87,13 +100,32 @@ model Course {
 }
 
 model Enrollment {
-  id        String   @id @default(cuid())
-  userId    String
-  courseId  String
-  createdAt DateTime @default(now())
+  id          String           @id @default(cuid())
+  userId      String
+  courseId    String
+  status      EnrollmentStatus @default(PENDING_PAYMENT)
+  paidAmount  Int              @default(0)
+  paymentNote String?          // nội dung chuyển khoản để đối chiếu (VietQR addInfo)
+  confirmedAt DateTime?        // thời điểm admin xác nhận mở khoá
+  createdAt   DateTime         @default(now())
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String           // người nhận thông báo
+  type      NotificationType
+  title     String
+  message   String           @db.Text
+  link      String?
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
 }
