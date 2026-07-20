@@ -16,8 +16,8 @@ import React from "react";
 // đồng thời escape để không lỡ chèn HTML từ nội dung người dùng nhập.
 function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
   const nodes: React.ReactNode[] = [];
-  // Khớp **đậm** hoặc *nghiêng*, ưu tiên ** trước vì dài hơn
-  const pattern = /\*\*(.+?)\*\*|\*(.+?)\*/g;
+  // Khớp [chữ](url), **đậm** hoặc *nghiêng*, ưu tiên link trước, rồi ** vì dài hơn *
+  const pattern = /\[(.+?)\]\((.+?)\)|\*\*(.+?)\*\*|\*(.+?)\*/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
   let i = 0;
@@ -27,9 +27,21 @@ function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
       nodes.push(text.slice(lastIndex, match.index));
     }
     if (match[1] !== undefined) {
-      nodes.push(<strong key={`${keyPrefix}-b-${i++}`}>{match[1]}</strong>);
-    } else if (match[2] !== undefined) {
-      nodes.push(<em key={`${keyPrefix}-i-${i++}`}>{match[2]}</em>);
+      nodes.push(
+        <a
+          key={`${keyPrefix}-a-${i++}`}
+          href={match[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-bordeaux underline underline-offset-2 hover:text-bordeaux/80"
+        >
+          {match[1]}
+        </a>
+      );
+    } else if (match[3] !== undefined) {
+      nodes.push(<strong key={`${keyPrefix}-b-${i++}`}>{match[3]}</strong>);
+    } else if (match[4] !== undefined) {
+      nodes.push(<em key={`${keyPrefix}-i-${i++}`}>{match[4]}</em>);
     }
     lastIndex = pattern.lastIndex;
   }
@@ -41,6 +53,7 @@ type Block =
   | { type: "h1"; text: string }
   | { type: "h2"; text: string }
   | { type: "ul"; items: string[] }
+  | { type: "quote"; lines: string[] }
   | { type: "p"; lines: string[] };
 
 function parseBlocks(content: string): Block[] {
@@ -75,15 +88,25 @@ function parseBlocks(content: string): Block[] {
       blocks.push({ type: "ul", items });
       continue;
     }
+    if (/^>\s?/.test(line)) {
+      const lines: string[] = [];
+      while (i < rawLines.length && /^>\s?/.test(rawLines[i])) {
+        lines.push(rawLines[i].replace(/^>\s?/, ""));
+        i++;
+      }
+      blocks.push({ type: "quote", lines });
+      continue;
+    }
 
-    // Đoạn văn: gom các dòng liên tiếp không trống, không phải tiêu đề/list
+    // Đoạn văn: gom các dòng liên tiếp không trống, không phải tiêu đề/list/trích dẫn
     const lines: string[] = [];
     while (
       i < rawLines.length &&
       rawLines[i].trim() !== "" &&
       !rawLines[i].startsWith("# ") &&
       !rawLines[i].startsWith("## ") &&
-      !/^[-*]\s+/.test(rawLines[i])
+      !/^[-*]\s+/.test(rawLines[i]) &&
+      !/^>\s?/.test(rawLines[i])
     ) {
       lines.push(rawLines[i]);
       i++;
@@ -121,6 +144,21 @@ export function RichText({
             </h3>
           );
         }
+        if (block.type === "quote") {
+          return (
+            <blockquote
+              key={bi}
+              className="mt-3 border-l-2 border-bordeaux/50 pl-4 italic text-ink/70 first:mt-0"
+            >
+              {block.lines.map((line, li) => (
+                <React.Fragment key={li}>
+                  {li > 0 && <br />}
+                  {renderInline(line, `${bi}-${li}`)}
+                </React.Fragment>
+              ))}
+            </blockquote>
+          );
+        }
         if (block.type === "ul") {
           return (
             <ul key={bi} className="mt-3 list-disc space-y-1 pl-5 first:mt-0">
@@ -154,6 +192,8 @@ export function stripRichText(content: string): string {
       line
         .replace(/^#{1,2}\s+/, "")
         .replace(/^[-*]\s+/, "")
+        .replace(/^>\s?/, "")
+        .replace(/\[(.+?)\]\(.+?\)/g, "$1")
         .replace(/\*\*(.+?)\*\*/g, "$1")
         .replace(/\*(.+?)\*/g, "$1")
     )

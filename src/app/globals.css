@@ -26,14 +26,19 @@ body {
   border: 1px solid theme("colors.mist");
 }
 
-/* focus rõ ràng cho điều hướng bàn phím */
+/* focus rõ ràng cho điều hướng bàn phím (nút, liên kết) */
 a:focus-visible,
-button:focus-visible,
+button:focus-visible {
+  outline: 2px solid theme("colors.gold");
+  outline-offset: 2px;
+}
+
+/* Ô nhập liệu: bỏ viền vàng nổi bật, thay bằng đổi màu viền nhẹ nhàng hơn */
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid theme("colors.gold");
-  outline-offset: 2px;
+  outline: none;
+  border-color: theme("colors.ink / 35%");
 }
 
 /* Thanh scroll ngang mảnh, bo tròn, hợp tông màu trang - dùng cho các bảng
