@@ -5,7 +5,13 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function AuthButton() {
+export default function AuthButton({
+  compensateCenteredHeader = false,
+}: {
+  // Xem chú thích chi tiết trong NotificationBell.tsx - áp dụng cùng cách dịch dropdown
+  // sang phải cho header trang người dùng, không cần đổi vị trí/khung của header.
+  compensateCenteredHeader?: boolean;
+}) {
   const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -60,7 +66,7 @@ export default function AuthButton() {
             className="h-9 w-9 object-cover"
           />
         ) : (
-          <span className="flex h-9 w-9 items-center justify-center bg-mist font-display text-sm font-semibold text-ink">
+          <span className="flex h-9 w-9 items-center justify-center bg-mist font-display text-sm font-semibold leading-none text-ink">
             {session.user.name?.[0]?.toUpperCase() || "?"}
           </span>
         )}
@@ -70,6 +76,11 @@ export default function AuthButton() {
         <div
           role="menu"
           className="absolute right-0 top-12 z-[60] w-56 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-mist bg-white shadow-lg"
+          style={
+            compensateCenteredHeader
+              ? { right: "min(0px, calc((72rem - 100vw) / 2))" }
+              : undefined
+          }
         >
           <div className="border-b border-mist px-4 py-3">
             <p className="truncate text-sm font-semibold text-ink">

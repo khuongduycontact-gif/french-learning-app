@@ -55,8 +55,8 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <NotificationBell />
-          <AuthButton />
+          <NotificationBell compensateCenteredHeader />
+          <AuthButton compensateCenteredHeader />
         </div>
       </div>
     </header>

@@ -182,7 +182,7 @@ export default function AdminEnrollmentsPage() {
                           className="h-7 w-7 rounded-full object-cover"
                         />
                       ) : (
-                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mist text-xs font-semibold text-ink">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mist text-xs font-semibold leading-none text-ink">
                           {e.user?.name?.[0]?.toUpperCase() || "?"}
                         </span>
                       )}
