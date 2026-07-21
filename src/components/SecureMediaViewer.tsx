@@ -65,7 +65,7 @@ export default function SecureMediaViewer({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex select-none items-center justify-center bg-ink/90 p-4"
+      className="fixed inset-0 z-[60] flex select-none items-center justify-center bg-ink/75 backdrop-blur-md p-4"
       style={{ WebkitTouchCallout: "none" } as React.CSSProperties}
       onContextMenu={(e) => e.preventDefault()}
       role="dialog"
