@@ -10,8 +10,8 @@ const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_BYTES = 200 * 1024 * 1024; // 200MB
 const MAX_DOC_BYTES = 50 * 1024 * 1024; // 50MB
 
-// Các định dạng tài liệu học được phép: Word, PowerPoint, PDF, file nén
-const DOC_EXTENSIONS = /\.(pdf|docx?|pptx?|zip|rar|7z)$/i;
+// Các định dạng tài liệu học được phép: Word, PowerPoint, PDF, văn bản thuần, file nén
+const DOC_EXTENSIONS = /\.(pdf|docx?|pptx?|txt|zip|rar|7z)$/i;
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);

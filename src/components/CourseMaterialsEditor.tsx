@@ -38,7 +38,7 @@ function stripExtension(filename: string) {
 }
 
 const ACCEPT =
-  "image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.zip,.rar,.7z";
+  "image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar,.7z";
 
 function fileKindLabel(fileType?: string, fileName?: string) {
   const name = (fileName || "").toLowerCase();
@@ -47,6 +47,7 @@ function fileKindLabel(fileType?: string, fileName?: string) {
   if (name.endsWith(".pdf")) return "PDF";
   if (name.endsWith(".doc") || name.endsWith(".docx")) return "Word";
   if (name.endsWith(".ppt") || name.endsWith(".pptx")) return "PowerPoint";
+  if (name.endsWith(".txt")) return "Văn bản";
   if (name.endsWith(".zip") || name.endsWith(".rar") || name.endsWith(".7z"))
     return "File nén";
   return "Tệp";
@@ -142,7 +143,7 @@ function MaterialFilesField({
 
       <p className="mt-1 text-xs text-ink/50">
         Có thể chọn nhiều tệp cùng lúc, tất cả sẽ được đính kèm vào tài liệu
-        này. Hỗ trợ ảnh, video, Word, PowerPoint, PDF, file nén (.zip, .rar, .7z).
+        này. Hỗ trợ ảnh, video, Word, PowerPoint, PDF, văn bản (.txt), file nén (.zip, .rar, .7z).
       </p>
     </div>
   );
