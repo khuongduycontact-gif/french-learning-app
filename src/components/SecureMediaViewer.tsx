@@ -65,9 +65,13 @@ export default function SecureMediaViewer({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex select-none items-center justify-center bg-ink/75 backdrop-blur-md p-4"
+      className="fixed inset-0 z-[60] flex select-none items-center justify-center bg-slate-400/60 backdrop-blur-sm p-4"
       style={{ WebkitTouchCallout: "none" } as React.CSSProperties}
       onContextMenu={(e) => e.preventDefault()}
+      onClick={(e) => {
+        // Chỉ đóng khi bấm đúng vào lớp phủ nền, không đóng khi bấm vào ảnh/video bên trong
+        if (e.target === e.currentTarget) onClose();
+      }}
       role="dialog"
       aria-modal="true"
       aria-label={name || "Xem tài liệu học"}
@@ -76,13 +80,13 @@ export default function SecureMediaViewer({
         type="button"
         onClick={onClose}
         aria-label="Đóng"
-        className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-parchment transition hover:bg-white/20"
+        className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-md transition hover:bg-parchment"
       >
         ✕
       </button>
 
       {name && (
-        <p className="absolute left-4 top-4 max-w-[65%] truncate text-sm font-medium text-parchment/80">
+        <p className="absolute left-4 top-4 max-w-[65%] truncate rounded-full bg-white/70 px-3 py-1 text-sm font-medium text-ink shadow-sm">
           {name}
         </p>
       )}
