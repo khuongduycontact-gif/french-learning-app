@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import CourseCard from "@/components/CourseCard";
+import { enrollmentStatusMap } from "@/lib/enrollmentStatus";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -31,6 +32,24 @@ export default async function HomePage() {
       : [];
 
   const secondaryTitle = "Khoá học nhiều người đăng ký nhất";
+
+  // Lấy trạng thái đăng ký của người dùng hiện tại cho các khoá học đang hiển thị,
+  // để hiển thị huy hiệu "đã đăng ký / chờ xác nhận..." trên từng CourseCard.
+  const shownCourseIds = [...newestCourses, ...secondaryCourses].map((c) => c.id);
+  const statusByCourseId = new Map<string, string>();
+  if (session?.user && shownCourseIds.length > 0) {
+    const myEnrollments = await prisma.enrollment.findMany({
+      where: { userId: session.user.id, courseId: { in: shownCourseIds } },
+      select: { courseId: true, status: true },
+    });
+    myEnrollments.forEach((e) => statusByCourseId.set(e.courseId, e.status));
+  }
+  function statusBadgeFor(courseId: string) {
+    const status = statusByCourseId.get(courseId);
+    return status
+      ? enrollmentStatusMap[status as keyof typeof enrollmentStatusMap]
+      : undefined;
+  }
 
   return (
     <div className="flex flex-col gap-20">
@@ -88,7 +107,7 @@ export default async function HomePage() {
               </h3>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {newestCourses.map((c) => (
-                  <CourseCard key={c.id} course={c as any} />
+                  <CourseCard key={c.id} course={c as any} statusBadge={statusBadgeFor(c.id)} />
                 ))}
               </div>
             </div>
@@ -99,7 +118,7 @@ export default async function HomePage() {
                 </h3>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {secondaryCourses.map((c) => (
-                    <CourseCard key={c.id} course={c as any} />
+                    <CourseCard key={c.id} course={c as any} statusBadge={statusBadgeFor(c.id)} />
                   ))}
                 </div>
               </div>

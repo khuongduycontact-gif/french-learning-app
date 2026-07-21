@@ -47,17 +47,11 @@ export default function PaymentQrModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header cố định, bo góc theo khung ngoài */}
-        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-mist px-6 pb-4 pt-6">
-          <div>
-            <h2 className="font-display text-lg font-semibold text-ink">
-              Thanh toán khoá học
-            </h2>
-            <p className="mt-0.5 text-sm text-ink/60 line-clamp-1">{courseTitle}</p>
-          </div>
+        <div className="relative shrink-0 border-b border-mist px-6 pb-4 pt-6 text-center">
           <button
             onClick={onClose}
             aria-label="Đóng"
-            className="shrink-0 rounded-full p-1.5 text-ink/50 transition hover:bg-mist hover:text-ink"
+            className="absolute right-4 top-4 shrink-0 rounded-full p-1.5 text-ink/50 transition hover:bg-mist hover:text-ink"
           >
             <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none">
               <path
@@ -68,6 +62,12 @@ export default function PaymentQrModal({
               />
             </svg>
           </button>
+          <p className="text-xs font-semibold uppercase tracking-wide text-bordeaux">
+            Thanh toán khoá học
+          </p>
+          <h2 className="mt-1 font-display text-xl font-semibold text-ink line-clamp-2 px-6">
+            {courseTitle}
+          </h2>
         </div>
 
         {/* Nội dung cuộn được, phần bo góc chỉ nằm ở khung ngoài nên luôn mượt */}

@@ -32,6 +32,7 @@ export interface Course {
   updatedAt: string;
   materials?: CourseMaterial[];
   _count?: { enrollments: number };
+  myEnrollmentStatus?: EnrollmentStatus | null;
 }
 
 export interface CourseMaterialInput {

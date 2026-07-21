@@ -7,6 +7,7 @@ import CourseCard from "@/components/CourseCard";
 import SearchBar from "@/components/SearchBar";
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
+import { enrollmentStatusMap } from "@/lib/enrollmentStatus";
 import type { Course } from "@/types";
 
 const PAGE_SIZE = 6;
@@ -116,7 +117,15 @@ export default function CoursesPage() {
         <>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {pageCourses.map((c) => (
-              <CourseCard key={c.id} course={c} />
+              <CourseCard
+                key={c.id}
+                course={c}
+                statusBadge={
+                  c.myEnrollmentStatus
+                    ? enrollmentStatusMap[c.myEnrollmentStatus]
+                    : undefined
+                }
+              />
             ))}
           </div>
           <Pagination page={page} totalPages={totalPages} onChange={setPage} />

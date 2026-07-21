@@ -303,7 +303,7 @@ export default function AdminEnrollmentsPage() {
                   </td>
                   <td className="px-4 py-3">
                     {e.paymentNote ? (
-                      <span className="cell-nowrap rounded-full bg-mist px-2 py-0.5 font-mono text-xs">
+                      <span className="inline-block max-w-[220px] overflow-x-auto whitespace-nowrap rounded-full bg-mist px-2 py-0.5 font-mono text-xs align-top">
                         {e.paymentNote}
                       </span>
                     ) : (

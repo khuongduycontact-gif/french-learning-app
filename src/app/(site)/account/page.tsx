@@ -3,12 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import CourseCard from "@/components/CourseCard";
-
-const statusMap = {
-  PENDING_PAYMENT: { label: "Chờ thanh toán", tone: "pending" as const },
-  AWAITING_CONFIRMATION: { label: "Chờ xác nhận", tone: "waiting" as const },
-  CONFIRMED: { label: "Đã kích hoạt", tone: "confirmed" as const },
-};
+import { enrollmentStatusMap } from "@/lib/enrollmentStatus";
 
 export default async function TaiKhoanPage() {
   const session = await getServerSession(authOptions);
@@ -44,7 +39,7 @@ export default async function TaiKhoanPage() {
             <CourseCard
               key={e.id}
               course={e.course as any}
-              statusBadge={statusMap[e.status as keyof typeof statusMap]}
+              statusBadge={enrollmentStatusMap[e.status as keyof typeof enrollmentStatusMap]}
             />
           ))}
         </div>

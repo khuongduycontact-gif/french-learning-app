@@ -41,6 +41,25 @@ export async function GET(req: NextRequest) {
     include: { _count: { select: { enrollments: true } } },
   });
 
+  // Đính kèm trạng thái đăng ký của người dùng hiện tại (nếu có) cho mỗi
+  // khoá học, để phía client hiển thị huy hiệu "đã đăng ký / chờ xác nhận..."
+  if (session?.user && !isAdmin) {
+    const enrollments = await prisma.enrollment.findMany({
+      where: {
+        userId: session.user.id,
+        courseId: { in: courses.map((c) => c.id) },
+      },
+      select: { courseId: true, status: true },
+    });
+    const statusByCourseId = new Map(enrollments.map((e) => [e.courseId, e.status]));
+    return NextResponse.json(
+      courses.map((c) => ({
+        ...c,
+        myEnrollmentStatus: statusByCourseId.get(c.id) || null,
+      }))
+    );
+  }
+
   return NextResponse.json(courses);
 }
 

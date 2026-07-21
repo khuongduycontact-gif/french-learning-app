@@ -53,6 +53,36 @@ function speakFrench(text: string) {
   }
 }
 
+function FrenchFlag() {
+  return (
+    <svg
+      viewBox="0 0 3 2"
+      className="inline-block h-[1em] w-[1.5em] shrink-0 rounded-[2px] ring-1 ring-white/30"
+      aria-hidden="true"
+    >
+      <rect width="1" height="2" x="0" fill="#0055A4" />
+      <rect width="1" height="2" x="1" fill="#FFFFFF" />
+      <rect width="1" height="2" x="2" fill="#EF4135" />
+    </svg>
+  );
+}
+
+function VietnamFlag() {
+  return (
+    <svg
+      viewBox="0 0 3 2"
+      className="inline-block h-[1em] w-[1.5em] shrink-0 rounded-[2px] ring-1 ring-white/30"
+      aria-hidden="true"
+    >
+      <rect width="3" height="2" fill="#DA251D" />
+      <polygon
+        points="1.5,0.4 1.66,0.87 2.15,0.87 1.75,1.16 1.9,1.63 1.5,1.34 1.1,1.63 1.25,1.16 0.85,0.87 1.34,0.87"
+        fill="#FFFF00"
+      />
+    </svg>
+  );
+}
+
 function SpeakerIcon() {
   return (
     <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
@@ -158,8 +188,16 @@ function DictionaryLookup() {
       {open && (
         <div className="w-80 max-w-[calc(100vw-2.5rem)] overflow-hidden rounded-2xl border border-mist bg-white shadow-xl">
           <div className="flex items-center justify-between bg-ink px-4 py-2.5">
-            <p className="text-sm font-semibold text-parchment">
-              Từ điển Pháp – Việt
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-parchment">
+              <span className="flex items-center gap-1">
+                Từ điển Pháp
+                <FrenchFlag />
+              </span>
+              <span>–</span>
+              <span className="flex items-center gap-1">
+                Việt
+                <VietnamFlag />
+              </span>
             </p>
             <button
               type="button"

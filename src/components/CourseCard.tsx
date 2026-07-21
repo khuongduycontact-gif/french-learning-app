@@ -59,11 +59,13 @@ export default function CourseCard({
           </span>
         )}
         {statusBadge && (
-          <span
-            className={`absolute right-3 top-3 rounded-full px-2 py-0.5 text-xs font-medium ${toneClass}`}
-          >
-            {statusBadge.label}
-          </span>
+          <div className="absolute right-[-46px] top-[18px] w-[170px] rotate-45">
+            <span
+              className={`block border-y border-white/50 py-1 text-center text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm ${toneClass}`}
+            >
+              {statusBadge.label}
+            </span>
+          </div>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-5">
