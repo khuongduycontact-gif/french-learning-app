@@ -122,6 +122,36 @@ select:focus-visible {
   padding: 0;
 }
 
+/* Ribbon đánh dấu trạng thái khoá học (VD: "ĐÃ ĐĂNG KÝ") - dán chéo góc
+   trên-phải của cả thẻ, viền đứt nét kiểu chỉ may, hai đầu gập vào trong
+   nhờ được cắt bởi khung .corner-ribbon (overflow: hidden). */
+.corner-ribbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 108px;
+  height: 108px;
+  overflow: hidden;
+  z-index: 20;
+  pointer-events: none;
+}
+.corner-ribbon__band {
+  position: absolute;
+  top: 20px;
+  right: -34px;
+  width: 150px;
+  transform: rotate(45deg);
+  text-align: center;
+  padding: 5px 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  border-top: 1px dashed rgba(255, 255, 255, 0.75);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.75);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;

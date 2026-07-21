@@ -22,16 +22,21 @@ export default function CourseCard({
 }) {
   const toneClass =
     statusBadge?.tone === "confirmed"
-      ? "bg-green-600 text-white"
+      ? "bg-green-600"
       : statusBadge?.tone === "waiting"
-      ? "bg-gold text-white"
-      : "bg-ink/80 text-parchment";
+      ? "bg-gold"
+      : "bg-ink/80";
 
   return (
     <Link
       href={`/courses/${course.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-mist bg-white/60 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-mist bg-white/60 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
     >
+      {statusBadge && (
+        <div className="corner-ribbon">
+          <span className={`corner-ribbon__band ${toneClass}`}>{statusBadge.label}</span>
+        </div>
+      )}
       <div className="relative h-40 w-full overflow-hidden bg-mist">
         {course.videoUrl && isVideoUrl(course.videoUrl) ? (
           <video
@@ -57,15 +62,6 @@ export default function CourseCard({
           <span className="absolute left-3 top-3 rounded-full bg-ink/80 px-2 py-0.5 text-xs font-medium text-parchment">
             Bản nháp
           </span>
-        )}
-        {statusBadge && (
-          <div className="absolute right-[-46px] top-[18px] w-[170px] rotate-45">
-            <span
-              className={`block border-y border-white/50 py-1 text-center text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm ${toneClass}`}
-            >
-              {statusBadge.label}
-            </span>
-          </div>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-5">
