@@ -31,6 +31,18 @@ html {
   background: theme("colors.parchment");
 }
 
+/* Ẩn hẳn thanh cuộn (vẫn cuộn được bình thường bằng chuột/trackpad/phím) -
+   dùng cho các khung cuộn nhỏ, không muốn thanh trượt gây rối mắt. */
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge cũ */
+}
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 /* Biến chung cho các nút nổi (từ điển, về-đầu-trang...) để chúng luôn xếp
    chồng đúng khoảng cách trên mọi kích thước màn hình (desktop & mobile).
    --fab-size/--fab-offset khớp với nút từ điển (h-10/w-10, bottom-5/right-5);
