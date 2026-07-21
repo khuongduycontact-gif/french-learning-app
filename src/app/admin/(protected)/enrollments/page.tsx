@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Enrollment, EnrollmentStatus } from "@/types";
 import { useToast } from "@/components/Toast";
 import Loader from "@/components/Loader";
+import Pagination from "@/components/Pagination";
 import { formatVnd } from "@/lib/format";
+
+const PAGE_SIZE = 10;
 
 const statusOrder: Record<EnrollmentStatus, number> = {
   AWAITING_CONFIRMATION: 0,
@@ -43,10 +46,12 @@ export default function AdminEnrollmentsPage() {
   const highlightId = searchParams.get("highlight");
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [filter, setFilter] = useState(() => searchParams.get("status") || "");
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const [actingId, setActingId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
   const isFirstLoad = useRef(true);
   const highlightRef = useRef<HTMLTableRowElement | null>(null);
 
@@ -90,6 +95,39 @@ export default function AdminEnrollmentsPage() {
     return () => controller.abort();
   }, [filter, reloadKey]);
 
+  const filteredEnrollments = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return enrollments;
+    return enrollments.filter((e) => {
+      const userName = e.user?.name?.toLowerCase() || "";
+      const userEmail = e.user?.email?.toLowerCase() || "";
+      const courseTitle = e.course?.title?.toLowerCase() || "";
+      const note = e.paymentNote?.toLowerCase() || "";
+      return (
+        userName.includes(q) ||
+        userEmail.includes(q) ||
+        courseTitle.includes(q) ||
+        note.includes(q)
+      );
+    });
+  }, [enrollments, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredEnrollments.length / PAGE_SIZE));
+  const pageEnrollments = filteredEnrollments.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [filter, search]);
+
+  useEffect(() => {
+    if (!highlightId) return;
+    const idx = filteredEnrollments.findIndex((e) => e.id === highlightId);
+    if (idx >= 0) setPage(Math.floor(idx / PAGE_SIZE) + 1);
+  }, [highlightId, filteredEnrollments]);
+
   async function handleAction(id: string, action: "approve" | "reject") {
     setActingId(id);
     try {
@@ -104,6 +142,13 @@ export default function AdminEnrollmentsPage() {
           ? prev.filter((e) => e.id !== id)
           : prev.map((e) => (e.id === id ? { ...e, status: data.status } : e))
       );
+      if (filter) {
+        setPage((p) => {
+          const nextLength = filteredEnrollments.filter((e) => e.id !== id).length;
+          const nextTotalPages = Math.max(1, Math.ceil(nextLength / PAGE_SIZE));
+          return Math.min(p, nextTotalPages);
+        });
+      }
       showToast(
         action === "approve"
           ? "Đã xác nhận và mở khoá học cho học viên!"
@@ -126,20 +171,52 @@ export default function AdminEnrollmentsPage() {
         <div className="ribbon-rule mt-3" />
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {filters.map((f) => (
-          <button
-            key={f.value}
-            onClick={() => setFilter(f.value)}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-              filter === f.value
-                ? "bg-bordeaux text-parchment"
-                : "bg-white text-ink hover:bg-mist"
-            }`}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap gap-2">
+          {filters.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setFilter(f.value)}
+              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                filter === f.value
+                  ? "bg-bordeaux text-parchment"
+                  : "bg-white text-ink hover:bg-mist"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative w-full sm:w-72">
+          <svg
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40"
+            viewBox="0 0 20 20"
+            fill="none"
           >
-            {f.label}
-          </button>
-        ))}
+            <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.6" />
+            <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Tìm theo tên học viên, khoá học, nội dung CK..."
+            className="w-full rounded-full border border-mist bg-white py-2 pl-9 pr-8 text-sm text-ink placeholder:text-ink/40 focus:border-bordeaux/40 focus:outline-none"
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              aria-label="Xoá tìm kiếm"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink/40 hover:text-ink"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
+                <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="scroll-x-fancy overflow-x-auto rounded-lg border border-mist bg-white/60">
@@ -174,14 +251,14 @@ export default function AdminEnrollmentsPage() {
                   </button>
                 </td>
               </tr>
-            ) : enrollments.length === 0 ? (
+            ) : filteredEnrollments.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-ink/50">
-                  Không có yêu cầu nào.
+                  {search ? "Không tìm thấy kết quả phù hợp." : "Không có yêu cầu nào."}
                 </td>
               </tr>
             ) : (
-              enrollments.map((e) => (
+              pageEnrollments.map((e) => (
                 <tr
                   key={e.id}
                   ref={e.id === highlightId ? highlightRef : undefined}
@@ -268,6 +345,8 @@ export default function AdminEnrollmentsPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </div>
   );
 }

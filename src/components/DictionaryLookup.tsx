@@ -257,11 +257,11 @@ function DictionaryLookup() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-bordeaux text-white shadow-lg transition hover:bg-bordeaux/90"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-bordeaux text-white shadow-lg transition hover:bg-bordeaux/90"
         aria-label="Mở từ điển tra cứu"
         title="Từ điển tra cứu"
       >
-        <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
           <path
             d="M4 4.5A1.5 1.5 0 0 1 5.5 3H15a1 1 0 0 1 1 1v11.5a1 1 0 0 1-1 1H5.5A1.5 1.5 0 0 1 4 15V4.5Z"
             stroke="currentColor"

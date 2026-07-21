@@ -151,7 +151,7 @@ export default function PaymentQrModal({
             disabled={confirming}
             className="w-full rounded-full bg-bordeaux px-6 py-3 text-sm font-semibold text-parchment transition hover:bg-bordeaux/90 disabled:opacity-60"
           >
-            {confirming ? "Đang xử lý..." : "Tôi đã thanh toán"}
+            {confirming ? "Đang xử lý..." : "Xác nhận đã thanh toán"}
           </button>
           <button
             onClick={onClose}

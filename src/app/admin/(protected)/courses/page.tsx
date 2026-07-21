@@ -8,7 +8,7 @@ import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
 import { formatVnd } from "@/lib/format";
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
 
 const LEVEL_OPTIONS = [
   { value: "", label: "Tất cả trình độ" },

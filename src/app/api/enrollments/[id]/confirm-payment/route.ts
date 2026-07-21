@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { notifyAdmins } from "@/lib/notifications";
 
 // POST /api/enrollments/:id/confirm-payment
-// Học viên bấm "Tôi đã thanh toán" -> chuyển sang chờ admin xác nhận,
+// Học viên bấm "Xác nhận đã thanh toán" -> chuyển sang chờ admin xác nhận,
 // KHÔNG mở khoá học ngay. Chỉ khi admin bấm "Xác nhận" (route /approve)
 // thì trạng thái mới thành CONFIRMED và học viên mới truy cập được tài liệu.
 export async function POST(
