@@ -20,7 +20,7 @@ export default async function AdminLayout({
 
       <div className="grid gap-8 px-6 py-10 md:grid-cols-[minmax(220px,auto)_1fr] md:px-10">
         <AdminSidebar />
-        <div>{children}</div>
+        <div className="min-w-0">{children}</div>
       </div>
     </div>
   );
