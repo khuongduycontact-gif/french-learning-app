@@ -252,14 +252,15 @@ export default function CourseCard({
         )}
 
         {/* Dải ruy băng góc: trạng thái đăng ký của học viên - dải băng bo
-            chéo 45°, cắt qua góc trên-phải của thẻ giống mẫu tham khảo.
-            Container ngoài bo góc + overflow-hidden để dải băng không tràn
-            ra khỏi bán kính góc thẻ; dải băng bên trong xoay 45° và đặt lùi
-            ra ngoài mép để phần text luôn nằm giữa dải. */}
+            chéo THẲNG (không cong), cắt qua góc trên-phải của thẻ, có nếp
+            gấp tam giác nhỏ ở đầu dưới của đường chéo (mô phỏng ruy băng
+            giấy gấp thật) và viền sáng mỏng chạy theo cạnh chéo - đúng như
+            mẫu tham khảo. Container ngoài bo góc + overflow-hidden để dải
+            băng không tràn ra khỏi bán kính góc thẻ. */}
         {statusBadge && tone && (
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-11 w-[70%] max-w-[230px]">
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-11 w-[68%] max-w-[220px]">
             <svg
-              viewBox="0 0 230 48"
+              viewBox="0 0 200 100"
               preserveAspectRatio="none"
               className="absolute inset-0 h-full w-full"
             >
@@ -275,12 +276,26 @@ export default function CourseCard({
                   <stop offset="100%" stopColor={tone.stops[1]} />
                 </linearGradient>
               </defs>
-              <path
-                d="M85 0 C40 4, 55 40, 10 48 L230 48 L230 0 Z"
+              {/* Thân ruy băng: hình thang, cạnh trái là đường chéo thẳng */}
+              <polygon
+                points="62,0 200,0 200,100 15,100"
                 fill={`url(#ribbon-grad-${course.id})`}
               />
+              {/* Viền sáng mỏng dọc cạnh chéo */}
+              <line
+                x1="62"
+                y1="0"
+                x2="15"
+                y2="100"
+                stroke="white"
+                strokeOpacity="0.5"
+                strokeWidth="1.5"
+              />
+              {/* Nếp gấp tam giác nhỏ ở đầu dưới cạnh chéo, tạo hiệu ứng
+                  ruy băng giấy gấp thật */}
+              <polygon points="15,100 42,100 24,76" fill="black" fillOpacity="0.18" />
             </svg>
-            <div className="absolute inset-0 flex items-center gap-1.5 py-1.5 pl-[46%] pr-3">
+            <div className="absolute inset-0 flex items-center gap-1.5 py-1.5 pl-[27%] pr-3">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
                 <tone.Icon className={`h-3 w-3 ${tone.badge}`} />
               </span>
@@ -320,9 +335,9 @@ export default function CourseCard({
             </span>
             {course.price > 0 ? formatVnd(course.price) : "Miễn phí"}
           </span>
-          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-100 px-3.5 py-1.5 text-xs font-semibold text-emerald-800">
             <ClockIcon className="h-3.5 w-3.5" />
-            {course.duration} giờ
+            {course.duration} giờ học
           </span>
         </div>
       </div>
