@@ -160,18 +160,28 @@ export default function CourseCard({
           </div>
         )}
 
-        {/* Dải ruy băng góc: trạng thái đăng ký của học viên */}
+        {/* Dải ruy băng góc: trạng thái đăng ký của học viên.
+            Miếng nêm được "tràn" ra ngoài mép trên-phải (-top-2 -right-2 và kích
+            thước lớn hơn khung chứa) để khi khung Link ngoài cùng cắt theo
+            rounded-3xl, không còn hở nền ảnh phía sau ở góc bo tròn. */}
         {statusBadge && tone && (
-          <div className="absolute right-0 top-0 h-28 w-28 overflow-hidden" aria-hidden={false}>
+          <div className="pointer-events-none absolute right-0 top-0 h-32 w-32">
             <div
-              className={`absolute right-0 top-0 h-28 w-28 rounded-tr-3xl bg-gradient-to-br shadow-sm ${tone.wedge}`}
+              className={`absolute -right-2 -top-2 h-[140px] w-[140px] bg-gradient-to-br shadow-sm ${tone.wedge}`}
               style={{ clipPath: "polygon(100% 0, 100% 100%, 0 0)" }}
             />
-            <div className="absolute right-3 top-3 flex flex-col items-end gap-1">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white shadow-sm">
-                <tone.Icon className={`h-3 w-3 ${tone.badge}`} />
+            <div
+              className="absolute flex flex-col items-center gap-1"
+              style={{
+                left: "64%",
+                top: "34%",
+                transform: "translate(-50%, -50%) rotate(45deg)",
+              }}
+            >
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white shadow-sm">
+                <tone.Icon className={`h-2.5 w-2.5 ${tone.badge}`} />
               </span>
-              <span className="max-w-[68px] text-right text-[10px] font-bold uppercase leading-tight tracking-wide text-white drop-shadow-sm">
+              <span className="whitespace-nowrap text-[9px] font-bold uppercase tracking-wide text-white drop-shadow-sm">
                 {statusBadge.label}
               </span>
             </div>
