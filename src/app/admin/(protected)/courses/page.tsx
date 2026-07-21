@@ -155,7 +155,7 @@ export default function AdminCoursesPage() {
         </select>
       </div>
 
-      <div className="scroll-x-fancy overflow-x-auto rounded-2xl border border-mist bg-white/60">
+      <div className="scroll-x-fancy overflow-x-auto rounded-2xl border border-mist">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="border-b border-mist text-ink/60">
             <tr>

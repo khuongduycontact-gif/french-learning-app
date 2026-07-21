@@ -52,10 +52,26 @@ select:focus-visible {
 }
 
 /* Thanh scroll ngang mảnh, bo tròn, hợp tông màu trang - dùng cho các bảng
-   dữ liệu tràn màn hình trên mobile (vd. bảng đăng ký ở trang quản trị) */
+   dữ liệu tràn màn hình trên mobile (vd. bảng đăng ký ở trang quản trị).
+   Trên desktop/Android Chrome sẽ thấy thanh scrollbar mảnh màu bordeaux.
+   Trên iOS Safari, trình duyệt luôn ẩn thanh scrollbar nên KHÔNG thể hiện
+   cố định được - thay vào đó dùng bóng mờ 2 mép (không cần JS) để báo hiệu
+   còn nội dung có thể vuốt tiếp: mép nào hết nội dung thì bóng tự biến mất. */
 .scroll-x-fancy {
   scrollbar-width: thin;
   scrollbar-color: theme("colors.bordeaux/0.35") transparent;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-size: 28px 100%, 28px 100%, 10px 100%, 10px 100%;
+  background-position: left center, right center, left center, right center;
+  background-attachment: local, local, scroll, scroll;
+  background-image:
+    linear-gradient(to right, #fff 30%, rgba(255, 255, 255, 0)),
+    linear-gradient(to left, #fff 30%, rgba(255, 255, 255, 0)),
+    linear-gradient(to right, theme("colors.ink/0.16"), rgba(0, 0, 0, 0)),
+    linear-gradient(to left, theme("colors.ink/0.16"), rgba(0, 0, 0, 0));
 }
 .scroll-x-fancy::-webkit-scrollbar {
   height: 8px;
