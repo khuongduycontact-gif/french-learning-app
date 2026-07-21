@@ -22,12 +22,12 @@ function timeAgo(iso: string) {
 export default function NotificationBell({
   compensateCenteredHeader = false,
 }: {
-  // Header trang người dùng vẫn nằm trong khung max-w-6xl (mx-auto) căn giữa,
+  // Header trang người dùng vẫn nằm trong khung max-w-[1400px] (mx-auto) căn giữa,
   // nên trên màn hình rất rộng, icon nằm cách khá xa mép phải thật của trình duyệt.
   // Bật cờ này để dropdown tự dịch thêm sang phải đúng bằng khoảng trống đó,
   // cho nó luôn áp sát mép phải thật (giống header admin - không bị giới hạn max-w),
   // mà KHÔNG cần đổi lại vị trí/khung của header. An toàn ở mọi kích thước màn hình:
-  // ở màn <=1152px (đúng bằng max-w-6xl) độ dịch = 0, giống hệt hành vi mặc định.
+  // ở màn <=1400px (đúng bằng max-w-[1400px]) độ dịch = 0, giống hệt hành vi mặc định.
   compensateCenteredHeader?: boolean;
 }) {
   const { data: session } = useSession();
@@ -143,7 +143,7 @@ export default function NotificationBell({
           className="absolute right-0 top-[calc(100%+0.5rem)] z-[60] w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-mist bg-white shadow-xl"
           style={
             compensateCenteredHeader
-              ? { right: "min(0px, calc((72rem - 100vw) / 2))" }
+              ? { right: "min(0px, calc((87.5rem - 100vw) / 2))" }
               : undefined
           }
         >

@@ -78,7 +78,7 @@ export default function AuthButton({
           className="absolute right-0 top-12 z-[60] w-56 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-mist bg-white shadow-lg"
           style={
             compensateCenteredHeader
-              ? { right: "min(0px, calc((72rem - 100vw) / 2))" }
+              ? { right: "min(0px, calc((87.5rem - 100vw) / 2))" }
               : undefined
           }
         >

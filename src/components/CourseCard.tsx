@@ -257,17 +257,34 @@ export default function CourseCard({
             ra khỏi bán kính góc thẻ; dải băng bên trong xoay 45° và đặt lùi
             ra ngoài mép để phần text luôn nằm giữa dải. */}
         {statusBadge && tone && (
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-28 w-28 overflow-hidden">
-            <div
-              className="absolute right-[-42px] top-[22px] flex w-[168px] rotate-45 items-center justify-center gap-1.5 py-1.5 shadow-md"
-              style={{
-                backgroundImage: `linear-gradient(90deg, ${tone.stops[0]}, ${tone.stops[1]})`,
-              }}
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-11 w-[70%] max-w-[230px]">
+            <svg
+              viewBox="0 0 230 48"
+              preserveAspectRatio="none"
+              className="absolute inset-0 h-full w-full"
             >
-              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
-                <tone.Icon className={`h-2.5 w-2.5 ${tone.badge}`} />
+              <defs>
+                <linearGradient
+                  id={`ribbon-grad-${course.id}`}
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor={tone.stops[0]} />
+                  <stop offset="100%" stopColor={tone.stops[1]} />
+                </linearGradient>
+              </defs>
+              <path
+                d="M85 0 C40 4, 55 40, 10 48 L230 48 L230 0 Z"
+                fill={`url(#ribbon-grad-${course.id})`}
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center gap-1.5 py-1.5 pl-[46%] pr-3">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
+                <tone.Icon className={`h-3 w-3 ${tone.badge}`} />
               </span>
-              <span className="truncate text-[11px] font-bold text-white">
+              <span className="truncate text-[13px] font-semibold text-white">
                 {statusBadge.label}
               </span>
             </div>
@@ -297,7 +314,7 @@ export default function CourseCard({
         </p>
 
         <div className="mt-auto flex items-center justify-between gap-2 border-t border-mist pt-3">
-          <span className="flex items-center gap-1.5 text-sm font-bold text-ink">
+          <span className="flex items-center gap-1.5 text-xs font-medium text-ink/55">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-indigo-50">
               <TagIcon className="h-3.5 w-3.5 text-indigo-500" />
             </span>
@@ -305,7 +322,7 @@ export default function CourseCard({
           </span>
           <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
             <ClockIcon className="h-3.5 w-3.5" />
-            {course.duration}h
+            {course.duration} giờ
           </span>
         </div>
       </div>
