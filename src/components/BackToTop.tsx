@@ -1,17 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 // Nút "Về đầu trang" nổi, chỉ hiện sau khi cuộn xuống một đoạn,
 // và chỉ hiện trên màn hình rộng từ 1200px trở lên (ẩn hẳn trên
 // tablet/mobile để tránh che nội dung ở màn nhỏ).
 // Vị trí được tính từ các biến CSS --fab-* (định nghĩa trong globals.css)
 // để luôn nằm đúng phía trên nút từ điển (DictionaryLookup) 16px,
-// đồng bộ trên cả desktop và mobile.
+// đồng bộ trên cả desktop và mobile. Bên admin không có nút từ điển
+// (DictionaryLookup tự ẩn ở /admin), nên nút này hạ xuống đúng vị trí
+// góc dưới-phải thay vì để trống một khoảng phía dưới nó.
 const SHOW_AFTER_PX = 320;
 const MIN_WIDTH_PX = 1200;
 
 function BackToTop() {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
   const [visible, setVisible] = useState(false);
   const [wideEnough, setWideEnough] = useState(false);
 
@@ -48,7 +53,9 @@ function BackToTop() {
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       style={{
-        bottom: "calc(var(--fab-offset) + var(--fab-size) + var(--fab-gap))",
+        bottom: isAdmin
+          ? "var(--fab-offset)"
+          : "calc(var(--fab-offset) + var(--fab-size) + var(--fab-gap))",
       }}
     >
       <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">

@@ -26,6 +26,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Thiếu tệp tải lên" }, { status: 400 });
   }
 
+  if (file.size === 0) {
+    return NextResponse.json(
+      { error: "Tệp rỗng (0 byte), vui lòng chọn tệp có nội dung." },
+      { status: 400 }
+    );
+  }
+
   const isImage = file.type.startsWith("image/");
   const isVideo = file.type.startsWith("video/");
   const isDoc = !isImage && !isVideo && DOC_EXTENSIONS.test(file.name);
@@ -78,8 +85,16 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error("Lỗi tải lên Cloudinary:", err);
+    const detail =
+      err && typeof err === "object" && "message" in err
+        ? String((err as { message?: unknown }).message)
+        : "";
     return NextResponse.json(
-      { error: "Tải lên thất bại, vui lòng thử lại." },
+      {
+        error: detail
+          ? `Tải lên thất bại: ${detail}`
+          : "Tải lên thất bại, vui lòng thử lại.",
+      },
       { status: 500 }
     );
   }

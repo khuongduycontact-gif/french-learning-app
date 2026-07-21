@@ -182,9 +182,10 @@ export default function CourseForm({
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:items-start lg:gap-x-8 lg:gap-y-6"
+      className="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:items-stretch lg:gap-x-8 lg:gap-y-6"
     >
-      {/* Cột chính (trái trên desktop): thông tin cơ bản */}
+      {/* Cột chính (trái trên desktop): toàn bộ thông tin cơ bản + nút hành động, gộp làm 1 khối
+          để chiều cao cột này chỉ phụ thuộc nội dung của chính nó, không bị cột phải kéo giãn theo. */}
       <div className="flex flex-col gap-5 lg:col-span-2">
         <div>
           <label className="mb-1 block text-sm font-medium text-ink">Tiêu đề</label>
@@ -283,16 +284,7 @@ export default function CourseForm({
             />
           </div>
         </div>
-      </div>
 
-      {/* Cột phụ (phải trên desktop, dính khi cuộn): tài liệu học */}
-      <div className="flex flex-col gap-3 lg:col-span-1 lg:row-span-2 lg:sticky lg:top-24">
-        <CourseMaterialsEditor value={materials} onChange={setMaterials} />
-        {materialsError && <p className="text-xs text-bordeaux">{materialsError}</p>}
-      </div>
-
-      {/* Tiếp nối cột chính: xuất bản, nút hành động */}
-      <div className="flex flex-col gap-5 lg:col-span-2">
         <label className="flex items-center gap-2 text-sm text-ink">
           <input
             type="checkbox"
@@ -320,6 +312,15 @@ export default function CourseForm({
             Huỷ
           </button>
         </div>
+      </div>
+
+      {/* Cột phụ (phải trên desktop, dính khi cuộn): tài liệu học.
+          lg:min-h-0 cho phép cột này bị nén xuống đúng bằng chiều cao (đã stretch)
+          của cột trái thay vì kéo giãn cả grid theo nội dung của chính nó;
+          overflow-y-auto khiến phần vượt quá tự cuộn riêng bên trong. */}
+      <div className="flex min-h-0 flex-col gap-3 lg:col-span-1 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1">
+        <CourseMaterialsEditor value={materials} onChange={setMaterials} />
+        {materialsError && <p className="text-xs text-bordeaux">{materialsError}</p>}
       </div>
     </form>
   );
