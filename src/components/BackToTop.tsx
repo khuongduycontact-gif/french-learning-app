@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 // Vị trí được tính từ các biến CSS --fab-* (định nghĩa trong globals.css)
 // để luôn nằm đúng phía trên nút từ điển (DictionaryLookup) 16px,
 // đồng bộ trên cả desktop và mobile.
-const SHOW_AFTER_PX = 1200;
+const SHOW_AFTER_PX = 320;
 
 function BackToTop() {
   const [visible, setVisible] = useState(false);
