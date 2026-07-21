@@ -105,7 +105,7 @@ export default async function HomePage() {
               <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-ink/50">
                 Mới nhất
               </h3>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 {newestCourses.map((c) => (
                   <CourseCard key={c.id} course={c as any} statusBadge={statusBadgeFor(c.id)} />
                 ))}
@@ -116,7 +116,7 @@ export default async function HomePage() {
                 <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-ink/50">
                   {secondaryTitle}
                 </h3>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                   {secondaryCourses.map((c) => (
                     <CourseCard key={c.id} course={c as any} statusBadge={statusBadgeFor(c.id)} />
                   ))}
