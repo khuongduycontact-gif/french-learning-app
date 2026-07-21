@@ -92,6 +92,36 @@ select:focus-visible {
   background-color: theme("colors.bordeaux/0.55");
 }
 
+/* Ô lọc theo ngày (dashboard admin): dáng viên nhộng theo tông màu chung,
+   viền hoá vàng nhẹ khi focus/hover, icon lịch nhuộm theo màu bordeaux. */
+.admin-date-input {
+  @apply rounded-full border border-mist bg-white px-4 py-2 pr-3 text-sm text-ink shadow-sm transition;
+  color-scheme: light;
+}
+.admin-date-input:hover {
+  border-color: theme("colors.gold/60%");
+}
+.admin-date-input:focus-visible {
+  border-color: theme("colors.bordeaux/50%");
+  box-shadow: 0 0 0 3px theme("colors.gold/20%");
+}
+.admin-date-input::-webkit-calendar-picker-indicator {
+  margin-left: 0.5rem;
+  padding: 2px;
+  border-radius: 999px;
+  cursor: pointer;
+  filter: invert(16%) sepia(46%) saturate(1719%) hue-rotate(315deg) brightness(93%) contrast(89%);
+  opacity: 0.75;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+.admin-date-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  background-color: theme("colors.gold/15%");
+}
+.admin-date-input::-webkit-datetime-edit {
+  padding: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;

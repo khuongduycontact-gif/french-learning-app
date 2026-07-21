@@ -188,7 +188,7 @@ export default function AdminEnrollmentsPage() {
           ))}
         </div>
 
-        <div className="relative w-full sm:w-72">
+        <div className="relative w-full sm:w-[28rem]">
           <svg
             className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40"
             viewBox="0 0 20 20"
