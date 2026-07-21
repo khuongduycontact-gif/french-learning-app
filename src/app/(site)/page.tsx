@@ -15,7 +15,7 @@ export default async function HomePage() {
     prisma.course.findMany({
       where: { published: true },
       orderBy: { createdAt: "desc" },
-      take: 3,
+      take: 4,
       include: { _count: { select: { enrollments: true } } },
     }),
     prisma.enrollment.count(),
@@ -26,7 +26,7 @@ export default async function HomePage() {
       ? await prisma.course.findMany({
           where: { published: true, enrollments: { some: {} } },
           orderBy: { enrollments: { _count: "desc" } },
-          take: 3,
+          take: 4,
           include: { _count: { select: { enrollments: true } } },
         })
       : [];

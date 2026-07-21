@@ -184,30 +184,22 @@ export default function CourseCard({
           </div>
         )}
 
-        {/* Dải ruy băng góc: trạng thái đăng ký của học viên.
-            - Đường chéo cắt lệch về sát góc hơn (điểm 40% thay vì 0%) để
-              phần màu hẹp lại, không choán hết góc thẻ.
-            - Miếng nêm vẫn "tràn" ra ngoài mép trên-phải (-top-2 -right-2 và
-              lớn hơn khung chứa) để khung Link ngoài cùng cắt theo rounded-3xl
-              không còn hở nền ảnh phía sau ở góc bo tròn. */}
+        {/* Dải ruy băng góc: trạng thái đăng ký của học viên - dạng lá cờ nằm
+            ngang phủ ngang góc trên-phải, chữ đọc thẳng (không xoay) cho rõ,
+            giống mẫu tham khảo. Miếng nêm bọc tràn ra ngoài mép 1px để khung
+            Link ngoài cùng (rounded-2xl, overflow-hidden) cắt gọn, không hở
+            nền ảnh phía sau ở góc bo tròn. */}
         {statusBadge && tone && (
-          <div className="pointer-events-none absolute right-0 top-0 h-20 w-20">
+          <div className="pointer-events-none absolute right-0 top-0 h-12 w-[62%] max-w-[168px]">
             <div
-              className={`absolute -right-1.5 -top-1.5 h-[92px] w-[92px] bg-gradient-to-br shadow-sm ${tone.wedge}`}
-              style={{ clipPath: "polygon(100% 0, 100% 100%, 40% 0)" }}
+              className={`absolute -right-1 -top-1 h-[calc(100%+8px)] w-[calc(100%+8px)] bg-gradient-to-br shadow-sm ${tone.wedge}`}
+              style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 24% 100%)" }}
             />
-            <div
-              className="absolute flex flex-col items-center gap-0.5"
-              style={{
-                left: "77%",
-                top: "32%",
-                transform: "translate(-50%, -50%) rotate(45deg)",
-              }}
-            >
-              <span className="flex h-3 w-3 items-center justify-center rounded-full bg-white shadow-sm">
-                <tone.Icon className={`h-1.5 w-1.5 ${tone.badge}`} />
+            <div className="relative flex h-full items-center justify-end gap-1.5 pr-3">
+              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
+                <tone.Icon className={`h-2.5 w-2.5 ${tone.badge}`} />
               </span>
-              <span className="whitespace-nowrap text-[7px] font-bold uppercase tracking-wide text-white drop-shadow-sm">
+              <span className="truncate text-[10px] font-bold uppercase tracking-wide text-white drop-shadow-sm">
                 {statusBadge.label}
               </span>
             </div>
