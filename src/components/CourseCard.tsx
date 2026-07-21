@@ -98,23 +98,25 @@ function WalletIcon({ className }: { className?: string }) {
 /* Sắc thái dải ruy băng góc thẻ theo trạng thái đăng ký của học viên.
    - confirmed (đã đăng ký): dấu tick
    - waiting (chờ xác nhận): đồng hồ - đang chờ admin xử lý
-   - pending (chờ thanh toán): ví tiền - đang chờ học viên thanh toán */
+   - pending (chờ thanh toán): ví tiền - đang chờ học viên thanh toán
+   Dùng mã màu hex (thay vì class Tailwind) vì gradient được vẽ bằng SVG
+   <linearGradient> để có thể vừa tô màu vừa vẽ viền dọc theo cạnh chéo. */
 const ribbonTone: Record<
   "pending" | "waiting" | "confirmed",
-  { wedge: string; badge: string; Icon: (p: { className?: string }) => JSX.Element }
+  { stops: [string, string]; badge: string; Icon: (p: { className?: string }) => JSX.Element }
 > = {
   confirmed: {
-    wedge: "from-emerald-400 to-teal-600",
+    stops: ["#34d399", "#0d9488"],
     badge: "text-emerald-600",
     Icon: CheckIcon,
   },
   waiting: {
-    wedge: "from-gold to-amber-600",
+    stops: ["#C9A227", "#d97706"],
     badge: "text-amber-600",
     Icon: ClockIcon,
   },
   pending: {
-    wedge: "from-ink/70 to-ink",
+    stops: ["#1B2A4Ab3", "#1B2A4A"],
     badge: "text-ink",
     Icon: WalletIcon,
   },
@@ -137,7 +139,7 @@ export default function CourseCard({
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
     >
       {/* Vùng ảnh / minh hoạ đầu thẻ */}
-      <div className="relative h-32 w-full overflow-hidden bg-mist">
+      <div className="relative h-40 w-full overflow-hidden bg-mist">
         {course.videoUrl && isVideoUrl(course.videoUrl) ? (
           <video
             src={course.videoUrl}
@@ -154,52 +156,118 @@ export default function CourseCard({
             className="object-cover transition duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-gradient-to-br from-mist/70 via-parchment to-white">
+          <div className="relative h-full w-full overflow-hidden bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
             {/* Hoạ tiết chấm bi góc trên-trái */}
             <div
-              className="absolute left-3 top-3 grid grid-cols-4 grid-rows-3 gap-1 opacity-50"
+              className="absolute left-4 top-4 grid grid-cols-4 grid-rows-5 gap-[6px] opacity-40"
               aria-hidden
             >
-              {Array.from({ length: 12 }).map((_, i) => (
-                <span key={i} className="h-[3px] w-[3px] rounded-full bg-ink/40" />
+              {Array.from({ length: 20 }).map((_, i) => (
+                <span key={i} className="h-[3px] w-[3px] rounded-full bg-indigo-900" />
               ))}
             </div>
-            {/* Vệt tròn trang trí */}
+
+            {/* Vệt tròn trang trí góc dưới-trái */}
             <div
-              className="pointer-events-none absolute -bottom-10 -left-10 h-28 w-28 rounded-full bg-bordeaux/5"
+              className="pointer-events-none absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-indigo-200/45"
               aria-hidden
             />
-            {/* Bóng mờ tháp Eiffel - điểm nhấn chủ đề tiếng Pháp */}
-            <svg
-              viewBox="0 0 120 200"
-              className="pointer-events-none absolute -bottom-2 right-2 h-24 w-auto text-ink/10 transition duration-300 group-hover:text-ink/15"
-              fill="currentColor"
-              aria-hidden
-            >
-              <path d="M60 0 68 55 98 58 76 88 92 128 66 108 70 200 50 200 54 108 28 128 44 88 22 58 52 55Z" />
-            </svg>
-            <span className="relative select-none font-display text-5xl font-bold text-ink/15">
+
+            {/* Chữ cái đầu tên khoá học - phông chữ display cỡ lớn */}
+            <span className="pointer-events-none absolute left-[16%] top-1/2 -translate-y-1/2 select-none font-display text-7xl font-bold leading-none text-indigo-400">
               {initial}
             </span>
+
+            {/* Minh hoạ tháp Eiffel + skyline + cầu + mây + chim */}
+            <svg
+              viewBox="0 0 300 200"
+              preserveAspectRatio="xMaxYMax meet"
+              className="pointer-events-none absolute bottom-0 right-0 h-[95%] w-[64%] text-indigo-400 transition duration-300 group-hover:text-indigo-500"
+              aria-hidden
+            >
+              {/* Mây */}
+              <g fill="white">
+                <ellipse cx="72" cy="28" rx="26" ry="10" opacity="0.9" />
+                <ellipse cx="98" cy="22" rx="18" ry="8" opacity="0.9" />
+                <ellipse cx="185" cy="16" rx="22" ry="9" opacity="0.85" />
+                <ellipse cx="205" cy="22" rx="15" ry="7" opacity="0.85" />
+              </g>
+
+              {/* Chim */}
+              <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.5">
+                <path d="M38 55 q6 -8 12 0 q6 -8 12 0" />
+                <path d="M150 38 q5 -7 10 0 q5 -7 10 0" />
+              </g>
+
+              {/* Skyline */}
+              <g fill="currentColor" opacity="0.22">
+                <rect x="184" y="142" width="18" height="43" />
+                <rect x="204" y="122" width="14" height="63" />
+                <rect x="220" y="150" width="20" height="35" />
+                <rect x="242" y="132" width="16" height="53" />
+                <rect x="260" y="146" width="23" height="39" />
+              </g>
+
+              {/* Cầu */}
+              <g stroke="currentColor" strokeWidth="2.5" fill="none" opacity="0.3">
+                <path d="M178 185 q20 -22 40 0" />
+                <path d="M213 185 q20 -22 40 0" />
+                <line x1="168" y1="185" x2="273" y2="185" />
+              </g>
+
+              {/* Tháp Eiffel */}
+              <g stroke="currentColor" fill="none" strokeLinejoin="round">
+                <path d="M95 186 L140 20 L146 20 L191 186" strokeWidth="2.5" opacity="0.55" />
+                <path
+                  d="M99 178 L182 178 M103 160 L178 160 M108 140 L173 140 M113 118 L168 118 M119 96 L162 96 M125 74 L156 74 M130 55 L151 55"
+                  strokeWidth="1.3"
+                  opacity="0.4"
+                />
+                <path
+                  d="M99 178 L143 140 L182 178 M103 160 L143 118 L178 160 M108 140 L143 96 L173 140 M113 118 L143 74 L168 118 M119 96 L143 55 L162 96"
+                  strokeWidth="1"
+                  opacity="0.3"
+                />
+                <rect x="118" y="90" width="50" height="8" strokeWidth="1.6" opacity="0.5" />
+                <rect x="129" y="45" width="28" height="7" strokeWidth="1.4" opacity="0.55" />
+                <line x1="143" y1="20" x2="143" y2="5" strokeWidth="2" opacity="0.6" />
+              </g>
+            </svg>
+
+            {/* Sóng lượn trang trí đáy */}
+            <svg
+              viewBox="0 0 300 20"
+              preserveAspectRatio="none"
+              className="pointer-events-none absolute bottom-3 left-0 h-4 w-full text-indigo-300 opacity-40"
+              aria-hidden
+            >
+              <path
+                d="M0 10 Q 25 0 50 10 T 100 10 T 150 10 T 200 10 T 250 10 T 300 10"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                fill="none"
+              />
+            </svg>
           </div>
         )}
 
-        {/* Dải ruy băng góc: trạng thái đăng ký của học viên - dạng lá cờ nằm
-            ngang phủ ngang góc trên-phải, chữ đọc thẳng (không xoay) cho rõ,
-            giống mẫu tham khảo. Miếng nêm bọc tràn ra ngoài mép 1px để khung
-            Link ngoài cùng (rounded-2xl, overflow-hidden) cắt gọn, không hở
-            nền ảnh phía sau ở góc bo tròn. */}
+        {/* Dải ruy băng góc: trạng thái đăng ký của học viên - dải băng bo
+            chéo 45°, cắt qua góc trên-phải của thẻ giống mẫu tham khảo.
+            Container ngoài bo góc + overflow-hidden để dải băng không tràn
+            ra khỏi bán kính góc thẻ; dải băng bên trong xoay 45° và đặt lùi
+            ra ngoài mép để phần text luôn nằm giữa dải. */}
         {statusBadge && tone && (
-          <div className="pointer-events-none absolute right-0 top-0 h-12 w-[62%] max-w-[168px]">
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-28 w-28 overflow-hidden">
             <div
-              className={`absolute -right-1 -top-1 h-[calc(100%+8px)] w-[calc(100%+8px)] bg-gradient-to-br shadow-sm ${tone.wedge}`}
-              style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 24% 100%)" }}
-            />
-            <div className="relative flex h-full items-center justify-end gap-1.5 pr-3">
+              className="absolute right-[-42px] top-[22px] flex w-[168px] rotate-45 items-center justify-center gap-1.5 py-1.5 shadow-md"
+              style={{
+                backgroundImage: `linear-gradient(90deg, ${tone.stops[0]}, ${tone.stops[1]})`,
+              }}
+            >
               <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
                 <tone.Icon className={`h-2.5 w-2.5 ${tone.badge}`} />
               </span>
-              <span className="truncate text-[10px] font-bold uppercase tracking-wide text-white drop-shadow-sm">
+              <span className="truncate text-[11px] font-bold text-white">
                 {statusBadge.label}
               </span>
             </div>
@@ -220,11 +288,11 @@ export default function CourseCard({
           {levelLabel[course.level] ?? course.level}
         </span>
 
-        <h3 className="line-clamp-1 font-display text-base font-bold leading-snug text-ink">
+        <h3 className="line-clamp-1 font-display text-lg font-bold leading-snug text-ink">
           {course.title}
         </h3>
 
-        <p className="line-clamp-2 text-xs text-ink/60">
+        <p className="line-clamp-2 text-sm text-ink/60">
           {stripRichText(course.description)}
         </p>
 
