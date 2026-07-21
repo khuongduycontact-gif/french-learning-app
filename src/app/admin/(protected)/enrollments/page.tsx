@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Enrollment, EnrollmentStatus } from "@/types";
@@ -38,13 +39,22 @@ const filters: { value: string; label: string }[] = [
 
 export default function AdminEnrollmentsPage() {
   const { showToast } = useToast();
+  const searchParams = useSearchParams();
+  const highlightId = searchParams.get("highlight");
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState(() => searchParams.get("status") || "");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const [actingId, setActingId] = useState<string | null>(null);
   const isFirstLoad = useRef(true);
+  const highlightRef = useRef<HTMLTableRowElement | null>(null);
+
+  useEffect(() => {
+    if (highlightId && highlightRef.current) {
+      highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [highlightId, enrollments]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -172,8 +182,13 @@ export default function AdminEnrollmentsPage() {
               </tr>
             ) : (
               enrollments.map((e) => (
-                <tr key={e.id} className="border-b border-mist last:border-0 align-top">
-                  <td className="px-4 py-3">
+                <tr
+                  key={e.id}
+                  ref={e.id === highlightId ? highlightRef : undefined}
+                  className={`border-b border-mist last:border-0 align-top ${
+                    e.id === highlightId ? "bg-gold/10" : ""
+                  }`}
+                >                  <td className="px-4 py-3">
                     <div className="flex items-center gap-2.5">
                       {e.user?.image ? (
                         <Image

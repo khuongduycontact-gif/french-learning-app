@@ -87,9 +87,9 @@ export default function EnrollButton({
         showToast(data.error || "Có lỗi xảy ra, vui lòng thử lại.", "error");
         return;
       }
-      setStatus("CONFIRMED");
+      setStatus("AWAITING_CONFIRMATION");
       setModalOpen(false);
-      showToast("Đã ghi nhận thanh toán! Khoá học của bạn đã được mở khoá.", "success");
+      showToast("Đã ghi nhận thanh toán, đang chờ cô giáo Céline xác nhận.", "success");
     } catch {
       showToast("Có lỗi xảy ra, vui lòng thử lại.", "error");
     } finally {
