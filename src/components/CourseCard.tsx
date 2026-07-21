@@ -251,11 +251,12 @@ export default function CourseCard({
           </div>
         )}
 
-        {/* Dải ruy băng góc: trạng thái đăng ký của học viên - dải băng bo
-            chéo THẲNG (không cong), cắt qua góc trên-phải của thẻ, có nếp
-            gấp tam giác nhỏ ở đầu dưới của đường chéo (mô phỏng ruy băng
-            giấy gấp thật) và viền sáng mỏng chạy theo cạnh chéo - đúng như
-            mẫu tham khảo. Container ngoài bo góc + overflow-hidden để dải
+        {/* Dải ruy băng góc: trạng thái đăng ký của học viên. ĐÚNG hướng
+            đường chéo theo mẫu tham khảo: rộng và áp sát mép trên (đầy hết
+            chiều rộng khung ngay tại y=0), rồi thu hẹp dần xuống gần thành
+            một điểm nhọn ở phía dưới, có nếp gấp tam giác nhỏ ngay tại điểm
+            nhọn đó (mô phỏng ruy băng giấy gấp thật) và viền sáng mỏng chạy
+            theo cạnh chéo. Container ngoài bo góc + overflow-hidden để dải
             băng không tràn ra khỏi bán kính góc thẻ. */}
         {statusBadge && tone && (
           <div className="pointer-events-none absolute right-0 top-0 z-10 h-11 w-[68%] max-w-[220px]">
@@ -276,26 +277,26 @@ export default function CourseCard({
                   <stop offset="100%" stopColor={tone.stops[1]} />
                 </linearGradient>
               </defs>
-              {/* Thân ruy băng: hình thang, cạnh trái là đường chéo thẳng */}
+              {/* Thân ruy băng: rộng áp mép trên, cạnh trái chéo thu hẹp dần xuống dưới */}
               <polygon
-                points="62,0 200,0 200,100 15,100"
+                points="12,0 200,0 200,100 158,100"
                 fill={`url(#ribbon-grad-${course.id})`}
               />
               {/* Viền sáng mỏng dọc cạnh chéo */}
               <line
-                x1="62"
+                x1="12"
                 y1="0"
-                x2="15"
+                x2="158"
                 y2="100"
                 stroke="white"
                 strokeOpacity="0.5"
                 strokeWidth="1.5"
               />
-              {/* Nếp gấp tam giác nhỏ ở đầu dưới cạnh chéo, tạo hiệu ứng
-                  ruy băng giấy gấp thật */}
-              <polygon points="15,100 42,100 24,76" fill="black" fillOpacity="0.18" />
+              {/* Nếp gấp tam giác nhỏ ngay tại điểm nhọn phía dưới, tạo
+                  hiệu ứng ruy băng giấy gấp thật */}
+              <polygon points="158,100 185,100 170,80" fill="black" fillOpacity="0.18" />
             </svg>
-            <div className="absolute inset-0 flex items-center gap-1.5 py-1.5 pl-[27%] pr-3">
+            <div className="absolute inset-0 flex items-center gap-1.5 py-1.5 pl-[46%] pr-3">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
                 <tone.Icon className={`h-3 w-3 ${tone.badge}`} />
               </span>
