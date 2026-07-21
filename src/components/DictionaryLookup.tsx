@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 
 type HistoryItem = {
   id: string;
@@ -104,6 +105,7 @@ function SpeakerIcon() {
 }
 
 function DictionaryLookup() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<string | null>(null);
@@ -182,6 +184,9 @@ function DictionaryLookup() {
     e.preventDefault();
     lookup(query);
   }
+
+  // Từ điển chỉ dành cho học viên (giao diện client) — không hiện ở khu vực admin
+  if (pathname?.startsWith("/admin")) return null;
 
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
