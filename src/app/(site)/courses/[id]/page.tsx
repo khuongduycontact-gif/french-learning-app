@@ -73,10 +73,11 @@ function ClockIcon({ className }: { className?: string }) {
 function CheckIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
       <path
-        d="m5 13 4 4L19 7"
+        d="m8 12.5 2.6 2.6L16 9.5"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -87,20 +88,21 @@ function CheckIcon({ className }: { className?: string }) {
 function WalletIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
       <path
-        d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v2"
+        d="M8 9.5a1.3 1.3 0 0 1 1.3-1.3h5.4a.8.8 0 0 1 .8.8v1"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.6"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M3 7v10a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2Z"
+        d="M8 9.5v5.2a1.3 1.3 0 0 0 1.3 1.3h5.9a.8.8 0 0 0 .8-.8V10.3a.8.8 0 0 0-.8-.8H9.3a1.3 1.3 0 0 1-1.3-1.3Z"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.6"
         strokeLinejoin="round"
       />
-      <circle cx="16.5" cy="13" r="1.4" fill="currentColor" />
+      <circle cx="14.6" cy="12.7" r="0.9" fill="currentColor" />
     </svg>
   );
 }
@@ -151,7 +153,7 @@ export default async function CourseDetailPage({
   const initial = course.title.trim().slice(0, 1).toUpperCase();
 
   return (
-    <div className="grid gap-8 md:grid-cols-3 md:items-start lg:items-stretch">
+    <div className="grid gap-8 md:grid-cols-3 md:items-stretch">
       {/* Cột chính: banner + nội dung khoá học, theo đúng phong cách thẻ
           khoá học mẫu (chấm bi, minh hoạ tháp Eiffel, huy hiệu trạng thái). */}
       <div className="md:col-span-2">
@@ -169,11 +171,11 @@ export default async function CourseDetailPage({
               <div className="relative h-full w-full overflow-hidden bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
                 {/* Hoạ tiết chấm bi góc trên-trái */}
                 <div
-                  className="absolute left-5 top-5 grid grid-cols-4 grid-rows-5 gap-[7px] opacity-40"
+                  className="absolute left-6 top-6 grid grid-cols-4 grid-rows-5 gap-x-6 gap-y-3 opacity-50 sm:left-8 sm:top-8 sm:gap-x-7"
                   aria-hidden
                 >
                   {Array.from({ length: 20 }).map((_, i) => (
-                    <span key={i} className="h-1 w-1 rounded-full bg-indigo-900" />
+                    <span key={i} className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
                   ))}
                 </div>
 
@@ -252,12 +254,13 @@ export default async function CourseDetailPage({
               </div>
             )}
 
-            {/* Huy hiệu trạng thái đăng ký, dạng viên thuốc ở góc trên-phải,
-                giống ảnh mẫu (dấu tick xanh "Đã đăng ký"). */}
+            {/* Huy hiệu trạng thái đăng ký ở góc trên-phải: icon vòng tròn +
+                chữ nổi trực tiếp trên nền minh hoạ, không có khung/nền bọc
+                ngoài - đúng như ảnh mẫu (dấu tick xanh "Đã đăng ký"). */}
             {statusInfo && statusTone && (
-              <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 shadow-sm backdrop-blur">
-                <statusTone.Icon className={`h-3.5 w-3.5 ${statusTone.text}`} />
-                <span className={`text-xs font-semibold ${statusTone.text}`}>
+              <div className="absolute right-5 top-5 flex items-center gap-2 sm:right-6 sm:top-6">
+                <statusTone.Icon className={`h-6 w-6 shrink-0 sm:h-7 sm:w-7 ${statusTone.text}`} />
+                <span className={`text-sm font-bold sm:text-base ${statusTone.text}`}>
                   {statusInfo.label}
                 </span>
               </div>
@@ -271,8 +274,8 @@ export default async function CourseDetailPage({
           </div>
 
           <div className="p-6 sm:p-8">
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-bordeaux/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-bordeaux">
-              <GraduationCapIcon className="h-3.5 w-3.5" />
+            <span className="inline-flex w-fit items-center gap-2 rounded-full bg-indigo-50 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wide text-indigo-600 sm:text-sm">
+              <GraduationCapIcon className="h-4 w-4" />
               {levelLabel[course.level] ?? course.level}
             </span>
 
@@ -280,9 +283,32 @@ export default async function CourseDetailPage({
               {course.title}
             </h1>
 
-            <div className="ribbon-rule my-4" />
+            <RichText content={course.description} className="mt-3 text-ink/60" />
 
-            <RichText content={course.description} className="text-ink/80" />
+            <div className="my-6 h-px w-full bg-mist" />
+
+            {/* Ô giá tiền / thời lượng - icon nằm trực tiếp trên nền màu,
+                không có khung vuông bọc icon, đúng như ảnh mẫu. */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="flex items-center gap-3 rounded-2xl bg-amber-50 px-4 py-4 sm:px-5">
+                <TagIcon className="h-7 w-7 shrink-0 text-amber-500 sm:h-8 sm:w-8" />
+                <div className="min-w-0">
+                  <p className="truncate text-base font-bold text-ink sm:text-lg">
+                    {course.price > 0 ? formatVnd(course.price) : "Miễn phí"}
+                  </p>
+                  <p className="text-xs text-ink/50">Học phí trọn khoá</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 px-4 py-4 sm:px-5">
+                <ClockIcon className="h-7 w-7 shrink-0 text-emerald-600 sm:h-8 sm:w-8" />
+                <div className="min-w-0">
+                  <p className="truncate text-base font-bold text-emerald-700 sm:text-lg">
+                    {course.duration} giờ học
+                  </p>
+                  <p className="text-xs text-ink/50">Thời lượng khoá học</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -292,32 +318,9 @@ export default async function CourseDetailPage({
           nội dung tài liệu vượt quá không gian còn lại, chỉ danh sách tài
           liệu tự cuộn bên trong (giống cách cột phải bên trang admin cuộn),
           còn ô giá tiền luôn hiển thị đầy đủ phía trên. */}
-      <div className="flex flex-col gap-6 md:sticky md:top-24 md:max-h-[calc(100vh-7rem)]">
+      <div className="flex flex-col gap-6 md:sticky md:top-24 md:max-h-[min(100%,calc(100vh-7rem))]">
         <aside className="shrink-0 rounded-2xl border border-mist bg-white/60 p-6">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex items-center gap-3 rounded-xl bg-amber-50 p-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
-                <TagIcon className="h-4 w-4" />
-              </span>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-ink">
-                  {course.price > 0 ? formatVnd(course.price) : "Miễn phí"}
-                </p>
-                <p className="text-[11px] text-ink/60">Học phí trọn khoá</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 rounded-xl bg-emerald-50 p-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
-                <ClockIcon className="h-4 w-4" />
-              </span>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-ink">{course.duration} giờ học</p>
-                <p className="text-[11px] text-ink/60">Thời lượng khoá học</p>
-              </div>
-            </div>
-          </div>
-
-          <p className="mt-3 text-sm text-ink/70">
+          <p className="text-sm text-ink/70">
             <span className="font-medium text-ink/70">Số bài giảng:</span> {course.lessons} bài
           </p>
 
