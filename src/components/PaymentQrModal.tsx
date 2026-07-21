@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import type { PaymentInfo } from "@/types";
 import { useToast } from "./Toast";
+import { formatVnd } from "@/lib/format";
 
 export default function PaymentQrModal({
   open,
@@ -72,7 +73,7 @@ export default function PaymentQrModal({
         {/* Nội dung cuộn được, phần bo góc chỉ nằm ở khung ngoài nên luôn mượt */}
         <div className="overflow-y-auto px-6 py-5">
           <p className="mb-4 text-center font-display text-2xl font-semibold text-bordeaux">
-            {payment.amount.toLocaleString("vi-VN")} đ
+            {formatVnd(payment.amount)}
           </p>
 
           {payment.qrUrl ? (

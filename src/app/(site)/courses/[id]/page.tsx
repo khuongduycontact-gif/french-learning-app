@@ -8,6 +8,7 @@ import EnrollButton from "@/components/EnrollButton";
 import MaterialFileAction from "@/components/MaterialFileAction";
 import { RichText } from "@/lib/richtext";
 import { isVideoUrl } from "@/lib/media";
+import { formatVnd } from "@/lib/format";
 
 type MaterialFile = { url: string; name?: string; type?: string };
 
@@ -82,7 +83,7 @@ export default async function CourseDetailPage({
             <p className="text-lg font-semibold text-ink">
               Giá tiền:{" "}
               {course.price > 0
-                ? course.price.toLocaleString("vi-VN") + " vnđ"
+                ? formatVnd(course.price)
                 : "Miễn phí"}
             </p>
             <p>

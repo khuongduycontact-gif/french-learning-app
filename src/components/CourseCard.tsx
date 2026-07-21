@@ -3,6 +3,7 @@ import Image from "next/image";
 import type { Course } from "@/types";
 import { stripRichText } from "@/lib/richtext";
 import { isVideoUrl } from "@/lib/media";
+import { formatVnd } from "@/lib/format";
 
 const levelLabel: Record<string, string> = {
   A1: "A1 · Mới bắt đầu",
@@ -76,7 +77,7 @@ export default function CourseCard({
         <div className="mt-auto flex items-center justify-between pt-3 text-sm">
           <span className="font-semibold text-ink">
             {course.price > 0
-              ? course.price.toLocaleString("vi-VN") + " đ"
+              ? formatVnd(course.price)
               : "Miễn phí"}
           </span>
           <span className="text-ink/50">{course.duration} giờ học</span>

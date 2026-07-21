@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Enrollment, EnrollmentStatus } from "@/types";
 import { useToast } from "@/components/Toast";
 import Loader from "@/components/Loader";
+import { formatVnd } from "@/lib/format";
 
 const statusOrder: Record<EnrollmentStatus, number> = {
   AWAITING_CONFIRMATION: 0,
@@ -131,7 +132,7 @@ export default function AdminEnrollmentsPage() {
         ))}
       </div>
 
-      <div className="scroll-x-fancy overflow-x-auto rounded-2xl border border-mist">
+      <div className="scroll-x-fancy overflow-x-auto rounded-lg border border-mist bg-white/60">
         <table className="w-full min-w-[760px] text-left text-sm">
           <thead className="border-b border-mist text-ink/60">
             <tr>
@@ -180,16 +181,16 @@ export default function AdminEnrollmentsPage() {
                           alt={e.user.name || ""}
                           width={28}
                           height={28}
-                          className="h-7 w-7 rounded-full object-cover"
+                          className="h-7 w-7 shrink-0 rounded-full object-cover"
                         />
                       ) : (
-                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mist text-xs font-semibold leading-none text-ink">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-mist text-xs font-semibold leading-none text-ink">
                           {e.user?.name?.[0]?.toUpperCase() || "?"}
                         </span>
                       )}
-                      <div>
-                        <p className="font-medium text-ink">{e.user?.name}</p>
-                        <p className="text-xs text-ink/50">{e.user?.email}</p>
+                      <div className="min-w-0">
+                        <p className="cell-nowrap font-medium text-ink">{e.user?.name}</p>
+                        <p className="cell-nowrap text-xs text-ink/50">{e.user?.email}</p>
                       </div>
                     </div>
                   </td>
@@ -197,31 +198,29 @@ export default function AdminEnrollmentsPage() {
                     {e.course?.id ? (
                       <Link
                         href={`/admin/courses/${e.course.id}/edit`}
-                        className="hover:underline"
+                        className="cell-nowrap hover:underline"
                       >
                         {e.course?.title}
                       </Link>
                     ) : (
-                      e.course?.title
+                      <span className="cell-nowrap">{e.course?.title}</span>
                     )}
                   </td>
-                  <td className="px-4 py-3">
-                    {e.paidAmount > 0
-                      ? e.paidAmount.toLocaleString("vi-VN") + " đ"
-                      : "Miễn phí"}
+                  <td className="whitespace-nowrap px-4 py-3">
+                    {e.paidAmount > 0 ? formatVnd(e.paidAmount) : "Miễn phí"}
                   </td>
                   <td className="px-4 py-3">
                     {e.paymentNote ? (
-                      <span className="rounded-full bg-mist px-2 py-0.5 font-mono text-xs">
+                      <span className="cell-nowrap rounded-full bg-mist px-2 py-0.5 font-mono text-xs">
                         {e.paymentNote}
                       </span>
                     ) : (
                       "—"
                     )}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="whitespace-nowrap px-4 py-3">
                     <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusLabel[e.status].className}`}
+                      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusLabel[e.status].className}`}
                     >
                       {statusLabel[e.status].label}
                     </span>

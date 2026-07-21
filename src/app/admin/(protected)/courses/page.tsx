@@ -6,6 +6,7 @@ import type { Course } from "@/types";
 import { useToast } from "@/components/Toast";
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
+import { formatVnd } from "@/lib/format";
 
 const PAGE_SIZE = 15;
 
@@ -155,7 +156,7 @@ export default function AdminCoursesPage() {
         </select>
       </div>
 
-      <div className="scroll-x-fancy overflow-x-auto rounded-2xl border border-mist">
+      <div className="scroll-x-fancy overflow-x-auto rounded-lg border border-mist bg-white/60">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="border-b border-mist text-ink/60">
             <tr>
@@ -199,19 +200,19 @@ export default function AdminCoursesPage() {
                   <td className="px-4 py-3 font-medium text-ink">
                     <Link
                       href={`/admin/courses/${c.id}/edit`}
-                      className="hover:underline"
+                      className="cell-nowrap hover:underline"
                     >
                       {c.title}
                     </Link>
                   </td>
-                  <td className="px-4 py-3">{c.level}</td>
-                  <td className="px-4 py-3">
-                    {c.price > 0 ? c.price.toLocaleString("vi-VN") + " đ" : "Miễn phí"}
+                  <td className="whitespace-nowrap px-4 py-3">{c.level}</td>
+                  <td className="whitespace-nowrap px-4 py-3">
+                    {c.price > 0 ? formatVnd(c.price) : "Miễn phí"}
                   </td>
-                  <td className="px-4 py-3">{c._count?.enrollments ?? 0}</td>
-                  <td className="px-4 py-3">
+                  <td className="whitespace-nowrap px-4 py-3">{c._count?.enrollments ?? 0}</td>
+                  <td className="whitespace-nowrap px-4 py-3">
                     <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
                         c.published ? "bg-ink/10 text-ink" : "bg-mist text-ink/60"
                       }`}
                     >

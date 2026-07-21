@@ -15,7 +15,8 @@ export default function AdminHeader() {
             href="/admin"
             className="min-w-0 truncate font-display text-lg font-semibold tracking-tight text-ink transition hover:text-bordeaux sm:text-xl"
           >
-            <span className="font-display text-base italic text-bordeaux">
+            <span className="hidden md:inline">Quản trị</span>
+            <span className="font-display text-base italic text-bordeaux md:ml-2">
               Français avec Céline
             </span>
           </Link>

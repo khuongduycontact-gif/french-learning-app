@@ -60,8 +60,13 @@ export default function AdminMobileDrawer() {
         }`}
       >
         <div className="flex items-center justify-between border-b border-mist px-5 py-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
-            Quản trị Français avec Céline
+          <p className="flex items-baseline gap-1.5 leading-tight">
+            <span className="font-display text-base font-semibold tracking-tight text-ink">
+              Français
+            </span>
+            <span className="font-display text-sm italic text-bordeaux">
+              avec Céline
+            </span>
           </p>
           <button
             type="button"
