@@ -5,11 +5,10 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildPaymentInfo } from "@/lib/vietqr";
 import EnrollButton from "@/components/EnrollButton";
-import MaterialFileAction from "@/components/MaterialFileAction";
+import MaterialsPager from "@/components/MaterialsPager";
 import { RichText } from "@/lib/richtext";
 import { isVideoUrl } from "@/lib/media";
 import { formatVnd } from "@/lib/format";
-import { enrollmentStatusMap } from "@/lib/enrollmentStatus";
 
 type MaterialFile = { url: string; name?: string; type?: string };
 
@@ -70,58 +69,12 @@ function ClockIcon({ className }: { className?: string }) {
   );
 }
 
-function CheckIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
-      <path
-        d="m8 12.5 2.6 2.6L16 9.5"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function WalletIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
-      <path
-        d="M8 9.5a1.3 1.3 0 0 1 1.3-1.3h5.4a.8.8 0 0 1 .8.8v1"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M8 9.5v5.2a1.3 1.3 0 0 0 1.3 1.3h5.9a.8.8 0 0 0 .8-.8V10.3a.8.8 0 0 0-.8-.8H9.3a1.3 1.3 0 0 1-1.3-1.3Z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      <circle cx="14.6" cy="12.7" r="0.9" fill="currentColor" />
-    </svg>
-  );
-}
-
-// Cùng bảng màu/icon trạng thái đăng ký với dải ruy băng trên CourseCard,
-// nhưng hiển thị dạng "viên thuốc" (pill) ở góc banner như ảnh mẫu.
-const statusPillTone: Record<
-  "pending" | "waiting" | "confirmed",
-  { text: string; Icon: (p: { className?: string }) => JSX.Element }
-> = {
-  confirmed: { text: "text-emerald-600", Icon: CheckIcon },
-  waiting: { text: "text-amber-600", Icon: ClockIcon },
-  pending: { text: "text-ink", Icon: WalletIcon },
-};
-
 export default async function CourseDetailPage({
   params,
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { enroll?: string };
 }) {
   const course = await prisma.course.findUnique({
     where: { id: params.id },
@@ -145,10 +98,6 @@ export default async function CourseDetailPage({
       ? buildPaymentInfo({ enrollmentId: enrollment.id, amount: course.price })
       : null;
 
-  const statusInfo = enrollment
-    ? enrollmentStatusMap[enrollment.status as keyof typeof enrollmentStatusMap]
-    : null;
-  const statusTone = statusInfo ? statusPillTone[statusInfo.tone] : null;
   const hasMedia = Boolean(course.videoUrl);
   const initial = course.title.trim().slice(0, 1).toUpperCase();
 
@@ -254,18 +203,6 @@ export default async function CourseDetailPage({
               </div>
             )}
 
-            {/* Huy hiệu trạng thái đăng ký ở góc trên-phải: icon vòng tròn +
-                chữ nổi trực tiếp trên nền minh hoạ, không có khung/nền bọc
-                ngoài - đúng như ảnh mẫu (dấu tick xanh "Đã đăng ký"). */}
-            {statusInfo && statusTone && (
-              <div className="absolute right-5 top-5 flex items-center gap-2 sm:right-6 sm:top-6">
-                <statusTone.Icon className={`h-6 w-6 shrink-0 sm:h-7 sm:w-7 ${statusTone.text}`} />
-                <span className={`text-sm font-bold sm:text-base ${statusTone.text}`}>
-                  {statusInfo.label}
-                </span>
-              </div>
-            )}
-
             {!course.published && (
               <span className="absolute left-4 top-4 rounded-full bg-ink/85 px-2.5 py-1 text-[11px] font-medium text-parchment shadow-sm">
                 Bản nháp
@@ -279,48 +216,46 @@ export default async function CourseDetailPage({
               {levelLabel[course.level] ?? course.level}
             </span>
 
-            <h1 className="mt-3 font-display text-2xl font-bold text-ink sm:text-3xl">
+            <h1 className="mt-3 font-body text-2xl font-bold text-ink sm:text-3xl">
               {course.title}
             </h1>
 
             <RichText content={course.description} className="mt-3 text-ink/60" />
-
-            <div className="my-6 h-px w-full bg-mist" />
-
-            {/* Ô giá tiền / thời lượng - icon nằm trực tiếp trên nền màu,
-                không có khung vuông bọc icon, đúng như ảnh mẫu. */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="flex items-center gap-3 rounded-2xl bg-amber-50 px-4 py-4 sm:px-5">
-                <TagIcon className="h-7 w-7 shrink-0 text-amber-500 sm:h-8 sm:w-8" />
-                <div className="min-w-0">
-                  <p className="truncate text-base font-bold text-ink sm:text-lg">
-                    {course.price > 0 ? formatVnd(course.price) : "Miễn phí"}
-                  </p>
-                  <p className="text-xs text-ink/50">Học phí trọn khoá</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 px-4 py-4 sm:px-5">
-                <ClockIcon className="h-7 w-7 shrink-0 text-emerald-600 sm:h-8 sm:w-8" />
-                <div className="min-w-0">
-                  <p className="truncate text-base font-bold text-emerald-700 sm:text-lg">
-                    {course.duration} giờ học
-                  </p>
-                  <p className="text-xs text-ink/50">Thời lượng khoá học</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
       {/* Cột phụ: giá/thời lượng dạng ô màu như ảnh mẫu + tài liệu học.
-          lg:items-stretch ở grid cha giúp cột này cao bằng cột trái; khi
-          nội dung tài liệu vượt quá không gian còn lại, chỉ danh sách tài
-          liệu tự cuộn bên trong (giống cách cột phải bên trang admin cuộn),
-          còn ô giá tiền luôn hiển thị đầy đủ phía trên. */}
-      <div className="flex flex-col gap-6 md:sticky md:top-24 md:max-h-[min(100%,calc(100vh-7rem))]">
-        <aside className="shrink-0 rounded-2xl border border-mist bg-white/60 p-6">
-          <p className="text-sm text-ink/70">
+          Không dùng sticky/max-height ở đây nữa để toàn bộ trang cuộn bình
+          thường theo một luồng duy nhất, thay vì cột này bị "ghim" và cuộn
+          riêng bên trong. */}
+      <div className="flex flex-col gap-6">
+        <aside className="rounded-2xl border border-mist bg-white/60 p-6">
+          {/* Ô giá tiền / thời lượng - icon nằm trực tiếp trên nền màu,
+              không có khung vuông bọc icon, đúng như ảnh mẫu. Chuyển sang
+              cột phải để đi kèm luôn với nút đăng ký. */}
+          <div className="flex items-center gap-3">
+            <div className="flex min-w-0 flex-1 items-center gap-2.5 rounded-2xl bg-amber-50 px-3 py-3.5">
+              <TagIcon className="h-6 w-6 shrink-0 text-amber-500" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-ink sm:text-base">
+                  {course.price > 0 ? formatVnd(course.price) : "Miễn phí"}
+                </p>
+                <p className="truncate text-[11px] text-ink/50">Học phí</p>
+              </div>
+            </div>
+            <div className="flex min-w-0 flex-1 items-center gap-2.5 rounded-2xl bg-emerald-50 px-3 py-3.5">
+              <ClockIcon className="h-6 w-6 shrink-0 text-emerald-600" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-emerald-700 sm:text-base">
+                  {course.duration} giờ
+                </p>
+                <p className="truncate text-[11px] text-ink/50">Thời gian</p>
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-4 border-t border-mist pt-4 text-sm text-ink/70">
             <span className="font-medium text-ink/70">Số bài giảng:</span> {course.lessons} bài
           </p>
 
@@ -331,49 +266,26 @@ export default async function CourseDetailPage({
               initialEnrollmentId={enrollment?.id ?? null}
               initialStatus={(enrollment?.status as any) ?? null}
               initialPayment={payment}
+              autoStart={searchParams?.enroll === "1"}
             />
           </div>
         </aside>
 
         {enrollment?.status === "CONFIRMED" && course.materials.length > 0 && (
-          <div className="flex min-h-0 flex-1 flex-col rounded-2xl border border-mist bg-white/60 p-6">
+          <div className="flex flex-col rounded-2xl border border-mist bg-white/60 p-6">
             <h2 className="shrink-0 font-display text-xl font-semibold text-ink">
               Tài liệu học
             </h2>
             <div className="ribbon-rule my-3 shrink-0" />
-            <ul className="scroll-y-fancy flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-2">
-              {course.materials.map((m) => (
-                <li
-                  key={m.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-mist bg-white/60 p-4"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-ink">{m.name}</p>
-                    {m.description && (
-                      <p className="mt-0.5 text-sm text-ink/60">{m.description}</p>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    {getMaterialFiles(m.files).map((f, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between gap-4 rounded-xl border border-mist bg-white px-3 py-2"
-                      >
-                        <span className="min-w-0 truncate text-sm text-ink">
-                          {f.name || `Tệp ${i + 1}`}
-                        </span>
-                        <MaterialFileAction
-                          url={f.url}
-                          name={f.name}
-                          type={f.type}
-                          watermarkLabel={session?.user?.email ?? undefined}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <MaterialsPager
+              materials={course.materials.map((m) => ({
+                id: m.id,
+                name: m.name,
+                description: m.description,
+                files: getMaterialFiles(m.files),
+              }))}
+              watermarkLabel={session?.user?.email ?? undefined}
+            />
           </div>
         )}
       </div>

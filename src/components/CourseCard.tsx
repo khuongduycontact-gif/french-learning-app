@@ -95,33 +95,6 @@ function WalletIcon({ className }: { className?: string }) {
   );
 }
 
-/* Sắc thái dải ruy băng góc thẻ theo trạng thái đăng ký của học viên.
-   - confirmed (đã đăng ký): dấu tick
-   - waiting (chờ xác nhận): đồng hồ - đang chờ admin xử lý
-   - pending (chờ thanh toán): ví tiền - đang chờ học viên thanh toán
-   Dùng mã màu hex (thay vì class Tailwind) vì gradient được vẽ bằng SVG
-   <linearGradient> để có thể vừa tô màu vừa vẽ viền dọc theo cạnh chéo. */
-const ribbonTone: Record<
-  "pending" | "waiting" | "confirmed",
-  { stops: [string, string]; badge: string; Icon: (p: { className?: string }) => JSX.Element }
-> = {
-  confirmed: {
-    stops: ["#34d399", "#0d9488"],
-    badge: "text-emerald-600",
-    Icon: CheckIcon,
-  },
-  waiting: {
-    stops: ["#C9A227", "#d97706"],
-    badge: "text-amber-600",
-    Icon: ClockIcon,
-  },
-  pending: {
-    stops: ["#1B2A4Ab3", "#1B2A4A"],
-    badge: "text-ink",
-    Icon: WalletIcon,
-  },
-};
-
 export default function CourseCard({
   course,
   statusBadge,
@@ -129,15 +102,12 @@ export default function CourseCard({
   course: Course;
   statusBadge?: { label: string; tone: "pending" | "waiting" | "confirmed" };
 }) {
-  const tone = statusBadge ? ribbonTone[statusBadge.tone] : null;
   const hasMedia = Boolean(course.videoUrl);
   const initial = course.title.trim().slice(0, 1).toUpperCase();
 
   return (
-    <Link
-      href={`/courses/${course.id}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-    >
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <Link href={`/courses/${course.id}`} className="contents">
       {/* Vùng ảnh / minh hoạ đầu thẻ */}
       <div className="relative h-40 w-full overflow-hidden bg-mist">
         {course.videoUrl && isVideoUrl(course.videoUrl) ? (
@@ -251,62 +221,6 @@ export default function CourseCard({
           </div>
         )}
 
-        {/* Dải ruy băng góc: trạng thái đăng ký của học viên. ĐÚNG hướng
-            đường chéo theo mẫu tham khảo: rộng và áp sát mép trên (đầy hết
-            chiều rộng khung ngay tại y=0), rồi thu hẹp dần xuống gần thành
-            một điểm nhọn ở phía dưới, có nếp gấp tam giác nhỏ ngay tại điểm
-            nhọn đó (mô phỏng ruy băng giấy gấp thật) và viền sáng mỏng chạy
-            theo cạnh chéo. Container ngoài bo góc + overflow-hidden để dải
-            băng không tràn ra khỏi bán kính góc thẻ. */}
-        {statusBadge && tone && (
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-11 w-[68%] max-w-[220px]">
-            <svg
-              viewBox="0 0 200 100"
-              preserveAspectRatio="none"
-              className="absolute inset-0 h-full w-full"
-            >
-              <defs>
-                <linearGradient
-                  id={`ribbon-grad-${course.id}`}
-                  x1="0%"
-                  y1="0%"
-                  x2="100%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor={tone.stops[0]} />
-                  <stop offset="100%" stopColor={tone.stops[1]} />
-                </linearGradient>
-              </defs>
-              {/* Thân ruy băng: rộng áp mép trên, cạnh trái chéo thu hẹp dần xuống dưới */}
-              <polygon
-                points="12,0 200,0 200,100 158,100"
-                fill={`url(#ribbon-grad-${course.id})`}
-              />
-              {/* Viền sáng mỏng dọc cạnh chéo */}
-              <line
-                x1="12"
-                y1="0"
-                x2="158"
-                y2="100"
-                stroke="white"
-                strokeOpacity="0.5"
-                strokeWidth="1.5"
-              />
-              {/* Nếp gấp tam giác nhỏ ngay tại điểm nhọn phía dưới, tạo
-                  hiệu ứng ruy băng giấy gấp thật */}
-              <polygon points="158,100 185,100 170,80" fill="black" fillOpacity="0.18" />
-            </svg>
-            <div className="absolute inset-0 flex items-center gap-1.5 py-1.5 pl-[46%] pr-3">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
-                <tone.Icon className={`h-3 w-3 ${tone.badge}`} />
-              </span>
-              <span className="truncate text-[13px] font-semibold text-white">
-                {statusBadge.label}
-              </span>
-            </div>
-          </div>
-        )}
-
         {!course.published && (
           <span className="absolute left-2.5 top-2.5 rounded-full bg-ink/85 px-2 py-0.5 text-[10px] font-medium text-parchment shadow-sm">
             Bản nháp
@@ -321,7 +235,7 @@ export default function CourseCard({
           {levelLabel[course.level] ?? course.level}
         </span>
 
-        <h3 className="line-clamp-1 font-display text-lg font-bold leading-snug text-ink">
+        <h3 className="line-clamp-1 font-body text-lg font-bold leading-snug text-ink">
           {course.title}
         </h3>
 
@@ -329,19 +243,61 @@ export default function CourseCard({
           {stripRichText(course.description)}
         </p>
 
-        <div className="mt-auto flex items-center justify-between gap-2 border-t border-mist pt-3">
-          <span className="flex items-center gap-1.5 text-xs font-medium text-ink/55">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-indigo-50">
-              <TagIcon className="h-3.5 w-3.5 text-indigo-500" />
-            </span>
-            {course.price > 0 ? formatVnd(course.price) : "Miễn phí"}
-          </span>
-          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-100 px-3.5 py-1.5 text-xs font-semibold text-emerald-800">
-            <ClockIcon className="h-3.5 w-3.5" />
-            {course.duration} giờ học
-          </span>
+        <div className="mt-auto flex items-center gap-2 border-t border-mist pt-3">
+          <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl bg-amber-50 px-2.5 py-2">
+            <TagIcon className="h-4 w-4 shrink-0 text-amber-500" />
+            <div className="min-w-0">
+              <p className="truncate text-xs font-bold text-ink">
+                {course.price > 0 ? formatVnd(course.price) : "Miễn phí"}
+              </p>
+              <p className="truncate text-[10px] text-ink/50">Học phí</p>
+            </div>
+          </div>
+          <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl bg-emerald-50 px-2.5 py-2">
+            <ClockIcon className="h-4 w-4 shrink-0 text-emerald-600" />
+            <div className="min-w-0">
+              <p className="truncate text-xs font-bold text-emerald-700">
+                {course.duration} giờ
+              </p>
+              <p className="truncate text-[10px] text-ink/50">Thời gian</p>
+            </div>
+          </div>
         </div>
       </div>
     </Link>
+
+      {/* Nút hành động theo trạng thái đăng ký - luôn nằm dưới cùng của thẻ:
+          - Chưa đăng ký: "Đăng ký khoá học ngay" -> mở luôn form đăng ký/QR
+          - Đã đăng ký (đã xác nhận hoặc đang chờ xác nhận thanh toán): nút
+            "Bạn đã đăng ký khoá học này" -> chuyển sang trang chi tiết
+          - Đã đăng ký nhưng chưa thanh toán: "Tiến hành thanh toán" -> mở
+            lại đúng luồng thanh toán/QR */}
+      <div className="px-4 pb-4">
+        {!statusBadge ? (
+          <Link
+            href={`/courses/${course.id}?enroll=1`}
+            className="block w-full rounded-full bg-bordeaux px-4 py-2.5 text-center text-sm font-semibold text-parchment transition hover:bg-bordeaux/90"
+          >
+            Đăng ký khoá học ngay
+          </Link>
+        ) : statusBadge.tone === "pending" ? (
+          <Link
+            href={`/courses/${course.id}?enroll=1`}
+            className="flex w-full items-center justify-center gap-1.5 rounded-full bg-gold/20 px-4 py-2.5 text-center text-sm font-semibold text-ink transition hover:bg-gold/30"
+          >
+            <WalletIcon className="h-4 w-4" />
+            Tiến hành thanh toán
+          </Link>
+        ) : (
+          <Link
+            href={`/courses/${course.id}`}
+            className="flex w-full items-center justify-center gap-1.5 rounded-full bg-emerald-50 px-4 py-2.5 text-center text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100"
+          >
+            <CheckIcon className="h-4 w-4" />
+            Bạn đã đăng ký khoá học này
+          </Link>
+        )}
+      </div>
+    </div>
   );
 }

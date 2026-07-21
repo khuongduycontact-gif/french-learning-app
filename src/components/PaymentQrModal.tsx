@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import type { PaymentInfo } from "@/types";
 import { useToast } from "./Toast";
@@ -23,8 +24,23 @@ export default function PaymentQrModal({
 }) {
   const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  if (!open) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Khoá cuộn trang nền trong lúc modal mở, để tránh giật/lệch layout.
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
+
+  if (!open || !mounted) return null;
 
   async function handleCopy() {
     try {
@@ -37,7 +53,7 @@ export default function PaymentQrModal({
     }
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/50 p-4 backdrop-blur-[2px]"
       onClick={onClose}
@@ -65,14 +81,14 @@ export default function PaymentQrModal({
           <p className="text-xs font-semibold uppercase tracking-wide text-bordeaux">
             Thanh toán khoá học
           </p>
-          <h2 className="mt-1 font-display text-xl font-semibold text-ink line-clamp-2 px-6">
+          <h2 className="mt-1 font-body text-xl font-semibold text-ink line-clamp-2 px-6">
             {courseTitle}
           </h2>
         </div>
 
         {/* Nội dung cuộn được, phần bo góc chỉ nằm ở khung ngoài nên luôn mượt */}
-        <div className="overflow-y-auto px-6 py-5">
-          <p className="mb-4 text-center font-display text-2xl font-semibold text-bordeaux">
+        <div className="no-scrollbar overflow-y-auto px-6 py-5">
+          <p className="mb-4 text-center font-body text-2xl font-semibold text-bordeaux">
             {formatVnd(payment.amount)}
           </p>
 
@@ -161,6 +177,7 @@ export default function PaymentQrModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import type { EnrollmentStatus, PaymentInfo } from "@/types";
 import { useToast } from "./Toast";
@@ -12,14 +12,16 @@ export default function EnrollButton({
   initialEnrollmentId,
   initialStatus,
   initialPayment,
+  autoStart,
 }: {
   courseId: string;
   courseTitle: string;
   initialEnrollmentId: string | null;
   initialStatus: EnrollmentStatus | null;
   initialPayment: PaymentInfo | null;
+  autoStart?: boolean;
 }) {
-  const { data: session } = useSession();
+  const { data: session, status: authStatus } = useSession();
   const { showToast } = useToast();
 
   const [enrollmentId, setEnrollmentId] = useState(initialEnrollmentId);
@@ -97,6 +99,20 @@ export default function EnrollButton({
     }
   }
 
+  // Khi đến từ nút "Đăng ký khoá học ngay" (trang chủ / trang tất cả khoá
+  // học), tự động kích hoạt luôn quy trình đăng ký để mã QR thanh toán
+  // hiện ra ngay, không cần bấm lại nút "Đăng ký khoá học" ở đây nữa.
+  const autoStartedRef = useRef(false);
+  useEffect(() => {
+    if (!autoStart) return;
+    if (autoStartedRef.current) return;
+    if (authStatus === "loading") return; // đợi xác định phiên đăng nhập trước
+    if (status === "CONFIRMED" || status === "AWAITING_CONFIRMATION") return;
+    autoStartedRef.current = true;
+    handleStart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart, authStatus, status]);
+
   if (status === "CONFIRMED") {
     return (
       <div className="rounded-full bg-ink/5 px-6 py-3 text-center text-sm font-semibold text-ink">
@@ -129,7 +145,7 @@ export default function EnrollButton({
           : !session?.user
           ? "Đăng nhập để đăng ký"
           : status === "PENDING_PAYMENT"
-          ? "Tiếp tục thanh toán"
+          ? "Tiến hành thanh toán"
           : "Đăng ký khoá học"}
       </button>
       {status === "PENDING_PAYMENT" && (

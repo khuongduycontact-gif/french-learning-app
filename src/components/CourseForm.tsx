@@ -259,7 +259,7 @@ export default function CourseForm({
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink">Học phí (VNĐ)</label>
+            <label className="mb-1 block text-sm font-medium text-ink">Học phí (vnđ)</label>
             <input
               type="text"
               inputMode="numeric"

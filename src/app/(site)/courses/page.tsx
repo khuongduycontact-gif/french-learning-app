@@ -10,7 +10,7 @@ import Pagination from "@/components/Pagination";
 import { enrollmentStatusMap } from "@/lib/enrollmentStatus";
 import type { Course } from "@/types";
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 8; // 4 khoá học / dòng x 2 dòng, hết thì sang trang mới
 
 export default function CoursesPage() {
   const router = useRouter();
