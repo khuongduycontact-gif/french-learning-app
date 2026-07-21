@@ -4,6 +4,31 @@
 
 html {
   scroll-behavior: smooth;
+  /* Firefox: thanh cuộn mảnh, tông màu theo nền app (rãnh kem nhạt, con trượt đỏ rượu vang mờ) */
+  scrollbar-width: thin;
+  scrollbar-color: theme("colors.bordeaux/35%") theme("colors.parchment");
+}
+
+/* Chrome/Safari/Edge: thanh cuộn nhỏ gọn, cùng tông màu nền app.
+   Đặt ở mức toàn cục nhưng các class cụ thể hơn (.cell-nowrap, .scroll-x-fancy...)
+   vẫn được ưu tiên áp dụng nhờ độ đặc hiệu CSS cao hơn selector "*" ở đây. */
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-track {
+  background: theme("colors.parchment");
+}
+*::-webkit-scrollbar-thumb {
+  background-color: theme("colors.bordeaux/35%");
+  border-radius: 999px;
+  border: 2px solid theme("colors.parchment");
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: theme("colors.bordeaux/55%");
+}
+*::-webkit-scrollbar-corner {
+  background: theme("colors.parchment");
 }
 
 /* Biến chung cho các nút nổi (từ điển, về-đầu-trang...) để chúng luôn xếp
