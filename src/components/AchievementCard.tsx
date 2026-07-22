@@ -63,7 +63,6 @@ function ChevronRightIcon({ className }: { className?: string }) {
 
 export default function AchievementCard({ achievement }: { achievement: Achievement }) {
   const [preview, setPreview] = useState<string | null>(null);
-  const [thankYouIndex, setThankYouIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragX, setDragX] = useState(0);
@@ -75,7 +74,20 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
     achievement.thankYouUrls && achievement.thankYouUrls.length > 0
       ? achievement.thankYouUrls
       : [];
-  const hasMultipleThankYou = thankYouUrls.length > 1;
+  const n = thankYouUrls.length;
+  const hasMultipleThankYou = n > 1;
+
+  // Với >1 ảnh: nhân bản ảnh đầu/cuối ở hai đầu dải trượt để tạo hiệu ứng
+  // vòng tròn mượt mà (không bị giật ngược khi từ ảnh cuối quay về ảnh đầu).
+  const trackUrls = hasMultipleThankYou
+    ? [thankYouUrls[n - 1], ...thankYouUrls, thankYouUrls[0]]
+    : thankYouUrls;
+
+  // index chạy trên trackUrls (lệch +1 so với chỉ số thật khi có vòng lặp)
+  const [index, setIndex] = useState(() => (hasMultipleThankYou ? 1 : 0));
+  const [withTransition, setWithTransition] = useState(true);
+
+  const thankYouIndex = hasMultipleThankYou ? (((index - 1) % n) + n) % n : 0;
 
   // Tự động chạy slider mỗi 2s, chạy nối vòng tròn, dừng khi hover/kéo vào
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -84,22 +96,51 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
     if (!hasMultipleThankYou || isHovering || isDragging) return;
 
     intervalRef.current = setInterval(() => {
-      setThankYouIndex((i) => (i + 1) % thankYouUrls.length);
+      setWithTransition(true);
+      setIndex((i) => i + 1);
     }, AUTOPLAY_INTERVAL_MS);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [hasMultipleThankYou, isHovering, isDragging, thankYouUrls.length]);
+  }, [hasMultipleThankYou, isHovering, isDragging]);
+
+  // Sau khi "nhảy" tức thời (không hiệu ứng) để nối vòng, bật lại transition
+  // ở khung hình kế tiếp để lần trượt sau vẫn mượt mà.
+  useEffect(() => {
+    if (withTransition) return;
+    const raf = requestAnimationFrame(() => setWithTransition(true));
+    return () => cancelAnimationFrame(raf);
+  }, [withTransition]);
+
+  function handleTrackTransitionEnd() {
+    if (!hasMultipleThankYou) return;
+    if (index >= n + 1) {
+      // Đang ở bản sao của ảnh đầu -> nhảy êm về ảnh đầu thật, không giật ngược
+      setWithTransition(false);
+      setIndex(1);
+    } else if (index <= 0) {
+      // Đang ở bản sao của ảnh cuối -> nhảy êm về ảnh cuối thật
+      setWithTransition(false);
+      setIndex(n);
+    }
+  }
 
   function goPrev(e: React.MouseEvent) {
     e.stopPropagation();
-    setThankYouIndex((i) => (i - 1 + thankYouUrls.length) % thankYouUrls.length);
+    setWithTransition(true);
+    setIndex((i) => i - 1);
   }
 
   function goNext(e: React.MouseEvent) {
     e.stopPropagation();
-    setThankYouIndex((i) => (i + 1) % thankYouUrls.length);
+    setWithTransition(true);
+    setIndex((i) => i + 1);
+  }
+
+  function goToDot(i: number) {
+    setWithTransition(true);
+    setIndex(hasMultipleThankYou ? i + 1 : i);
   }
 
   function onTrackPointerDown(e: React.PointerEvent<HTMLDivElement>) {
@@ -109,7 +150,9 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
     didDragRef.current = false;
     dragStartXRef.current = e.clientX;
     trackWidthRef.current = e.currentTarget.offsetWidth || 1;
-    e.currentTarget.setPointerCapture?.(e.pointerId);
+    // Lưu ý: không gọi setPointerCapture ở đây — pointer capture trên
+    // container cha sẽ "nuốt" mất sự kiện click của ảnh con bên trong,
+    // khiến bấm vào ảnh không mở được xem trước.
   }
 
   function onTrackPointerMove(e: React.PointerEvent<HTMLDivElement>) {
@@ -122,10 +165,11 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
   function endDrag() {
     if (!isDragging) return;
     const threshold = trackWidthRef.current * 0.18;
+    setWithTransition(true);
     if (dragX <= -threshold) {
-      setThankYouIndex((i) => (i + 1) % thankYouUrls.length);
+      setIndex((i) => i + 1);
     } else if (dragX >= threshold) {
-      setThankYouIndex((i) => (i - 1 + thankYouUrls.length) % thankYouUrls.length);
+      setIndex((i) => i - 1);
     }
     setIsDragging(false);
     setDragX(0);
@@ -180,15 +224,19 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
               onPointerCancel={endDrag}
               onPointerLeave={() => isDragging && endDrag()}
             >
-              {thankYouUrls.length > 0 && (
+              {trackUrls.length > 0 && (
                 <div
                   className="flex h-full"
+                  onTransitionEnd={handleTrackTransitionEnd}
                   style={{
-                    transform: `translateX(calc(${-thankYouIndex * 100}% + ${dragX}px))`,
-                    transition: isDragging ? "none" : "transform 500ms cubic-bezier(0.22, 1, 0.36, 1)",
+                    transform: `translateX(calc(${-index * 100}% + ${dragX}px))`,
+                    transition:
+                      isDragging || !withTransition
+                        ? "none"
+                        : "transform 500ms cubic-bezier(0.22, 1, 0.36, 1)",
                   }}
                 >
-                  {thankYouUrls.map((url, i) => (
+                  {trackUrls.map((url, i) => (
                     <button
                       key={`${url}-${i}`}
                       type="button"
@@ -237,7 +285,7 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
                   <button
                     key={i}
                     type="button"
-                    onClick={() => setThankYouIndex(i)}
+                    onClick={() => goToDot(i)}
                     aria-label={`Xem ảnh ${i + 1}`}
                     className={`h-1.5 w-1.5 rounded-full transition ${
                       i === thankYouIndex ? "bg-bordeaux" : "bg-mist"
@@ -266,8 +314,11 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
         <div
           role="dialog"
           aria-modal="true"
-          onClick={() => setPreview(null)}
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-ink/80 p-6"
+          onClick={(e) => {
+            // Bấm vào lớp phủ nền xám sẽ đóng; bấm vào ảnh thì không.
+            if (e.target === e.currentTarget) setPreview(null);
+          }}
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-400/60 p-6 backdrop-blur-sm"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -279,7 +330,7 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
             type="button"
             onClick={() => setPreview(null)}
             aria-label="Đóng"
-            className="absolute right-6 top-6 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-parchment hover:bg-white/20"
+            className="absolute right-6 top-6 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-md transition hover:bg-parchment"
           >
             ✕
           </button>
