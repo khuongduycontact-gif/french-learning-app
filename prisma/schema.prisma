@@ -129,6 +129,18 @@ model Enrollment {
   @@unique([userId, courseId])
 }
 
+model Achievement {
+  id           String   @id @default(cuid())
+  level        Level // Trình độ đạt được
+  studentName  String // Tên học viên
+  evidenceUrl  String   @db.Text // Ảnh minh chứng (Cloudinary)
+  thankYouUrl  String   @db.Text // Ảnh lời cảm ơn của học viên (Cloudinary)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([level])
+}
+
 model Notification {
   id        String           @id @default(cuid())
   userId    String           // người nhận thông báo

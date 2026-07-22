@@ -41,6 +41,16 @@ export default function Navbar() {
                 Khoá học
               </Link>
             )}
+            {session?.user?.role !== "ADMIN" && (
+              <Link
+                href="/achievements"
+                className={`transition hover:text-ink ${
+                  isActive("/achievements") ? "font-semibold text-bordeaux" : ""
+                }`}
+              >
+                Thành tích
+              </Link>
+            )}
             {session?.user?.role === "ADMIN" && (
               <Link
                 href="/admin"

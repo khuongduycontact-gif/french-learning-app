@@ -53,6 +53,23 @@ export interface CourseInput {
   materials?: CourseMaterialInput[];
 }
 
+export interface Achievement {
+  id: string;
+  level: Level;
+  studentName: string;
+  evidenceUrl: string;
+  thankYouUrl: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AchievementInput {
+  level: Level;
+  studentName: string;
+  evidenceUrl?: string;
+  thankYouUrl?: string;
+}
+
 export interface Enrollment {
   id: string;
   userId: string;
