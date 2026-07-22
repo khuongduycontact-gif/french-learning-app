@@ -26,13 +26,19 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { level, studentName, evidenceUrl, thankYouUrl } = body;
+  const { level, studentName, evidenceUrl, thankYouUrls } = body;
 
-  if (!level || !studentName?.trim() || !evidenceUrl || !thankYouUrl) {
+  if (
+    !level ||
+    !studentName?.trim() ||
+    !evidenceUrl ||
+    !Array.isArray(thankYouUrls) ||
+    thankYouUrls.length === 0
+  ) {
     return NextResponse.json(
       {
         error:
-          "Vui lòng nhập đầy đủ trình độ, tên học viên, ảnh minh chứng và ảnh lời cảm ơn.",
+          "Vui lòng nhập đầy đủ trình độ, tên học viên, ảnh minh chứng và ít nhất một ảnh lời cảm ơn.",
       },
       { status: 400 }
     );
@@ -43,7 +49,7 @@ export async function POST(req: NextRequest) {
       level,
       studentName: studentName.trim(),
       evidenceUrl,
-      thankYouUrl,
+      thankYouUrls,
     },
   });
 

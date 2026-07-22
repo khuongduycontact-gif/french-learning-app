@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Achievement, AchievementInput } from "@/types";
 import MediaUploader from "./MediaUploader";
+import MultiImageUploader from "./MultiImageUploader";
 import { useToast } from "./Toast";
 
 const levels = ["A1", "A2", "B1", "B2", "C1"];
@@ -21,7 +22,7 @@ export default function AchievementForm({
     level: (initial?.level as any) || "A1",
     studentName: initial?.studentName || "",
     evidenceUrl: initial?.evidenceUrl || "",
-    thankYouUrl: initial?.thankYouUrl || "",
+    thankYouUrls: initial?.thankYouUrls || [],
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -38,7 +39,8 @@ export default function AchievementForm({
     const nextErrors: Partial<Record<keyof AchievementInput, string>> = {};
     if (!form.studentName.trim()) nextErrors.studentName = "Vui lòng nhập tên học viên.";
     if (!form.evidenceUrl) nextErrors.evidenceUrl = "Vui lòng chọn ảnh minh chứng.";
-    if (!form.thankYouUrl) nextErrors.thankYouUrl = "Vui lòng chọn ảnh lời cảm ơn.";
+    if (!form.thankYouUrls || form.thankYouUrls.length === 0)
+      nextErrors.thankYouUrls = "Vui lòng chọn ít nhất một ảnh lời cảm ơn.";
     return nextErrors;
   }
 
@@ -126,12 +128,11 @@ export default function AchievementForm({
             />
           </div>
           <div className="rounded-2xl border border-mist bg-white/60 p-6">
-            <MediaUploader
-              label="Ảnh lời cảm ơn của học viên"
-              kind="image"
-              value={form.thankYouUrl || ""}
-              onChange={(url) => update("thankYouUrl", url)}
-              error={fieldErrors.thankYouUrl}
+            <MultiImageUploader
+              label="Ảnh lời cảm ơn của học viên (có thể chọn nhiều ảnh)"
+              values={form.thankYouUrls || []}
+              onChange={(urls) => update("thankYouUrls", urls)}
+              error={fieldErrors.thankYouUrls}
             />
           </div>
         </div>

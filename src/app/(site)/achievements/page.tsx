@@ -91,11 +91,9 @@ export default function AchievementsPage() {
       </div>
 
       <div className="flex items-center gap-3">
-        <label htmlFor="level-filter" className="text-sm font-medium text-ink">
-          Lọc theo trình độ
-        </label>
         <select
           id="level-filter"
+          aria-label="Lọc theo trình độ"
           value={level}
           onChange={(e) => setLevel(e.target.value)}
           className="rounded-full border border-mist bg-white px-5 py-2.5 text-sm text-ink outline-none transition focus:border-bordeaux focus:ring-2 focus:ring-bordeaux/20"

@@ -26,18 +26,19 @@ export async function PUT(
   }
 
   const body = await req.json();
-  const { level, studentName, evidenceUrl, thankYouUrl } = body;
+  const { level, studentName, evidenceUrl, thankYouUrls } = body;
 
   if (
     (level !== undefined && !level) ||
     (studentName !== undefined && !studentName.trim()) ||
     (evidenceUrl !== undefined && !evidenceUrl) ||
-    (thankYouUrl !== undefined && !thankYouUrl)
+    (thankYouUrls !== undefined &&
+      (!Array.isArray(thankYouUrls) || thankYouUrls.length === 0))
   ) {
     return NextResponse.json(
       {
         error:
-          "Vui lòng nhập đầy đủ trình độ, tên học viên, ảnh minh chứng và ảnh lời cảm ơn.",
+          "Vui lòng nhập đầy đủ trình độ, tên học viên, ảnh minh chứng và ít nhất một ảnh lời cảm ơn.",
       },
       { status: 400 }
     );
@@ -49,7 +50,7 @@ export async function PUT(
       ...(level !== undefined ? { level } : {}),
       ...(studentName !== undefined ? { studentName: studentName.trim() } : {}),
       ...(evidenceUrl !== undefined ? { evidenceUrl } : {}),
-      ...(thankYouUrl !== undefined ? { thankYouUrl } : {}),
+      ...(thankYouUrls !== undefined ? { thankYouUrls } : {}),
     },
   });
 

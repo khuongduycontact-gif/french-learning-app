@@ -58,7 +58,7 @@ export interface Achievement {
   level: Level;
   studentName: string;
   evidenceUrl: string;
-  thankYouUrl: string;
+  thankYouUrls: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -67,7 +67,7 @@ export interface AchievementInput {
   level: Level;
   studentName: string;
   evidenceUrl?: string;
-  thankYouUrl?: string;
+  thankYouUrls?: string[];
 }
 
 export interface Enrollment {
