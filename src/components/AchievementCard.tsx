@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Achievement } from "@/types";
+
+const AUTOPLAY_INTERVAL_MS = 2000;
 
 function ShieldCheckIcon({ className }: { className?: string }) {
   return (
@@ -70,6 +72,7 @@ function ChevronRightIcon({ className }: { className?: string }) {
 export default function AchievementCard({ achievement }: { achievement: Achievement }) {
   const [preview, setPreview] = useState<string | null>(null);
   const [thankYouIndex, setThankYouIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
 
   const thankYouUrls =
     achievement.thankYouUrls && achievement.thankYouUrls.length > 0
@@ -77,6 +80,21 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
       : [];
   const hasMultipleThankYou = thankYouUrls.length > 1;
   const currentThankYouUrl = thankYouUrls[thankYouIndex];
+
+  // Tự động chạy slider mỗi 2s, chạy nối vòng tròn, dừng khi hover vào
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!hasMultipleThankYou || isHovering) return;
+
+    intervalRef.current = setInterval(() => {
+      setThankYouIndex((i) => (i + 1) % thankYouUrls.length);
+    }, AUTOPLAY_INTERVAL_MS);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [hasMultipleThankYou, isHovering, thankYouUrls.length]);
 
   function goPrev(e: React.MouseEvent) {
     e.stopPropagation();
@@ -91,10 +109,10 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
   return (
     <>
       <div className="group/card flex flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-bordeaux/30 hover:shadow-lg hover:shadow-bordeaux/10">
-        <div className="grid grid-cols-2 divide-x divide-mist">
+        <div className="grid grid-cols-2 gap-2 p-2">
           {/* Cột minh chứng */}
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5 px-3 pt-3 pb-2">
+          <div className="flex flex-col overflow-hidden rounded-xl border border-mist">
+            <div className="flex items-center justify-center gap-1.5 px-3 py-2.5">
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-bordeaux text-parchment">
                 <ShieldCheckIcon className="h-3 w-3" />
               </span>
@@ -117,8 +135,8 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
           </div>
 
           {/* Cột lời cảm ơn */}
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5 px-3 pt-3 pb-2">
+          <div className="flex flex-col overflow-hidden rounded-xl border border-mist">
+            <div className="flex items-center justify-center gap-1.5 px-3 py-2.5">
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-bordeaux text-parchment">
                 <HeartIcon className="h-3 w-3" />
               </span>
@@ -126,7 +144,11 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
                 Lời cảm ơn
               </span>
             </div>
-            <div className="relative aspect-square overflow-hidden bg-mist/30">
+            <div
+              className="relative aspect-square overflow-hidden bg-mist/30"
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+            >
               {currentThankYouUrl && (
                 <button
                   type="button"
@@ -148,7 +170,7 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
                     type="button"
                     onClick={goPrev}
                     aria-label="Ảnh trước"
-                    className="absolute left-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white"
+                    className="absolute left-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white/90 backdrop-blur-sm transition hover:bg-white/35"
                   >
                     <ChevronLeftIcon className="h-4 w-4" />
                   </button>
@@ -156,7 +178,7 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
                     type="button"
                     onClick={goNext}
                     aria-label="Ảnh tiếp theo"
-                    className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white"
+                    className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white/90 backdrop-blur-sm transition hover:bg-white/35"
                   >
                     <ChevronRightIcon className="h-4 w-4" />
                   </button>
