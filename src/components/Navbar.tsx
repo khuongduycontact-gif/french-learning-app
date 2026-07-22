@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import AuthButton from "./AuthButton";
 import NotificationBell from "./NotificationBell";
@@ -9,6 +9,7 @@ import NotificationBell from "./NotificationBell";
 export default function Navbar() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
 
   function isActive(href: string) {
     return pathname === href || pathname?.startsWith(`${href}/`);
@@ -18,8 +19,17 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b border-mist bg-parchment shadow-sm">
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-6 py-4 md:px-10">
         <div className="flex min-w-0 items-center gap-8">
+          {/* Trang chủ render động theo trạng thái đăng ký (huy hiệu "đã
+              đăng ký"/"chờ xác nhận"...). Next.js Link tự động prefetch "/"
+              ngay khi Navbar mount (kể cả khi đang ở trang khoá học, trước
+              lúc thanh toán/xác nhận), và bản prefetch đó không bị buộc
+              fetch lại chỉ bằng staleTimes.dynamic=0 trong next.config.js.
+              => tắt prefetch + ép router.refresh() khi bấm để luôn lấy
+              trạng thái mới nhất từ server, không cần tải lại cả trang. */}
           <Link
             href="/"
+            prefetch={false}
+            onClick={() => router.refresh()}
             className="flex shrink-0 flex-col leading-tight sm:flex-row sm:items-baseline sm:gap-2"
           >
             <span className="font-display text-lg font-semibold tracking-tight text-ink sm:text-xl">

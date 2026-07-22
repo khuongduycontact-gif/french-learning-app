@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import type { EnrollmentStatus, PaymentInfo } from "@/types";
 import { useToast } from "./Toast";
@@ -23,6 +24,7 @@ export default function EnrollButton({
 }) {
   const { data: session, status: authStatus } = useSession();
   const { showToast } = useToast();
+  const router = useRouter();
 
   const [enrollmentId, setEnrollmentId] = useState(initialEnrollmentId);
   const [status, setStatus] = useState<EnrollmentStatus | null>(initialStatus);
@@ -65,6 +67,7 @@ export default function EnrollButton({
 
       if (data.enrollment.status === "CONFIRMED") {
         showToast("Đăng ký khoá học miễn phí thành công!", "success");
+        router.refresh();
         return;
       }
 
@@ -92,6 +95,7 @@ export default function EnrollButton({
       setStatus("AWAITING_CONFIRMATION");
       setModalOpen(false);
       showToast("Đã ghi nhận thanh toán, đang chờ cô giáo Céline xác nhận.", "success");
+      router.refresh();
     } catch {
       showToast("Có lỗi xảy ra, vui lòng thử lại.", "error");
     } finally {
