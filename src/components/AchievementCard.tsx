@@ -8,8 +8,8 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
 
   return (
     <>
-      <div className="flex flex-col overflow-hidden rounded-2xl border border-mist bg-white/70 shadow-sm transition hover:shadow-md">
-        <div className="grid grid-cols-2 gap-0.5 bg-mist">
+      <div className="group/card flex flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-bordeaux/30 hover:shadow-lg hover:shadow-bordeaux/10">
+        <div className="grid grid-cols-2 gap-px bg-mist">
           <button
             type="button"
             onClick={() => setPreview(achievement.evidenceUrl)}
@@ -19,9 +19,10 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
             <img
               src={achievement.evidenceUrl}
               alt={`Minh chứng của ${achievement.studentName}`}
-              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
             />
-            <span className="absolute bottom-1.5 left-1.5 rounded-full bg-ink/60 px-2 py-0.5 text-[10px] font-medium text-parchment">
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/0 to-ink/0 opacity-80 transition-opacity group-hover:opacity-100" />
+            <span className="absolute bottom-2 left-2 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-parchment backdrop-blur-sm">
               Minh chứng
             </span>
           </button>
@@ -34,19 +35,22 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
             <img
               src={achievement.thankYouUrl}
               alt={`Lời cảm ơn của ${achievement.studentName}`}
-              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
             />
-            <span className="absolute bottom-1.5 left-1.5 rounded-full bg-ink/60 px-2 py-0.5 text-[10px] font-medium text-parchment">
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/0 to-ink/0 opacity-80 transition-opacity group-hover:opacity-100" />
+            <span className="absolute bottom-2 left-2 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-parchment backdrop-blur-sm">
               Lời cảm ơn
             </span>
           </button>
         </div>
 
-        <div className="flex items-center justify-between gap-3 px-4 py-3">
-          <p className="truncate font-medium text-ink">{achievement.studentName}</p>
-          <span className="shrink-0 rounded-full bg-bordeaux/10 px-3 py-1 text-xs font-semibold text-bordeaux">
+        <div className="flex items-center justify-between gap-3 px-4 py-3.5">
+          <span className="shrink-0 rounded-full border border-bordeaux/20 bg-bordeaux/10 px-3 py-1 text-xs font-semibold tracking-wide text-bordeaux">
             {achievement.level}
           </span>
+          <p className="truncate text-right font-display text-base font-semibold text-ink">
+            {achievement.studentName}
+          </p>
         </div>
       </div>
 
