@@ -134,7 +134,7 @@ model Achievement {
   level        Level // Trình độ đạt được
   studentName  String // Tên học viên
   evidenceUrl  String   @db.Text // Ảnh minh chứng (Cloudinary)
-  thankYouUrl  String   @db.Text // Ảnh lời cảm ơn của học viên (Cloudinary)
+  thankYouUrls Json // Danh sách ảnh lời cảm ơn của học viên (Cloudinary): ["url1", "url2", ...]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
