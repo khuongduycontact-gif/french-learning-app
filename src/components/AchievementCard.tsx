@@ -7,19 +7,11 @@ const AUTOPLAY_INTERVAL_MS = 2000;
 
 function ShieldCheckIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
       <path
-        d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M9 12.2l2 2 4-4.2"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        fillRule="evenodd"
+        d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 01-7.877 3.08.75.75 0 00-.722.515A12.74 12.74 0 002.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.75.75 0 00.374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 00-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08zm3.094 8.016a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+        clipRule="evenodd"
       />
     </svg>
   );
@@ -28,7 +20,7 @@ function ShieldCheckIcon({ className }: { className?: string }) {
 function HeartIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M12 20.2s-7.5-4.5-9.7-9C1 8.2 2.2 5 5.4 4.4c1.8-.3 3.5.5 4.6 2C11.1 4.9 12.8 4.1 14.6 4.4 17.8 5 19 8.2 17.7 11.2c-2.2 4.5-9.7 9-9.7 9z" />
+      <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
     </svg>
   );
 }
@@ -73,19 +65,23 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
   const [preview, setPreview] = useState<string | null>(null);
   const [thankYouIndex, setThankYouIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragX, setDragX] = useState(0);
+  const dragStartXRef = useRef(0);
+  const didDragRef = useRef(false);
+  const trackWidthRef = useRef(1);
 
   const thankYouUrls =
     achievement.thankYouUrls && achievement.thankYouUrls.length > 0
       ? achievement.thankYouUrls
       : [];
   const hasMultipleThankYou = thankYouUrls.length > 1;
-  const currentThankYouUrl = thankYouUrls[thankYouIndex];
 
-  // Tự động chạy slider mỗi 2s, chạy nối vòng tròn, dừng khi hover vào
+  // Tự động chạy slider mỗi 2s, chạy nối vòng tròn, dừng khi hover/kéo vào
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (!hasMultipleThankYou || isHovering) return;
+    if (!hasMultipleThankYou || isHovering || isDragging) return;
 
     intervalRef.current = setInterval(() => {
       setThankYouIndex((i) => (i + 1) % thankYouUrls.length);
@@ -94,7 +90,7 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [hasMultipleThankYou, isHovering, thankYouUrls.length]);
+  }, [hasMultipleThankYou, isHovering, isDragging, thankYouUrls.length]);
 
   function goPrev(e: React.MouseEvent) {
     e.stopPropagation();
@@ -104,6 +100,36 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
   function goNext(e: React.MouseEvent) {
     e.stopPropagation();
     setThankYouIndex((i) => (i + 1) % thankYouUrls.length);
+  }
+
+  function onTrackPointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    if (!hasMultipleThankYou) return;
+    setIsHovering(true);
+    setIsDragging(true);
+    didDragRef.current = false;
+    dragStartXRef.current = e.clientX;
+    trackWidthRef.current = e.currentTarget.offsetWidth || 1;
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  }
+
+  function onTrackPointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!isDragging) return;
+    const delta = e.clientX - dragStartXRef.current;
+    if (Math.abs(delta) > 5) didDragRef.current = true;
+    setDragX(delta);
+  }
+
+  function endDrag() {
+    if (!isDragging) return;
+    const threshold = trackWidthRef.current * 0.18;
+    if (dragX <= -threshold) {
+      setThankYouIndex((i) => (i + 1) % thankYouUrls.length);
+    } else if (dragX >= threshold) {
+      setThankYouIndex((i) => (i - 1 + thankYouUrls.length) % thankYouUrls.length);
+    }
+    setIsDragging(false);
+    setDragX(0);
+    setIsHovering(false);
   }
 
   return (
@@ -145,23 +171,42 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
               </span>
             </div>
             <div
-              className="relative aspect-square overflow-hidden bg-mist/30"
+              className="relative aspect-square touch-pan-y select-none overflow-hidden bg-mist/30"
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
+              onPointerDown={onTrackPointerDown}
+              onPointerMove={onTrackPointerMove}
+              onPointerUp={endDrag}
+              onPointerCancel={endDrag}
+              onPointerLeave={() => isDragging && endDrag()}
             >
-              {currentThankYouUrl && (
-                <button
-                  type="button"
-                  onClick={() => setPreview(currentThankYouUrl)}
-                  className="group absolute inset-0"
+              {thankYouUrls.length > 0 && (
+                <div
+                  className="flex h-full"
+                  style={{
+                    transform: `translateX(calc(${-thankYouIndex * 100}% + ${dragX}px))`,
+                    transition: isDragging ? "none" : "transform 500ms cubic-bezier(0.22, 1, 0.36, 1)",
+                  }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={currentThankYouUrl}
-                    alt={`Lời cảm ơn của ${achievement.studentName}`}
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                  />
-                </button>
+                  {thankYouUrls.map((url, i) => (
+                    <button
+                      key={`${url}-${i}`}
+                      type="button"
+                      onClick={() => {
+                        if (!didDragRef.current) setPreview(url);
+                      }}
+                      className="group relative h-full w-full shrink-0"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt={`Lời cảm ơn của ${achievement.studentName}`}
+                        draggable={false}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                      />
+                    </button>
+                  ))}
+                </div>
               )}
 
               {hasMultipleThankYou && (
