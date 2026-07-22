@@ -74,6 +74,15 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
+function HourglassIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
+      <circle cx="10" cy="10" r="7.25" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M10 6v4l2.5 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function WalletIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
@@ -266,12 +275,15 @@ export default function CourseCard({
       </div>
     </Link>
 
-      {/* Nút hành động theo trạng thái đăng ký - luôn nằm dưới cùng của thẻ:
+      {/* Nút hành động theo trạng thái đăng ký - luôn nằm dưới cùng của thẻ,
+          khớp với đúng trạng thái hiển thị ở trang chi tiết khoá học:
           - Chưa đăng ký: "Đăng ký khoá học ngay" -> mở luôn form đăng ký/QR
-          - Đã đăng ký (đã xác nhận hoặc đang chờ xác nhận thanh toán): nút
-            "Bạn đã đăng ký khoá học này" -> chuyển sang trang chi tiết
-          - Đã đăng ký nhưng chưa thanh toán: "Tiến hành thanh toán" -> mở
-            lại đúng luồng thanh toán/QR */}
+          - PENDING_PAYMENT (chưa thanh toán): "Tiến hành thanh toán" -> mở
+            lại đúng luồng thanh toán/QR
+          - AWAITING_CONFIRMATION (đã thanh toán, chờ admin duyệt): trạng
+            thái chờ riêng, không phải "đã đăng ký" - khớp với EnrollButton
+            ở trang chi tiết
+          - CONFIRMED (đã được admin xác nhận): "Bạn đã đăng ký khoá học này" */}
       <div className="px-4 pb-4">
         {!statusBadge ? (
           <Link
@@ -287,6 +299,14 @@ export default function CourseCard({
           >
             <WalletIcon className="h-4 w-4" />
             Tiến hành thanh toán
+          </Link>
+        ) : statusBadge.tone === "waiting" ? (
+          <Link
+            href={`/courses/${course.id}`}
+            className="flex w-full items-center justify-center gap-1.5 rounded-full bg-gold/10 px-4 py-2.5 text-center text-sm font-medium text-ink transition hover:bg-gold/20"
+          >
+            <HourglassIcon className="h-4 w-4 shrink-0 text-ink/60" />
+            Đang chờ xác nhận thanh toán
           </Link>
         ) : (
           <Link

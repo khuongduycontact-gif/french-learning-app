@@ -11,25 +11,37 @@ export default async function HomePage() {
   const session = await getServerSession(authOptions);
   if (session?.user?.role === "ADMIN") redirect("/admin");
 
-  const [newestCourses, totalEnrollments] = await Promise.all([
+  const [newestCourses, confirmedGroups] = await Promise.all([
     prisma.course.findMany({
       where: { published: true },
       orderBy: { createdAt: "desc" },
       take: 4,
-      include: { _count: { select: { enrollments: true } } },
+      include: { _count: { select: { enrollments: { where: { status: "CONFIRMED" } } } } },
     }),
-    prisma.enrollment.count(),
+    // "Nhiều người đăng ký nhất" chỉ tính các lượt đăng ký đã thanh toán
+    // thành công (CONFIRMED) - PENDING_PAYMENT / AWAITING_CONFIRMATION
+    // không được tính vào lượt đăng ký hợp lệ.
+    prisma.enrollment.groupBy({
+      by: ["courseId"],
+      where: { status: "CONFIRMED", course: { published: true } },
+      _count: { courseId: true },
+      orderBy: { _count: { courseId: "desc" } },
+      take: 4,
+    }),
   ]);
 
-  const secondaryCourses =
-    totalEnrollments > 0
+  const secondaryCourseIds = confirmedGroups.map((g) => g.courseId);
+  const secondaryCoursesById =
+    secondaryCourseIds.length > 0
       ? await prisma.course.findMany({
-          where: { published: true, enrollments: { some: {} } },
-          orderBy: { enrollments: { _count: "desc" } },
-          take: 4,
-          include: { _count: { select: { enrollments: true } } },
+          where: { id: { in: secondaryCourseIds } },
+          include: { _count: { select: { enrollments: { where: { status: "CONFIRMED" } } } } },
         })
       : [];
+  // Giữ đúng thứ tự "nhiều người đăng ký nhất" theo groupBy ở trên
+  const secondaryCourses = secondaryCourseIds
+    .map((id) => secondaryCoursesById.find((c) => c.id === id))
+    .filter((c): c is (typeof secondaryCoursesById)[number] => Boolean(c));
 
   const secondaryTitle = "Khoá học nhiều người đăng ký nhất";
 
