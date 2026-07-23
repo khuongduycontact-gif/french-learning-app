@@ -147,25 +147,33 @@ export default function CourseForm({
   }
 
   // Gõ vào ô "giờ" hoặc "phút": chỉ cho phép tối đa 2 chữ số, cho phép xoá
-  // trắng để gõ số mới (giống các ô số khác trong form)
+  // trắng để gõ số mới (giống các ô số khác trong form). Lưu thẳng vào
+  // form.duration ngay khi gõ (không đợi rời khỏi ô), tránh trường hợp bấm
+  // Lưu ngay sau khi gõ mà giá trị chưa kịp "chốt".
   function updateDurationPart(part: "hours" | "minutes", raw: string) {
     if (raw !== "" && !/^\d{0,2}$/.test(raw)) return;
-    setDurationParts((p) => ({ ...p, [part]: raw }));
+    setDurationParts((p) => {
+      const next = { ...p, [part]: raw };
+      const h = parseInt(next.hours, 10);
+      const m = parseInt(next.minutes, 10);
+      const hours = Math.min(23, Math.max(0, Number.isNaN(h) ? 0 : h));
+      const minutes = Math.min(59, Math.max(0, Number.isNaN(m) ? 0 : m));
+      const value = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+      setDurationTime(value);
+      update("duration", timeValueToDecimalHours(value));
+      return next;
+    });
   }
 
-  // Rời khỏi ô giờ/phút: chốt lại giá trị hợp lệ (giờ 0-23, phút 0-59),
-  // đệm số 0 phía trước rồi quy đổi sang thập phân để lưu
+  // Rời khỏi ô giờ/phút: chỉ để hiển thị lại đúng dạng 2 chữ số có đệm số 0
+  // (VD: "1" -> "01"), giá trị thực đã được lưu từ lúc gõ ở trên rồi.
   function commitDurationPart(part: "hours" | "minutes") {
     setDurationParts((p) => {
       const max = part === "hours" ? 23 : 59;
       let n = parseInt(p[part], 10);
       if (Number.isNaN(n)) n = 0;
       n = Math.min(max, Math.max(0, n));
-      const next = { ...p, [part]: String(n).padStart(2, "0") };
-      const value = `${next.hours}:${next.minutes}`;
-      setDurationTime(value);
-      update("duration", timeValueToDecimalHours(value));
-      return next;
+      return { ...p, [part]: String(n).padStart(2, "0") };
     });
   }
 
