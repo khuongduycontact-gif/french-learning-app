@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
   const validMaterials: {
     name: string;
     description: string;
-    files: { url: string; type: string; name: string }[];
+    files: { url: string; type: string; name: string; category: string }[];
     order: number;
   }[] = Array.isArray(materials)
     ? materials
@@ -119,6 +119,7 @@ export async function POST(req: NextRequest) {
                   url: String(f.url),
                   type: String(f.type || ""),
                   name: String(f.name || ""),
+                  category: f?.category === "exercise" ? "exercise" : "lecture",
                 }))
             : [],
         }))

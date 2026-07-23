@@ -19,13 +19,16 @@ export default function MaterialFileAction({
   const kind = getMediaKind({ url, type });
 
   // Tệp không phải ảnh/video (PDF, Word, PowerPoint, file nén...) vẫn cho
-  // tải xuống bình thường như trước.
+  // tải xuống bình thường như trước — nhưng đi qua proxy /api/download để
+  // trình duyệt luôn nhận đúng tên tệp, đúng đuôi mở rộng và tải xuống
+  // (thay vì Cloudinary trả về thiếu đuôi khiến tệp tải về không mở được).
   if (kind === "other") {
+    const downloadHref = `/api/download?url=${encodeURIComponent(
+      url
+    )}&name=${encodeURIComponent(name || "tai-lieu")}`;
     return (
       <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
+        href={downloadHref}
         className="shrink-0 rounded-full bg-bordeaux px-4 py-1.5 text-xs font-medium text-parchment transition hover:bg-bordeaux/90"
       >
         Tải xuống

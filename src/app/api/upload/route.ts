@@ -8,10 +8,13 @@ export const runtime = "nodejs";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_BYTES = 200 * 1024 * 1024; // 200MB
-const MAX_DOC_BYTES = 50 * 1024 * 1024; // 50MB
+// Tệp tài liệu học (PDF, Word, PowerPoint, âm thanh...) không giới hạn dung
+// lượng ở phía ứng dụng — chỉ còn phụ thuộc vào giới hạn của gói Cloudinary
+// và của nền tảng hosting (xem ghi chú trong README).
 
-// Các định dạng tài liệu học được phép: Word, PowerPoint, PDF, văn bản thuần, file nén
-const DOC_EXTENSIONS = /\.(pdf|docx?|pptx?|txt|zip|rar|7z)$/i;
+// Các định dạng tài liệu học được phép: Word, PowerPoint, PDF, văn bản thuần,
+// file nén, và các định dạng âm thanh (mp3, wav, m4a, aac, ogg, flac, wma)
+const DOC_EXTENSIONS = /\.(pdf|docx?|pptx?|txt|zip|rar|7z|mp3|wav|m4a|aac|ogg|flac|wma)$/i;
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -35,7 +38,8 @@ export async function POST(req: NextRequest) {
 
   const isImage = file.type.startsWith("image/");
   const isVideo = file.type.startsWith("video/");
-  const isDoc = !isImage && !isVideo && DOC_EXTENSIONS.test(file.name);
+  const isAudio = file.type.startsWith("audio/");
+  const isDoc = !isImage && !isVideo && (isAudio || DOC_EXTENSIONS.test(file.name));
 
   if (!isImage && !isVideo && !isDoc) {
     return NextResponse.json(
@@ -44,8 +48,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const maxBytes = isVideo ? MAX_VIDEO_BYTES : isDoc ? MAX_DOC_BYTES : MAX_IMAGE_BYTES;
-  if (file.size > maxBytes) {
+  // Tài liệu học (bao gồm âm thanh) không giới hạn dung lượng ở đây; chỉ ảnh
+  // và video giới thiệu khoá học mới bị giới hạn.
+  const maxBytes = isDoc ? null : isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+  if (maxBytes && file.size > maxBytes) {
     return NextResponse.json(
       {
         error: `Tệp quá lớn. Giới hạn ${Math.round(maxBytes / 1024 / 1024)}MB.`,

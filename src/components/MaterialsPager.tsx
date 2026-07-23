@@ -3,7 +3,12 @@
 import { useState } from "react";
 import MaterialFileAction from "./MaterialFileAction";
 
-type MaterialFile = { url: string; name?: string; type?: string };
+type MaterialFile = {
+  url: string;
+  name?: string;
+  type?: string;
+  category?: string | null;
+};
 
 type Material = {
   id: string;
@@ -69,24 +74,44 @@ export default function MaterialsPager({
             <p className="mt-0.5 text-sm text-ink/60">{current.description}</p>
           )}
         </div>
-        <div className="flex flex-col gap-2">
-          {current.files.map((f, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between gap-4 rounded-xl border border-mist bg-white px-3 py-2"
-            >
-              <span className="min-w-0 truncate text-sm text-ink">
-                {f.name || `Tệp ${i + 1}`}
-              </span>
-              <MaterialFileAction
-                url={f.url}
-                name={f.name}
-                type={f.type}
-                watermarkLabel={watermarkLabel}
-              />
+        {(() => {
+          const lectureFiles = current.files.filter((f) => f.category !== "exercise");
+          const exerciseFiles = current.files.filter((f) => f.category === "exercise");
+
+          function renderGroup(label: string, groupFiles: MaterialFile[]) {
+            if (groupFiles.length === 0) return null;
+            return (
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+                  {label}
+                </p>
+                {groupFiles.map((f, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between gap-4 rounded-xl border border-mist bg-white px-3 py-2"
+                  >
+                    <span className="min-w-0 truncate text-sm text-ink">
+                      {f.name || `Tệp ${i + 1}`}
+                    </span>
+                    <MaterialFileAction
+                      url={f.url}
+                      name={f.name}
+                      type={f.type}
+                      watermarkLabel={watermarkLabel}
+                    />
+                  </div>
+                ))}
+              </div>
+            );
+          }
+
+          return (
+            <div className="flex flex-col gap-4">
+              {renderGroup("Tài liệu bài giảng", lectureFiles)}
+              {renderGroup("Tài liệu bài tập", exerciseFiles)}
             </div>
-          ))}
-        </div>
+          );
+        })()}
       </div>
 
       <div className="mt-3 flex items-center gap-3">

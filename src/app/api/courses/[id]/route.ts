@@ -57,6 +57,7 @@ export async function PUT(
                 url: String(f.url),
                 type: String(f.type || ""),
                 name: String(f.name || ""),
+                category: f?.category === "exercise" ? "exercise" : "lecture",
               }))
           : [],
       }))

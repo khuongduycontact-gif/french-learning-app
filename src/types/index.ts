@@ -1,9 +1,14 @@
 export type Level = "A1" | "A2" | "B1" | "B2" | "C1";
 
+// "lecture" = tệp tài liệu bài giảng, "exercise" = tệp tài liệu bài tập.
+// Dữ liệu cũ chưa có trường này sẽ được coi mặc định là "lecture".
+export type MaterialFileCategory = "lecture" | "exercise";
+
 export interface CourseMaterialFile {
   url: string;
   type: string | null;
   name: string | null;
+  category?: MaterialFileCategory | null;
 }
 
 export interface CourseMaterial {

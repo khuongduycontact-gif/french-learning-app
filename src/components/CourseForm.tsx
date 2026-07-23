@@ -48,6 +48,7 @@ export default function CourseForm({
         url: f.url,
         type: f.type || "",
         name: f.name || "",
+        category: f.category === "exercise" ? "exercise" : "lecture",
       })),
     }))
   );
@@ -149,7 +150,12 @@ export default function CourseForm({
             description: m.description?.trim() || "",
             files: m.files
               .filter((f) => f.url)
-              .map((f) => ({ url: f.url, type: f.type || "", name: f.name || "" })),
+              .map((f) => ({
+                url: f.url,
+                type: f.type || "",
+                name: f.name || "",
+                category: f.category === "exercise" ? "exercise" : "lecture",
+              })),
           })),
       };
       const res = await fetch(

@@ -2,11 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 
+export type MaterialFileCategory = "lecture" | "exercise";
+
 export type MaterialFileDraft = {
   key: string;
   url: string; // rỗng trong lúc đang tải lên
   type: string;
   name: string;
+  category: MaterialFileCategory;
 };
 
 export type MaterialDraft = {
@@ -38,12 +41,17 @@ function stripExtension(filename: string) {
 }
 
 const ACCEPT =
-  "image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar,.7z";
+  "image/*,video/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar,.7z,.mp3,.wav,.m4a,.aac,.ogg,.flac,.wma";
 
 function fileKindLabel(fileType?: string, fileName?: string) {
   const name = (fileName || "").toLowerCase();
   if (fileType?.startsWith("image/")) return "Ảnh";
   if (fileType?.startsWith("video/")) return "Video";
+  if (
+    fileType?.startsWith("audio/") ||
+    /\.(mp3|wav|m4a|aac|ogg|flac|wma)$/i.test(name)
+  )
+    return "Âm thanh";
   if (name.endsWith(".pdf")) return "PDF";
   if (name.endsWith(".doc") || name.endsWith(".docx")) return "Word";
   if (name.endsWith(".ppt") || name.endsWith(".pptx")) return "PowerPoint";
@@ -56,11 +64,15 @@ function fileKindLabel(fileType?: string, fileName?: string) {
 // Danh sách các tệp đã đính kèm / đang tải lên cho 1 tài liệu, cộng với nút
 // thêm tệp (hỗ trợ chọn nhiều tệp cùng lúc, tất cả gộp vào tài liệu này).
 function MaterialFilesField({
+  label,
+  helpText,
   files,
   statusByKey,
   onSelectFiles,
   onRemoveFile,
 }: {
+  label: string;
+  helpText: string;
   files: MaterialFileDraft[];
   statusByKey: Record<string, UploadStatus>;
   onSelectFiles: (files: File[]) => void;
@@ -77,7 +89,7 @@ function MaterialFilesField({
 
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-ink">Tệp tài liệu</label>
+      <label className="mb-1 block text-sm font-medium text-ink">{label}</label>
 
       {files.length > 0 && (
         <div className="mb-2 flex flex-col gap-2">
@@ -141,13 +153,13 @@ function MaterialFilesField({
         className="hidden"
       />
 
-      <p className="mt-1 text-xs text-ink/50">
-        Có thể chọn nhiều tệp cùng lúc, tất cả sẽ được đính kèm vào tài liệu
-        này. Hỗ trợ ảnh, video, Word, PowerPoint, PDF, văn bản (.txt), file nén (.zip, .rar, .7z).
-      </p>
+      <p className="mt-1 text-xs text-ink/50">{helpText}</p>
     </div>
   );
 }
+
+const FILES_HELP_TEXT =
+  "Có thể chọn nhiều tệp cùng lúc. Hỗ trợ ảnh, video, âm thanh (.mp3, .wav, .m4a...), Word, PowerPoint, PDF, văn bản (.txt), file nén (.zip, .rar, .7z). Không giới hạn dung lượng tệp tài liệu.";
 
 export default function CourseMaterialsEditor({
   value,
@@ -269,9 +281,14 @@ export default function CourseMaterialsEditor({
     xhr.send(formData);
   }
 
-  // Chọn nhiều tệp cùng lúc cho 1 tài liệu -> tất cả gộp vào files[] của
-  // đúng tài liệu đó và tải lên song song.
-  function handleFilesSelected(materialIndex: number, files: File[]) {
+  // Chọn nhiều tệp cùng lúc cho 1 tài liệu (thuộc 1 trong 2 nhóm: bài giảng
+  // hoặc bài tập) -> tất cả gộp vào files[] của đúng tài liệu đó và tải lên
+  // song song.
+  function handleFilesSelected(
+    materialIndex: number,
+    files: File[],
+    category: MaterialFileCategory
+  ) {
     if (files.length === 0) return;
     const material = valueRef.current[materialIndex];
     if (!material) return;
@@ -281,6 +298,7 @@ export default function CourseMaterialsEditor({
       url: "",
       type: file.type,
       name: file.name,
+      category,
     }));
 
     const patch: Partial<MaterialDraft> = { files: [...material.files, ...drafts] };
@@ -352,9 +370,20 @@ export default function CourseMaterialsEditor({
               </div>
 
               <MaterialFilesField
-                files={material.files}
+                label="Tệp tài liệu bài giảng"
+                helpText={FILES_HELP_TEXT}
+                files={material.files.filter((f) => f.category !== "exercise")}
                 statusByKey={uploadStatus}
-                onSelectFiles={(files) => handleFilesSelected(index, files)}
+                onSelectFiles={(files) => handleFilesSelected(index, files, "lecture")}
+                onRemoveFile={(fileKey) => removeFile(index, fileKey)}
+              />
+
+              <MaterialFilesField
+                label="Tệp tài liệu bài tập"
+                helpText={FILES_HELP_TEXT}
+                files={material.files.filter((f) => f.category === "exercise")}
+                statusByKey={uploadStatus}
+                onSelectFiles={(files) => handleFilesSelected(index, files, "exercise")}
                 onRemoveFile={(fileKey) => removeFile(index, fileKey)}
               />
             </div>
