@@ -290,7 +290,7 @@ export default function AdminEnrollmentsPage() {
                     {e.course?.id ? (
                       <Link
                         href={`/admin/courses/${e.course.id}/edit`}
-                        className="cell-nowrap hover:underline"
+                        className="cell-nowrap"
                       >
                         {e.course?.title}
                       </Link>

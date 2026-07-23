@@ -200,7 +200,7 @@ export default function AdminCoursesPage() {
                   <td className="px-4 py-3 font-medium text-ink">
                     <Link
                       href={`/admin/courses/${c.id}/edit`}
-                      className="cell-nowrap hover:underline"
+                      className="cell-nowrap"
                     >
                       {c.title}
                     </Link>

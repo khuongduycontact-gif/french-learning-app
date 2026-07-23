@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import type { Submission, SubmissionFile } from "@/types";
 import { useToast } from "@/components/Toast";
 import Loader from "@/components/Loader";
@@ -305,7 +306,16 @@ export default function AdminSubmissionsPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3 font-medium text-ink">
-                      <span className="cell-nowrap">{s.course?.title}</span>
+                      {s.course?.id ? (
+                        <Link
+                          href={`/admin/courses/${s.course.id}/edit`}
+                          className="cell-nowrap"
+                        >
+                          {s.course?.title}
+                        </Link>
+                      ) : (
+                        <span className="cell-nowrap">{s.course?.title}</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-ink">
                       <span className="cell-nowrap">{s.material?.name}</span>

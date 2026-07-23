@@ -20,11 +20,11 @@ export default function SiteLayout({
           © {new Date().getFullYear()} Français avec Céline. Học tiếng Pháp cùng Céline
         </p>
         <p className="mt-3">
-          <a href="/privacy" className="underline decoration-mist underline-offset-2 hover:text-ink">
+          <a href="/privacy" className="hover:text-ink">
             Chính sách bảo mật
           </a>
           <span className="mx-2">·</span>
-          <a href="/terms" className="underline decoration-mist underline-offset-2 hover:text-ink">
+          <a href="/terms" className="hover:text-ink">
             Điều khoản sử dụng
           </a>
         </p>
