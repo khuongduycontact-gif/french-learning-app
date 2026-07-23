@@ -78,7 +78,7 @@ export default function AchievementsPage() {
           Những khoảnh khắc và lời cảm ơn từ các bạn học viên đã đạt được thành tích
           trong quá trình học tiếng Pháp tại{" "}
           <a
-            href="https://francais-avec-celine.vercel.app/"
+            href="https://francaisavecceline.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="whitespace-nowrap"
