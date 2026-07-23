@@ -5,7 +5,7 @@ import Providers from "./providers";
 import ScrollToTop from "@/components/ScrollToTop";
 import DictionaryLookup from "@/components/DictionaryLookup";
 import BackToTop from "@/components/BackToTop";
-import ZaloButton from "@/components/ZaloButton";
+import ContactButton from "@/components/ContactButton";
 
 const display = Playfair_Display({
   subsets: ["latin", "vietnamese"],
@@ -38,7 +38,7 @@ export default function RootLayout({
           {children}
           <BackToTop />
           <DictionaryLookup />
-          <ZaloButton />
+          <ContactButton />
         </Providers>
       </body>
     </html>
