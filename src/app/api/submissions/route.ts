@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { notifyAdmins } from "@/lib/notifications";
 
 // GET /api/submissions -> (học viên) danh sách bài nộp của chính mình,
@@ -115,7 +116,7 @@ export async function POST(req: NextRequest) {
       status: "SUBMITTED",
       submittedAt: new Date(),
       // Nộp lại bài mới -> xoá kết quả chữa bài cũ để admin chữa lại từ đầu
-      gradedFiles: null,
+      gradedFiles: Prisma.JsonNull,
       gradedNote: null,
       gradedById: null,
       gradedAt: null,
