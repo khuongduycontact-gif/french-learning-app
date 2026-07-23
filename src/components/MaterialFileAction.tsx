@@ -8,12 +8,17 @@ export default function MaterialFileAction({
   url,
   name,
   type,
+  onBeforeAction,
 }: {
   url: string;
   name?: string;
   type?: string;
+  // Hook tuỳ chọn: chạy trước khi thực sự tải/xem tệp (VD: hiện thông báo
+  // hạn nộp bài 48 tiếng và bắt đầu đếm giờ). Trả về false để huỷ hành động.
+  onBeforeAction?: () => Promise<boolean>;
 }) {
   const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
   const kind = getMediaKind({ url, type });
 
   // Tệp không phải ảnh/video (PDF, Word, PowerPoint, file nén...) vẫn cho
@@ -24,10 +29,25 @@ export default function MaterialFileAction({
     const downloadHref = `/api/download?url=${encodeURIComponent(
       url
     )}&name=${encodeURIComponent(name || "tai-lieu")}`;
+
+    async function handleClick(e: React.MouseEvent) {
+      if (!onBeforeAction) return; // để thẻ <a> tự điều hướng như bình thường
+      e.preventDefault();
+      setBusy(true);
+      try {
+        const proceed = await onBeforeAction();
+        if (proceed) window.location.href = downloadHref;
+      } finally {
+        setBusy(false);
+      }
+    }
+
     return (
       <a
         href={downloadHref}
-        className="shrink-0 rounded-full bg-bordeaux px-4 py-1.5 text-xs font-medium text-parchment transition hover:bg-bordeaux/90"
+        onClick={handleClick}
+        aria-disabled={busy}
+        className="shrink-0 rounded-full bg-bordeaux px-4 py-1.5 text-xs font-medium text-parchment transition hover:bg-bordeaux/90 aria-disabled:pointer-events-none aria-disabled:opacity-60"
       >
         Tải xuống
       </a>
@@ -36,12 +56,26 @@ export default function MaterialFileAction({
 
   // Ảnh/video: chỉ cho xem trực tiếp trong trình xem an toàn, không có liên
   // kết tải về.
+  async function handleView() {
+    if (onBeforeAction) {
+      setBusy(true);
+      try {
+        const proceed = await onBeforeAction();
+        if (!proceed) return;
+      } finally {
+        setBusy(false);
+      }
+    }
+    setOpen(true);
+  }
+
   return (
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
-        className="shrink-0 rounded-full bg-bordeaux px-4 py-1.5 text-xs font-medium text-parchment transition hover:bg-bordeaux/90"
+        onClick={handleView}
+        disabled={busy}
+        className="shrink-0 rounded-full bg-bordeaux px-4 py-1.5 text-xs font-medium text-parchment transition hover:bg-bordeaux/90 disabled:opacity-60"
       >
         Xem
       </button>

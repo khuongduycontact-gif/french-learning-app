@@ -42,12 +42,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const isAdmin = session.user.role === "ADMIN";
   const isImage = file.type.startsWith("image/");
   const isVideo = file.type.startsWith("video/");
   const isAudio = file.type.startsWith("audio/");
-  const isDoc = !isImage && !isVideo && (isAudio || DOC_EXTENSIONS.test(file.name));
+  // Admin (gửi bài đã chữa) được tải lên bất kỳ định dạng tệp nào — chỉ
+  // giới hạn định dạng ở phía học viên (nộp bài làm).
+  const isDoc = !isImage && !isVideo && (isAdmin || isAudio || DOC_EXTENSIONS.test(file.name));
 
-  if (!isImage && !isVideo && !isDoc) {
+  if (!isAdmin && !isImage && !isVideo && !isDoc) {
     return NextResponse.json(
       { error: "Định dạng tệp không được hỗ trợ" },
       { status: 400 }
@@ -55,7 +58,7 @@ export async function POST(req: NextRequest) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const resourceType = isVideo ? "video" : isDoc ? "raw" : "image";
+  const resourceType = isVideo ? "video" : isImage ? "image" : "raw";
 
   try {
     const result = await new Promise<any>((resolve, reject) => {

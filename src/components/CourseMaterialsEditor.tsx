@@ -40,8 +40,7 @@ function stripExtension(filename: string) {
   return idx > 0 ? filename.slice(0, idx) : filename;
 }
 
-const ACCEPT =
-  "image/*,video/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar,.7z,.mp3,.wav,.m4a,.aac,.ogg,.flac,.wma";
+const ACCEPT = undefined;
 
 function fileKindLabel(fileType?: string, fileName?: string) {
   const name = (fileName || "").toLowerCase();

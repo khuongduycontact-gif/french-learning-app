@@ -9,6 +9,7 @@ import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
 import MaterialFileAction from "@/components/MaterialFileAction";
 import SubmissionFilesUploader from "@/components/SubmissionFilesUploader";
+import AdminDeadlinesPanel from "@/components/AdminDeadlinesPanel";
 import { formatDateTime } from "@/lib/format";
 
 const PAGE_SIZE = 10;
@@ -30,6 +31,7 @@ export default function AdminSubmissionsPage() {
   const highlightId = searchParams.get("highlight");
 
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [view, setView] = useState<"submissions" | "deadlines">("submissions");
   const [statusFilter, setStatusFilter] = useState("");
   const [courseFilter, setCourseFilter] = useState("");
   const [materialFilter, setMaterialFilter] = useState("");
@@ -145,6 +147,28 @@ export default function AdminSubmissionsPage() {
         <div className="ribbon-rule mt-3" />
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        {[
+          { value: "submissions" as const, label: "Bài nộp" },
+          { value: "deadlines" as const, label: "Hạn nộp bài (48h)" },
+        ].map((t) => (
+          <button
+            key={t.value}
+            type="button"
+            onClick={() => setView(t.value)}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+              view === t.value ? "bg-ink text-parchment" : "bg-white text-ink hover:bg-mist"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {view === "deadlines" ? (
+        <AdminDeadlinesPanel />
+      ) : (
+        <>
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap gap-2">
           {statusFilters.map((f) => (
@@ -315,6 +339,8 @@ export default function AdminSubmissionsPage() {
       </div>
 
       <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+        </>
+      )}
     </div>
   );
 }

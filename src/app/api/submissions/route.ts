@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { notifyAdmins } from "@/lib/notifications";
+import { isDeadlinePassed } from "@/lib/deadline";
 
 // GET /api/submissions -> (học viên) danh sách bài nộp của chính mình,
 //   lọc thêm được theo ?courseId=
@@ -96,6 +97,26 @@ export async function POST(req: NextRequest) {
   if (!enrollment || enrollment.status !== "CONFIRMED") {
     return NextResponse.json(
       { error: "Bạn cần được mở khoá học này trước khi nộp bài" },
+      { status: 403 }
+    );
+  }
+
+  // Đã tải/xem tài liệu bài tập và quá 48 tiếng (hoặc số giờ admin đặt lại)
+  // mà chưa nộp bài -> khoá tính năng nộp bài cho tài liệu này. Admin có
+  // thể mở khoá lại (đặt lại thời điểm đếm giờ) trong trang quản trị.
+  const deadline = await prisma.submissionDeadline.findUnique({
+    where: { userId_materialId: { userId: session.user.id, materialId } },
+    select: { startedAt: true, hours: true },
+  });
+  if (
+    deadline &&
+    isDeadlinePassed({ startedAt: deadline.startedAt.toISOString(), hours: deadline.hours })
+  ) {
+    return NextResponse.json(
+      {
+        error:
+          "Đã hết thời gian nộp bài tập (quá 48 tiếng kể từ khi tải tài liệu). Vui lòng liên hệ giáo viên để được mở khoá.",
+      },
       { status: 403 }
     );
   }

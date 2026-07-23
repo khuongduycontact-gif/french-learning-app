@@ -14,9 +14,11 @@ const statusLabel: Record<string, { label: string; className: string }> = {
 export default function MaterialSubmission({
   materialId,
   initialSubmission,
+  locked = false,
 }: {
   materialId: string;
   initialSubmission: Submission | null;
+  locked?: boolean;
 }) {
   const { showToast } = useToast();
   const [submission, setSubmission] = useState<Submission | null>(initialSubmission);
@@ -114,21 +116,33 @@ export default function MaterialSubmission({
               setFiles([]);
               setNote("");
             }}
-            className="mt-1 self-start text-sm font-medium text-bordeaux hover:underline"
+            disabled={locked}
+            className="mt-1 self-start text-sm font-medium text-bordeaux hover:underline disabled:cursor-not-allowed disabled:text-ink/40 disabled:no-underline"
           >
             Nộp lại bài khác
           </button>
+          {locked && (
+            <p className="text-xs text-bordeaux">
+              Đã hết hạn nộp bài, không thể nộp lại. Vui lòng liên hệ giáo viên nếu cần mở khoá.
+            </p>
+          )}
         </div>
       )}
 
       {!submission && !formOpen && (
-        <button
-          type="button"
-          onClick={() => setFormOpen(true)}
-          className="self-start rounded-full bg-bordeaux px-4 py-1.5 text-sm font-medium text-parchment transition hover:bg-bordeaux/90"
-        >
-          Nộp bài làm
-        </button>
+        locked ? (
+          <p className="text-sm text-bordeaux">
+            Đã hết hạn nộp bài tập này. Vui lòng liên hệ giáo viên để được mở khoá.
+          </p>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setFormOpen(true)}
+            className="self-start rounded-full bg-bordeaux px-4 py-1.5 text-sm font-medium text-parchment transition hover:bg-bordeaux/90"
+          >
+            Nộp bài làm
+          </button>
+        )
       )}
 
       {formOpen && (

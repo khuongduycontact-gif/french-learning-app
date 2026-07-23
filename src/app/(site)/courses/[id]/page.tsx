@@ -87,6 +87,7 @@ export default async function CourseDetailPage({
 
   let enrollment: { id: string; status: string } | null = null;
   let submissionsByMaterial: Record<string, any> = {};
+  let deadlinesByMaterial: Record<string, { startedAt: string; hours: number } | null> = {};
   if (session?.user) {
     enrollment = await prisma.enrollment.findUnique({
       where: { userId_courseId: { userId: session.user.id, courseId: course.id } },
@@ -94,12 +95,15 @@ export default async function CourseDetailPage({
     });
 
     if (enrollment?.status === "CONFIRMED" && course.materials.length > 0) {
-      const submissions = await prisma.submission.findMany({
-        where: {
-          userId: session.user.id,
-          materialId: { in: course.materials.map((m) => m.id) },
-        },
-      });
+      const materialIds = course.materials.map((m) => m.id);
+      const [submissions, deadlines] = await Promise.all([
+        prisma.submission.findMany({
+          where: { userId: session.user.id, materialId: { in: materialIds } },
+        }),
+        prisma.submissionDeadline.findMany({
+          where: { userId: session.user.id, materialId: { in: materialIds } },
+        }),
+      ]);
       submissionsByMaterial = Object.fromEntries(
         submissions.map((s: (typeof submissions)[number]) => [
           s.materialId,
@@ -110,6 +114,12 @@ export default async function CourseDetailPage({
             submittedAt: s.submittedAt.toISOString(),
             gradedAt: s.gradedAt ? s.gradedAt.toISOString() : null,
           },
+        ])
+      );
+      deadlinesByMaterial = Object.fromEntries(
+        deadlines.map((d: (typeof deadlines)[number]) => [
+          d.materialId,
+          { startedAt: d.startedAt.toISOString(), hours: d.hours },
         ])
       );
     }
@@ -307,6 +317,7 @@ export default async function CourseDetailPage({
                 files: getMaterialFiles(m.files),
               }))}
               submissionsByMaterial={submissionsByMaterial}
+              deadlinesByMaterial={deadlinesByMaterial}
             />
           </div>
         )}

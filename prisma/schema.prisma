@@ -52,6 +52,7 @@ model User {
   notifications Notification[]
   submissions   Submission[]     @relation("SubmissionsByStudent")
   gradedSubmissions Submission[] @relation("SubmissionsGradedByAdmin")
+  submissionDeadlines SubmissionDeadline[]
   createdAt     DateTime       @default(now())
 }
 
@@ -120,6 +121,7 @@ model CourseMaterial {
 
   course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   submissions Submission[]
+  deadlines   SubmissionDeadline[]
 
   @@index([courseId])
 }
@@ -170,6 +172,28 @@ model Submission {
   @@index([materialId])
   @@index([userId])
   @@index([gradedById])
+}
+
+// Đếm giờ nộp bài: được tạo ra ngay khi học viên tải/xem tài liệu bài tập
+// (CourseMaterial, nhóm "exercise") lần đầu tiên. Từ thời điểm startedAt,
+// học viên có đúng `hours` giờ (mặc định 48) để nộp bài; quá hạn thì tính
+// năng nộp bài cho tài liệu đó bị khoá cho đến khi admin mở khoá lại (đặt
+// lại startedAt = thời điểm hiện tại).
+model SubmissionDeadline {
+  id         String   @id @default(cuid())
+  materialId String
+  userId     String
+  startedAt  DateTime @default(now()) // mốc bắt đầu đếm giờ (tải lần đầu, hoặc admin đặt lại)
+  hours      Int      @default(48) // số giờ được phép nộp bài kể từ startedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  material CourseMaterial @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, materialId])
+  @@index([materialId])
+  @@index([userId])
 }
 
 model Achievement {

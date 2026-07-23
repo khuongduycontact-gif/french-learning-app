@@ -121,6 +121,17 @@ export interface Notification {
   createdAt: string;
 }
 
+export interface SubmissionDeadline {
+  id: string;
+  materialId: string;
+  userId: string;
+  startedAt: string;
+  hours: number;
+  material?: { id: string; name: string };
+  course?: { id: string; title: string };
+  user?: { id: string; name: string | null; email: string | null; image: string | null };
+}
+
 export type SubmissionStatus = "SUBMITTED" | "GRADED";
 
 export interface SubmissionFile {
