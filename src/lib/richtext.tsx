@@ -33,7 +33,7 @@ function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
           href={match[2]}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-bordeaux underline underline-offset-2 hover:text-bordeaux/80"
+          className="text-bordeaux hover:text-bordeaux/80"
         >
           {match[1]}
         </a>
