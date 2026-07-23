@@ -207,9 +207,15 @@ export default function AdminDeadlinesPanel() {
                         </div>
                       </div>
                     </td>
-                    <td className="cell-nowrap px-4 py-3 font-medium text-ink">{d.course?.title}</td>
-                    <td className="cell-nowrap px-4 py-3 text-ink">{d.material?.name}</td>
-                    <td className="cell-nowrap px-4 py-3 text-ink/70">{formatDateTime(d.startedAt)}</td>
+                    <td className="px-4 py-3 font-medium text-ink">
+                      <span className="cell-nowrap">{d.course?.title}</span>
+                    </td>
+                    <td className="px-4 py-3 text-ink">
+                      <span className="cell-nowrap">{d.material?.name}</span>
+                    </td>
+                    <td className="px-4 py-3 text-ink/70">
+                      <span className="cell-nowrap">{formatDateTime(d.startedAt)}</span>
+                    </td>
                     <td className="whitespace-nowrap px-4 py-3">
                       <div className="flex flex-col gap-1">
                         <DeadlineCountdown deadline={{ startedAt: d.startedAt, hours: d.hours }} />

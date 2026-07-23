@@ -304,9 +304,15 @@ export default function AdminSubmissionsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="cell-nowrap px-4 py-3 font-medium text-ink">{s.course?.title}</td>
-                    <td className="cell-nowrap px-4 py-3 text-ink">{s.material?.name}</td>
-                    <td className="cell-nowrap px-4 py-3 text-ink/70">{formatDateTime(s.submittedAt)}</td>
+                    <td className="px-4 py-3 font-medium text-ink">
+                      <span className="cell-nowrap">{s.course?.title}</span>
+                    </td>
+                    <td className="px-4 py-3 text-ink">
+                      <span className="cell-nowrap">{s.material?.name}</span>
+                    </td>
+                    <td className="px-4 py-3 text-ink/70">
+                      <span className="cell-nowrap">{formatDateTime(s.submittedAt)}</span>
+                    </td>
                     <td className="whitespace-nowrap px-4 py-3">
                       <span
                         className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusLabel[s.status].className}`}
