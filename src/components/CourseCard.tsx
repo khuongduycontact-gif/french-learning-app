@@ -268,7 +268,7 @@ export default function CourseCard({
               <p className="truncate text-xs font-bold text-emerald-700">
                 {formatDuration(course.duration)}
               </p>
-              <p className="truncate text-[10px] text-ink/50">Giờ học/buổi học</p>
+              <p className="truncate text-[10px] text-ink/50">Giờ học/buổi</p>
             </div>
           </div>
         </div>

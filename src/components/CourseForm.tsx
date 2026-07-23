@@ -1,12 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Course, CourseInput } from "@/types";
 import MediaUploader from "./MediaUploader";
 import CourseMaterialsEditor, { type MaterialDraft } from "./CourseMaterialsEditor";
 import RichTextEditor from "./RichTextEditor";
 import { useToast } from "./Toast";
+
+function ClockIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+      <path
+        d="M12 7v5l3.5 2"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 const levels = ["A1", "A2", "B1", "B2", "C1"];
 
@@ -55,11 +70,32 @@ export default function CourseForm({
     price: String(initial?.price ?? 0),
     lessons: String(initial?.lessons ?? 0),
   });
-  // Thời lượng giờ học/buổi học nhập qua input type="time" (đồng hồ chọn
-  // hoặc gõ số trực tiếp), lưu tạm dạng "HH:MM" rồi quy đổi sang thập phân.
+  // Thời lượng giờ học/buổi học: bấm vào icon đồng hồ mới hiện 2 ô nhập
+  // "giờ" và "phút" riêng biệt; lưu tạm dạng "HH:MM" rồi quy đổi sang thập phân.
   const [durationTime, setDurationTime] = useState(
     decimalHoursToTimeValue(initial?.duration ?? 0)
   );
+  const [durationParts, setDurationParts] = useState(() => {
+    const [h, m] = decimalHoursToTimeValue(initial?.duration ?? 0).split(":");
+    return { hours: h, minutes: m };
+  });
+  const [durationPickerOpen, setDurationPickerOpen] = useState(false);
+  const durationPickerRef = useRef<HTMLDivElement>(null);
+
+  // Bấm ra ngoài popover giờ/phút thì tự đóng lại
+  useEffect(() => {
+    if (!durationPickerOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        durationPickerRef.current &&
+        !durationPickerRef.current.contains(e.target as Node)
+      ) {
+        setDurationPickerOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [durationPickerOpen]);
   const [materials, setMaterials] = useState<MaterialDraft[]>(
     (initial?.materials || []).map((m) => ({
       key: m.id,
@@ -110,14 +146,27 @@ export default function CourseForm({
     if (numText[key] === "") setNumText((t) => ({ ...t, [key]: "0" }));
   }
 
-  // Cập nhật thời lượng khi người dùng chọn/gõ giờ trong input type="time"
-  function updateDurationTime(value: string) {
-    setDurationTime(value);
-    if (!value) {
-      update("duration", 0);
-      return;
-    }
-    update("duration", timeValueToDecimalHours(value));
+  // Gõ vào ô "giờ" hoặc "phút": chỉ cho phép tối đa 2 chữ số, cho phép xoá
+  // trắng để gõ số mới (giống các ô số khác trong form)
+  function updateDurationPart(part: "hours" | "minutes", raw: string) {
+    if (raw !== "" && !/^\d{0,2}$/.test(raw)) return;
+    setDurationParts((p) => ({ ...p, [part]: raw }));
+  }
+
+  // Rời khỏi ô giờ/phút: chốt lại giá trị hợp lệ (giờ 0-23, phút 0-59),
+  // đệm số 0 phía trước rồi quy đổi sang thập phân để lưu
+  function commitDurationPart(part: "hours" | "minutes") {
+    setDurationParts((p) => {
+      const max = part === "hours" ? 23 : 59;
+      let n = parseInt(p[part], 10);
+      if (Number.isNaN(n)) n = 0;
+      n = Math.min(max, Math.max(0, n));
+      const next = { ...p, [part]: String(n).padStart(2, "0") };
+      const value = `${next.hours}:${next.minutes}`;
+      setDurationTime(value);
+      update("duration", timeValueToDecimalHours(value));
+      return next;
+    });
   }
 
   // Validate hoàn toàn tự viết (không dùng required/validate mặc định của trình duyệt),
@@ -266,17 +315,48 @@ export default function CourseForm({
               ))}
             </select>
           </div>
-          <div>
+          <div className="relative" ref={durationPickerRef}>
             <label className="mb-1 block text-sm font-medium text-ink">
-              Giờ học/buổi học
+              Giờ học/buổi
             </label>
-            <input
-              type="time"
-              value={durationTime}
-              onChange={(e) => updateDurationTime(e.target.value)}
-              className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
-              aria-label="Giờ học/buổi học (giờ:phút)"
-            />
+            <button
+              type="button"
+              onClick={() => setDurationPickerOpen((o) => !o)}
+              className="flex w-full items-center justify-between rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
+              aria-label="Giờ học/buổi (giờ:phút)"
+            >
+              <span>{durationTime}</span>
+              <ClockIcon className="h-4 w-4 shrink-0 text-ink/50" />
+            </button>
+            {durationPickerOpen && (
+              <div className="absolute left-0 top-full z-20 mt-1.5 flex items-end gap-2 rounded-lg border border-mist bg-white p-3 shadow-lg">
+                <div className="flex flex-col items-center gap-1">
+                  <label className="text-[10px] text-ink/50">Giờ</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={durationParts.hours}
+                    onChange={(e) => updateDurationPart("hours", e.target.value)}
+                    onBlur={() => commitDurationPart("hours")}
+                    onFocus={(e) => e.target.select()}
+                    className="w-12 rounded-md border border-mist px-2 py-1.5 text-center text-sm"
+                  />
+                </div>
+                <span className="pb-2 text-sm text-ink/50">:</span>
+                <div className="flex flex-col items-center gap-1">
+                  <label className="text-[10px] text-ink/50">Phút</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={durationParts.minutes}
+                    onChange={(e) => updateDurationPart("minutes", e.target.value)}
+                    onBlur={() => commitDurationPart("minutes")}
+                    onFocus={(e) => e.target.select()}
+                    className="w-12 rounded-md border border-mist px-2 py-1.5 text-center text-sm"
+                  />
+                </div>
+              </div>
+            )}
             {fieldErrors.duration && (
               <p className="mt-1 text-xs text-bordeaux">{fieldErrors.duration}</p>
             )}

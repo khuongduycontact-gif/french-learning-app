@@ -250,7 +250,7 @@ export default async function CourseDetailPage({
                 <p className="truncate text-sm font-bold text-emerald-700 sm:text-base">
                   {formatDuration(course.duration)}
                 </p>
-                <p className="truncate text-[11px] text-ink/50">Giờ học/buổi học</p>
+                <p className="truncate text-[11px] text-ink/50">Giờ học/buổi</p>
               </div>
             </div>
           </div>
