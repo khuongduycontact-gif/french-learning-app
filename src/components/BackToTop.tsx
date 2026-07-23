@@ -49,7 +49,7 @@ function BackToTop() {
       onClick={handleClick}
       aria-label="Về đầu trang"
       title="Về đầu trang"
-      className={`fixed right-5 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-ink text-parchment shadow-lg transition duration-200 hover:bg-ink/90 ${
+      className={`fixed right-5 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-gray-500/40 text-white shadow-lg backdrop-blur-sm transition duration-200 hover:bg-gray-500/60 ${
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       style={{

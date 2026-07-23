@@ -95,14 +95,14 @@ export default function ContactButton() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-full bg-bordeaux text-white shadow-lg transition hover:bg-bordeaux/90"
+        className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#0055A4] text-white shadow-lg transition hover:bg-[#0055A4]/90"
         aria-label={open ? "Đóng liên hệ" : "Mở liên hệ"}
         title="Liên hệ"
       >
         {!open && (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 animate-ping rounded-full bg-bordeaux/50"
+            className="pointer-events-none absolute inset-0 animate-ping rounded-full bg-[#0055A4]/50"
           />
         )}
         <span className="relative">{open ? "✕" : <ContactIcon />}</span>
