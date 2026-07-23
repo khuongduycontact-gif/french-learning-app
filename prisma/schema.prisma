@@ -88,7 +88,7 @@ model Course {
   description String       @db.Text
   level       Level        @default(A1)
   price       Int          @default(0)
-  duration    Int          @default(0) // số giờ học
+  duration    Float        @default(0) // số giờ học/buổi học, cho phép lẻ (VD: 1.5 = 1 giờ 30 phút)
   sessions    Int          @default(0) // số buổi học (không còn nhập ở form quản trị, giữ lại cho dữ liệu cũ)
   lessons     Int          @default(0) // số bài giảng
   videoUrl    String?      @db.Text // ảnh hoặc video giới thiệu, lưu trên Cloudinary

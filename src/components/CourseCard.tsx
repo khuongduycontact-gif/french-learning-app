@@ -3,7 +3,7 @@ import Image from "next/image";
 import type { Course } from "@/types";
 import { stripRichText } from "@/lib/richtext";
 import { isVideoUrl } from "@/lib/media";
-import { formatVnd } from "@/lib/format";
+import { formatVnd, formatDuration } from "@/lib/format";
 
 const levelLabel: Record<string, string> = {
   A1: "A1 · Mới bắt đầu",
@@ -266,9 +266,9 @@ export default function CourseCard({
             <ClockIcon className="h-4 w-4 shrink-0 text-emerald-600" />
             <div className="min-w-0">
               <p className="truncate text-xs font-bold text-emerald-700">
-                {course.duration} giờ
+                {formatDuration(course.duration)}
               </p>
-              <p className="truncate text-[10px] text-ink/50">Thời gian</p>
+              <p className="truncate text-[10px] text-ink/50">Giờ học/buổi học</p>
             </div>
           </div>
         </div>

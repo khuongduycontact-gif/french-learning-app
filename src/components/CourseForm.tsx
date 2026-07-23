@@ -10,7 +10,25 @@ import { useToast } from "./Toast";
 
 const levels = ["A1", "A2", "B1", "B2", "C1"];
 
-type NumberFieldKey = "price" | "duration" | "lessons";
+type NumberFieldKey = "price" | "lessons";
+
+// Chuyển số giờ dạng thập phân (VD: 1.5) sang chuỗi "HH:MM" để đổ vào
+// input type="time" (trình duyệt tự hiện đồng hồ chọn, gõ số trực tiếp
+// cũng được — không cần tự quy đổi giờ/phút thủ công nữa).
+function decimalHoursToTimeValue(duration: number): string {
+  const totalMinutes = Math.max(0, Math.round(duration * 60));
+  const hours = Math.min(23, Math.floor(totalMinutes / 60));
+  const minutes = totalMinutes % 60;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+}
+
+// Chuyển ngược "HH:MM" từ input type="time" về số giờ dạng thập phân để lưu
+function timeValueToDecimalHours(value: string): number {
+  const [h, m] = value.split(":").map((v) => parseInt(v, 10));
+  const hours = Number.isNaN(h) ? 0 : h;
+  const minutes = Number.isNaN(m) ? 0 : m;
+  return Number((hours + minutes / 60).toFixed(2));
+}
 
 export default function CourseForm({
   initial,
@@ -35,9 +53,13 @@ export default function CourseForm({
   // xoá trắng ô (kể cả số 0 mặc định) trong lúc gõ, không bị tự nhảy về 0.
   const [numText, setNumText] = useState<Record<NumberFieldKey, string>>({
     price: String(initial?.price ?? 0),
-    duration: String(initial?.duration ?? 0),
     lessons: String(initial?.lessons ?? 0),
   });
+  // Thời lượng giờ học/buổi học nhập qua input type="time" (đồng hồ chọn
+  // hoặc gõ số trực tiếp), lưu tạm dạng "HH:MM" rồi quy đổi sang thập phân.
+  const [durationTime, setDurationTime] = useState(
+    decimalHoursToTimeValue(initial?.duration ?? 0)
+  );
   const [materials, setMaterials] = useState<MaterialDraft[]>(
     (initial?.materials || []).map((m) => ({
       key: m.id,
@@ -86,6 +108,16 @@ export default function CourseForm({
   function handleNumberBlur(key: NumberFieldKey) {
     // Rời khỏi ô mà vẫn để trắng -> hiển thị lại 0 cho rõ ràng
     if (numText[key] === "") setNumText((t) => ({ ...t, [key]: "0" }));
+  }
+
+  // Cập nhật thời lượng khi người dùng chọn/gõ giờ trong input type="time"
+  function updateDurationTime(value: string) {
+    setDurationTime(value);
+    if (!value) {
+      update("duration", 0);
+      return;
+    }
+    update("duration", timeValueToDecimalHours(value));
   }
 
   // Validate hoàn toàn tự viết (không dùng required/validate mặc định của trình duyệt),
@@ -235,15 +267,15 @@ export default function CourseForm({
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink">Thời lượng (giờ)</label>
+            <label className="mb-1 block text-sm font-medium text-ink">
+              Giờ học/buổi học
+            </label>
             <input
-              type="text"
-              inputMode="numeric"
-              value={numText.duration}
-              onChange={(e) => updateNumber("duration", e.target.value)}
-              onBlur={() => handleNumberBlur("duration")}
-              onFocus={(e) => e.target.select()}
+              type="time"
+              value={durationTime}
+              onChange={(e) => updateDurationTime(e.target.value)}
               className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
+              aria-label="Giờ học/buổi học (giờ:phút)"
             />
             {fieldErrors.duration && (
               <p className="mt-1 text-xs text-bordeaux">{fieldErrors.duration}</p>

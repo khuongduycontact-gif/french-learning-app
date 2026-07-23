@@ -8,7 +8,7 @@ import EnrollButton from "@/components/EnrollButton";
 import MaterialsPager from "@/components/MaterialsPager";
 import { RichText } from "@/lib/richtext";
 import { isVideoUrl } from "@/lib/media";
-import { formatVnd } from "@/lib/format";
+import { formatVnd, formatDuration } from "@/lib/format";
 
 type MaterialFile = { url: string; name?: string; type?: string };
 
@@ -248,9 +248,9 @@ export default async function CourseDetailPage({
               <ClockIcon className="h-6 w-6 shrink-0 text-emerald-600" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold text-emerald-700 sm:text-base">
-                  {course.duration} giờ
+                  {formatDuration(course.duration)}
                 </p>
-                <p className="truncate text-[11px] text-ink/50">Thời gian</p>
+                <p className="truncate text-[11px] text-ink/50">Giờ học/buổi học</p>
               </div>
             </div>
           </div>
