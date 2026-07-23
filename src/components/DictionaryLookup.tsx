@@ -7,6 +7,7 @@ type HistoryItem = {
   id: string;
   word: string;
   translation: string;
+  wordTypes?: string[];
 };
 
 const STORAGE_KEY = "fr_dictionary_history_v1";
@@ -110,6 +111,7 @@ function DictionaryLookup() {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const [resultWord, setResultWord] = useState<string>("");
+  const [wordTypes, setWordTypes] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -130,21 +132,40 @@ function DictionaryLookup() {
     setLoading(true);
     setError(null);
     setResult(null);
+    setWordTypes([]);
     try {
       // Dịch qua route nội bộ /api/translate (server gọi DeepL), tránh lộ
       // API key ra client và tránh lỗi CORS khi gọi DeepL thẳng từ trình duyệt.
-      const res = await fetch("/api/translate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: word, sourceLang: "FR", targetLang: "VI" }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "request-failed");
+      // Đồng thời tra loại từ (danh từ/động từ/tính từ/trạng từ...) qua
+      // /api/wordtype (server gọi Wiktionary) — gọi song song để không làm
+      // chậm thêm lượt tra nghĩa chính.
+      const [translateRes, wordTypeRes] = await Promise.all([
+        fetch("/api/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: word, sourceLang: "FR", targetLang: "VI" }),
+        }),
+        fetch(`/api/wordtype?word=${encodeURIComponent(word)}`).catch(() => null),
+      ]);
+
+      const data = await translateRes.json();
+      if (!translateRes.ok) throw new Error(data?.error || "request-failed");
       const translated: string | undefined = data?.translation;
       if (!translated) throw new Error("empty-result");
 
+      // Tra loại từ chỉ mang tính bổ sung — lỗi ở bước này không làm hỏng
+      // kết quả dịch chính.
+      let types: string[] = [];
+      try {
+        const wordTypeData = wordTypeRes ? await wordTypeRes.json() : null;
+        if (Array.isArray(wordTypeData?.types)) types = wordTypeData.types;
+      } catch {
+        types = [];
+      }
+
       setResult(translated);
       setResultWord(word);
+      setWordTypes(types);
 
       const historyId = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 
@@ -154,7 +175,7 @@ function DictionaryLookup() {
         );
         const next = [
           ...withoutDup,
-          { id: historyId, word, translation: translated },
+          { id: historyId, word, translation: translated, wordTypes: types },
         ];
         // Chỉ giữ tối đa MAX_HISTORY lượt: cắt bớt (các) từ cũ nhất khi vượt quá
         const trimmed = next.length > MAX_HISTORY ? next.slice(next.length - MAX_HISTORY) : next;
@@ -248,6 +269,14 @@ function DictionaryLookup() {
                   >
                     <SpeakerIcon />
                   </button>
+                  {wordTypes.map((type) => (
+                    <span
+                      key={type}
+                      className="rounded-full bg-bordeaux/10 px-2 py-0.5 text-xs font-medium text-bordeaux"
+                    >
+                      {type}
+                    </span>
+                  ))}
                 </div>
                 <div className="mt-1 flex items-center gap-1.5">
                   <span className="text-ink/40">→</span>
@@ -267,7 +296,11 @@ function DictionaryLookup() {
                   {history.map((item) => (
                     <span
                       key={item.id}
-                      title={item.translation}
+                      title={
+                        item.wordTypes && item.wordTypes.length > 0
+                          ? `${item.wordTypes.join(", ")} · ${item.translation}`
+                          : item.translation
+                      }
                       className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full border border-mist bg-white px-2.5 py-1 text-xs text-ink"
                     >
                       <button

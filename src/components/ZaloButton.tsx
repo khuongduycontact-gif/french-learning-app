@@ -9,15 +9,24 @@ const ZALO_LINK = "https://zalo.me/84356935918";
 
 function ZaloIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
-      <rect width="48" height="48" rx="12" fill="#0068FF" />
+    <svg viewBox="0 0 200 200" className={className} aria-hidden="true">
+      <rect width="200" height="200" rx="44" fill="#ffffff" />
+      {/* Đuôi bong bóng chat cong ở góc dưới-trái, đặc trưng của icon Zalo */}
       <path
-        d="M24 11c-7.2 0-13 5.1-13 11.4 0 3.6 1.9 6.8 4.9 8.9-.2 1.5-.9 3.4-1.7 4.7-.2.3.1.7.5.6 2.1-.6 4.4-1.7 5.9-2.6 1.1.3 2.2.4 3.4.4 7.2 0 13-5.1 13-11.4S31.2 11 24 11Z"
-        fill="#fff"
+        d="M46 150c-10 14-14 26-8 34 9 11 28 10 44 3-16-2-30-10-36-22-3-6-1-11 0-15z"
+        fill="#0068FF"
       />
-      <circle cx="18.5" cy="22.5" r="2" fill="#0068FF" />
-      <circle cx="24" cy="22.5" r="2" fill="#0068FF" />
-      <circle cx="29.5" cy="22.5" r="2" fill="#0068FF" />
+      <text
+        x="100"
+        y="118"
+        textAnchor="middle"
+        fontFamily="Arial, Helvetica, sans-serif"
+        fontWeight="800"
+        fontSize="62"
+        fill="#0068FF"
+      >
+        Zalo
+      </text>
     </svg>
   );
 }
@@ -34,9 +43,20 @@ export default function ZaloButton() {
       rel="noopener noreferrer"
       aria-label="Nhắn tin qua Zalo"
       title="Nhắn tin qua Zalo"
-      className="fixed bottom-5 left-5 z-40 flex h-12 w-12 items-center justify-center overflow-hidden rounded-full shadow-lg transition duration-200 hover:scale-105"
+      className="fixed bottom-5 left-5 z-40 flex h-10 w-10 items-center justify-center"
     >
-      <ZaloIcon className="h-full w-full" />
+      {/* Vòng sóng toả ra để thu hút sự chú ý, chỉ mang tính trang trí */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 animate-ping rounded-full bg-[#0068FF]/60"
+      />
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 rounded-full bg-[#0068FF]/40"
+      />
+      <span className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full shadow-lg transition duration-200 hover:scale-105">
+        <ZaloIcon className="h-full w-full" />
+      </span>
     </a>
   );
 }
