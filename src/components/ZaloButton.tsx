@@ -31,10 +31,11 @@ export default function ZaloButton() {
         aria-hidden="true"
         className="absolute inset-0 rounded-full bg-[#0068FF]/40"
       />
-      <span className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-white shadow-lg transition duration-200 hover:scale-105">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/zalo.svg" alt="Zalo" className="h-full w-full object-cover" />
-      </span>
+      <img
+        src="/zalo.svg"
+        alt="Zalo"
+        className="relative h-10 w-10 rounded-full shadow-lg transition duration-200 hover:scale-105"
+      />
     </a>
   );
 }
