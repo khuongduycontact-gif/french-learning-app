@@ -8,12 +8,10 @@ export default function MaterialFileAction({
   url,
   name,
   type,
-  watermarkLabel,
 }: {
   url: string;
   name?: string;
   type?: string;
-  watermarkLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const kind = getMediaKind({ url, type });
@@ -52,7 +50,6 @@ export default function MaterialFileAction({
           url={url}
           name={name}
           kind={kind}
-          watermarkLabel={watermarkLabel}
           onClose={() => setOpen(false)}
         />
       )}

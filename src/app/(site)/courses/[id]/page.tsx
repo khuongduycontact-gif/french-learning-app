@@ -284,7 +284,6 @@ export default async function CourseDetailPage({
                 description: m.description,
                 files: getMaterialFiles(m.files),
               }))}
-              watermarkLabel={session?.user?.email ?? undefined}
             />
           </div>
         )}

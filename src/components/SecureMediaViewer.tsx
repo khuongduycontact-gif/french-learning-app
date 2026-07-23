@@ -6,8 +6,6 @@ type Props = {
   url: string;
   name?: string;
   kind: "image" | "video";
-  /** Nhãn nhận diện (vd: email học viên) in mờ lên tài liệu để hạn chế phát tán. */
-  watermarkLabel?: string;
   onClose: () => void;
 };
 
@@ -20,7 +18,6 @@ export default function SecureMediaViewer({
   url,
   name,
   kind,
-  watermarkLabel,
   onClose,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -58,10 +55,6 @@ export default function SecureMediaViewer({
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
-
-  const watermarkText = watermarkLabel
-    ? `Chỉ xem trực tuyến · ${watermarkLabel}`
-    : "Chỉ xem trực tuyến · Không sao chép";
 
   return (
     <div
@@ -112,22 +105,6 @@ export default function SecureMediaViewer({
             className="block max-h-[85vh] max-w-[92vw]"
           />
         )}
-
-        {/* Watermark lặp lại theo dạng lưới nghiêng, chỉ mang tính hạn chế/nhận
-            diện nguồn phát tán, không chặn được việc chụp/quay màn hình. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 grid grid-cols-3 grid-rows-3 place-items-center gap-6 p-4"
-        >
-          {Array.from({ length: 9 }).map((_, i) => (
-            <span
-              key={i}
-              className="-rotate-[25deg] whitespace-nowrap text-[11px] font-semibold text-white/25"
-            >
-              {watermarkText}
-            </span>
-          ))}
-        </div>
       </div>
     </div>
   );

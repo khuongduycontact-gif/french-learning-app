@@ -47,10 +47,8 @@ function ChevronRightIcon({ className }: { className?: string }) {
 
 export default function MaterialsPager({
   materials,
-  watermarkLabel,
 }: {
   materials: Material[];
-  watermarkLabel?: string;
 }) {
   const [index, setIndex] = useState(0);
   const total = materials.length;
@@ -97,7 +95,6 @@ export default function MaterialsPager({
                       url={f.url}
                       name={f.name}
                       type={f.type}
-                      watermarkLabel={watermarkLabel}
                     />
                   </div>
                 ))}

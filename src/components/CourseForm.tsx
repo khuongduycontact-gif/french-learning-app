@@ -440,11 +440,9 @@ export default function CourseForm({
         </div>
       </div>
 
-      {/* Cột phụ (phải trên desktop, dính khi cuộn): tài liệu học.
-          lg:min-h-0 cho phép cột này bị nén xuống đúng bằng chiều cao (đã stretch)
-          của cột trái thay vì kéo giãn cả grid theo nội dung của chính nó;
-          overflow-y-auto khiến phần vượt quá tự cuộn riêng bên trong. */}
-      <div className="no-scrollbar flex min-h-0 flex-col gap-3 lg:col-span-1 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1">
+      {/* Cột phụ (phải trên desktop): tài liệu học. Cuộn cùng với trang
+          (không còn dính/sticky và không còn tự cuộn riêng bên trong). */}
+      <div className="flex flex-col gap-3 lg:col-span-1">
         <CourseMaterialsEditor value={materials} onChange={setMaterials} />
         {materialsError && <p className="text-xs text-bordeaux">{materialsError}</p>}
       </div>
