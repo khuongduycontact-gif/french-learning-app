@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import MaterialFileAction from "./MaterialFileAction";
+import MaterialSubmission from "./MaterialSubmission";
+import type { Submission } from "@/types";
 
 type MaterialFile = {
   url: string;
@@ -47,8 +49,10 @@ function ChevronRightIcon({ className }: { className?: string }) {
 
 export default function MaterialsPager({
   materials,
+  submissionsByMaterial = {},
 }: {
   materials: Material[];
+  submissionsByMaterial?: Record<string, Submission | null>;
 }) {
   const [index, setIndex] = useState(0);
   const total = materials.length;
@@ -106,6 +110,13 @@ export default function MaterialsPager({
             <div className="flex flex-col gap-4">
               {renderGroup("Tài liệu bài giảng", lectureFiles)}
               {renderGroup("Tài liệu bài tập", exerciseFiles)}
+              {exerciseFiles.length > 0 && (
+                <MaterialSubmission
+                  key={current.id}
+                  materialId={current.id}
+                  initialSubmission={submissionsByMaterial[current.id] ?? null}
+                />
+              )}
             </div>
           );
         })()}

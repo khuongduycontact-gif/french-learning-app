@@ -30,6 +30,13 @@ enum NotificationType {
   PAYMENT_SUBMITTED    // gửi cho admin: học viên báo đã thanh toán
   ENROLLMENT_CONFIRMED // gửi cho học viên: admin đã xác nhận mở khoá học
   PAYMENT_REJECTED     // gửi cho học viên: admin từ chối xác nhận thanh toán
+  SUBMISSION_RECEIVED  // gửi cho admin: học viên vừa nộp bài tập
+  SUBMISSION_GRADED    // gửi cho học viên: admin đã chữa xong bài tập
+}
+
+enum SubmissionStatus {
+  SUBMITTED // học viên đã nộp, đang chờ admin chữa
+  GRADED    // admin đã chữa và gửi lại bài cho học viên
 }
 
 model User {
@@ -43,6 +50,8 @@ model User {
   sessions      Session[]
   enrollments   Enrollment[]
   notifications Notification[]
+  submissions   Submission[]     @relation("SubmissionsByStudent")
+  gradedSubmissions Submission[] @relation("SubmissionsGradedByAdmin")
   createdAt     DateTime       @default(now())
 }
 
@@ -95,6 +104,7 @@ model Course {
   published   Boolean      @default(true)
   enrollments Enrollment[]
   materials   CourseMaterial[]
+  submissions Submission[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
@@ -108,7 +118,8 @@ model CourseMaterial {
   order       Int      @default(0)
   createdAt   DateTime @default(now())
 
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  submissions Submission[]
 
   @@index([courseId])
 }
@@ -127,6 +138,38 @@ model Enrollment {
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
+}
+
+// Bài tập học viên nộp cho một tài liệu bài tập (CourseMaterial) cụ thể,
+// thuộc một khoá học cụ thể -> admin luôn biết chính xác cần chữa bài nào,
+// của khoá học nào (mỗi học viên chỉ có 1 bản nộp cho mỗi tài liệu, nộp lại
+// sẽ ghi đè và chuyển về trạng thái chờ chữa).
+model Submission {
+  id          String           @id @default(cuid())
+  courseId    String
+  materialId  String
+  userId      String
+  files       Json             // Tệp học viên nộp: [{ url, name, type }]
+  note        String?          @db.Text // Ghi chú của học viên khi nộp bài
+  status      SubmissionStatus @default(SUBMITTED)
+  gradedFiles Json?            // Tệp admin đã chữa gửi lại: [{ url, name, type }]
+  gradedNote  String?          @db.Text // Nhận xét của admin khi chữa bài
+  gradedById  String?          // Admin nào đã chữa
+  gradedAt    DateTime?
+  submittedAt DateTime         @default(now()) // Lần nộp (hoặc nộp lại) gần nhất
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  course   Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  material CourseMaterial @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  user     User           @relation("SubmissionsByStudent", fields: [userId], references: [id], onDelete: Cascade)
+  gradedBy User?          @relation("SubmissionsGradedByAdmin", fields: [gradedById], references: [id], onDelete: SetNull)
+
+  @@unique([userId, materialId])
+  @@index([courseId])
+  @@index([materialId])
+  @@index([userId])
+  @@index([gradedById])
 }
 
 model Achievement {

@@ -61,6 +61,16 @@ export default function Navbar() {
                 Thành tích
               </Link>
             )}
+            {session?.user && session.user.role !== "ADMIN" && (
+              <Link
+                href="/submissions"
+                className={`transition hover:text-ink ${
+                  isActive("/submissions") ? "font-semibold text-bordeaux" : ""
+                }`}
+              >
+                Bài tập của tôi
+              </Link>
+            )}
             {session?.user?.role === "ADMIN" && (
               <Link
                 href="/admin"

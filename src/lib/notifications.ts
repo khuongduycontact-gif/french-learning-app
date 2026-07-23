@@ -1,11 +1,14 @@
 import { prisma } from "./prisma";
 
-// Gửi thông báo cho tất cả admin (dùng khi học viên báo đã thanh toán)
+// Gửi thông báo cho tất cả admin (dùng khi học viên báo đã thanh toán, hoặc
+// khi học viên vừa nộp bài tập)
 export async function notifyAdmins({
+  type = "PAYMENT_SUBMITTED",
   title,
   message,
   link,
 }: {
+  type?: "PAYMENT_SUBMITTED" | "SUBMISSION_RECEIVED";
   title: string;
   message: string;
   link?: string;
@@ -19,7 +22,7 @@ export async function notifyAdmins({
   await prisma.notification.createMany({
     data: admins.map((a) => ({
       userId: a.id,
-      type: "PAYMENT_SUBMITTED",
+      type,
       title,
       message,
       link,
@@ -27,7 +30,8 @@ export async function notifyAdmins({
   });
 }
 
-// Gửi thông báo cho một học viên cụ thể (khi admin xác nhận/từ chối thanh toán)
+// Gửi thông báo cho một học viên cụ thể (khi admin xác nhận/từ chối thanh
+// toán, hoặc khi admin đã chữa xong bài tập)
 export async function notifyUser({
   userId,
   type,
@@ -36,7 +40,7 @@ export async function notifyUser({
   link,
 }: {
   userId: string;
-  type: "ENROLLMENT_CONFIRMED" | "PAYMENT_REJECTED";
+  type: "ENROLLMENT_CONFIRMED" | "PAYMENT_REJECTED" | "SUBMISSION_GRADED";
   title: string;
   message: string;
   link?: string;

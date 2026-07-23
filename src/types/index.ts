@@ -107,7 +107,9 @@ export interface PaymentInfo {
 export type NotificationType =
   | "PAYMENT_SUBMITTED"
   | "ENROLLMENT_CONFIRMED"
-  | "PAYMENT_REJECTED";
+  | "PAYMENT_REJECTED"
+  | "SUBMISSION_RECEIVED"
+  | "SUBMISSION_GRADED";
 
 export interface Notification {
   id: string;
@@ -117,4 +119,33 @@ export interface Notification {
   link: string | null;
   read: boolean;
   createdAt: string;
+}
+
+export type SubmissionStatus = "SUBMITTED" | "GRADED";
+
+export interface SubmissionFile {
+  url: string;
+  name?: string;
+  type?: string;
+}
+
+export interface Submission {
+  id: string;
+  courseId: string;
+  materialId: string;
+  userId: string;
+  files: SubmissionFile[];
+  note: string | null;
+  status: SubmissionStatus;
+  gradedFiles: SubmissionFile[] | null;
+  gradedNote: string | null;
+  gradedById: string | null;
+  gradedAt: string | null;
+  submittedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  course?: { id: string; title: string };
+  material?: { id: string; name: string };
+  user?: { id: string; name: string | null; email: string | null; image: string | null };
+  gradedBy?: { id: string; name: string | null } | null;
 }
