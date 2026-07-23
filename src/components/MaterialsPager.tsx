@@ -61,6 +61,18 @@ export default function MaterialsPager({
   const total = materials.length;
   const current = materials[index];
 
+  // Đếm giờ nộp bài của từng tài liệu được lưu ở đây (component cha không
+  // bị unmount khi chuyển qua lại giữa các bài), để khi học viên chuyển
+  // sang bài khác rồi quay lại, đồng hồ đếm ngược vừa bắt đầu không bị mất
+  // (mỗi tài liệu có đồng hồ đếm riêng, độc lập với nhau).
+  const [deadlineMap, setDeadlineMap] = useState<Record<string, DeadlineInfo | null>>(
+    deadlinesByMaterial
+  );
+
+  function handleDeadlineStarted(materialId: string, info: DeadlineInfo) {
+    setDeadlineMap((prev) => ({ ...prev, [materialId]: info }));
+  }
+
   const isFirst = index === 0;
   const isLast = index === total - 1;
 
@@ -118,7 +130,8 @@ export default function MaterialsPager({
                   materialId={current.id}
                   files={exerciseFiles}
                   initialSubmission={submissionsByMaterial[current.id] ?? null}
-                  initialDeadline={deadlinesByMaterial[current.id] ?? null}
+                  deadline={deadlineMap[current.id] ?? null}
+                  onDeadlineStarted={handleDeadlineStarted}
                 />
               )}
             </div>

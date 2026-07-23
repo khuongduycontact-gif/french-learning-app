@@ -15,15 +15,19 @@ export default function ExerciseDeadlineGate({
   materialId,
   files,
   initialSubmission,
-  initialDeadline,
+  deadline,
+  onDeadlineStarted,
 }: {
   materialId: string;
   files: ExerciseFile[];
   initialSubmission: Submission | null;
-  initialDeadline: DeadlineInfo | null;
+  // Đếm giờ hiện tại của ĐÚNG tài liệu này, do component cha (MaterialsPager)
+  // nắm giữ và truyền xuống — cha không bị unmount khi chuyển qua lại giữa
+  // các bài, nên đồng hồ đếm ngược của từng tài liệu không bị mất.
+  deadline: DeadlineInfo | null;
+  onDeadlineStarted: (materialId: string, info: DeadlineInfo) => void;
 }) {
   const { showToast } = useToast();
-  const [deadline, setDeadline] = useState<DeadlineInfo | null>(initialDeadline);
   const [noticeOpen, setNoticeOpen] = useState(false);
   const [starting, setStarting] = useState(false);
   const resolveRef = useRef<((proceed: boolean) => void) | null>(null);
@@ -49,7 +53,7 @@ export default function ExerciseDeadlineGate({
         resolveRef.current?.(false);
         return;
       }
-      setDeadline({ startedAt: data.startedAt, hours: data.hours });
+      onDeadlineStarted(materialId, { startedAt: data.startedAt, hours: data.hours });
       resolveRef.current?.(true);
     } catch {
       showToast("Có lỗi xảy ra, vui lòng thử lại.", "error");
