@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -88,11 +89,13 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="relative aspect-square w-full max-w-[220px] justify-self-center overflow-hidden rounded-full border border-mist bg-white/50 md:justify-self-end">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src="/logo-app.png"
             alt="Français avec Céline"
-            className="h-full w-full object-cover"
+            fill
+            sizes="220px"
+            quality={100}
+            className="object-cover"
           />
         </div>
       </section>
