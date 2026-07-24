@@ -98,6 +98,16 @@ export default function AuthButton({
               Khoá học của tôi
             </Link>
           )}
+          {session.user.role !== "ADMIN" && (
+            <Link
+              href="/submissions"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center border-b border-mist px-4 py-3 text-left text-sm font-medium text-ink transition hover:bg-mist"
+            >
+              Bài tập của tôi
+            </Link>
+          )}
           <button
             role="menuitem"
             onClick={() => {

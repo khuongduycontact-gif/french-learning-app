@@ -53,6 +53,15 @@ html {
   --fab-gap: 1rem;
 }
 
+html,
+body {
+  /* Chặn cuộn ngang ngoài ý muốn trên mobile (nguyên nhân gây hiện tượng
+     "rách hình"/lệch nội dung khi cuộn trên Safari iOS, kết hợp với các
+     lớp GPU riêng (transform-gpu) đặt ở header dính (sticky) và các nút
+     nổi cố định (fixed) bên dưới). */
+  overflow-x: hidden;
+}
+
 body {
   @apply bg-parchment text-ink font-body;
 }

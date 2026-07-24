@@ -210,7 +210,7 @@ function DictionaryLookup() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-5 right-5 z-50 flex transform-gpu flex-col items-end gap-3">
       {open && (
         <div className="w-80 max-w-[calc(100vw-2.5rem)] overflow-hidden rounded-2xl border border-mist bg-white shadow-xl">
           <div className="flex items-center justify-between bg-ink px-4 py-2.5">

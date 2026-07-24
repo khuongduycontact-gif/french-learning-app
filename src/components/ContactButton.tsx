@@ -54,7 +54,7 @@ export default function ContactButton() {
   if (isAdmin) return null;
 
   return (
-    <div className="fixed bottom-5 left-5 z-40 flex flex-col items-start gap-3">
+    <div className="fixed bottom-5 left-5 z-40 flex transform-gpu flex-col items-start gap-3">
       {open && (
         <div className="w-64 max-w-[calc(100vw-2.5rem)] overflow-hidden rounded-2xl border border-mist bg-white shadow-xl">
           <div className="flex items-center justify-between bg-ink px-4 py-2.5">

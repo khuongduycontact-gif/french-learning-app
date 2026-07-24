@@ -138,7 +138,7 @@ export default async function CourseDetailPage({
       {/* Cột chính: banner + nội dung khoá học, theo đúng phong cách thẻ
           khoá học mẫu (chấm bi, minh hoạ tháp Eiffel, huy hiệu trạng thái). */}
       <div className="md:col-span-2">
-        <div className="overflow-hidden rounded-2xl border border-mist bg-white shadow-sm">
+        <div className="transform-gpu overflow-hidden rounded-2xl border border-mist bg-white shadow-sm">
           <div className="relative aspect-[16/9] w-full overflow-hidden bg-mist sm:aspect-[21/9]">
             {course.videoUrl && isVideoUrl(course.videoUrl) ? (
               <video
