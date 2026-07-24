@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import AuthButton from "./AuthButton";
 import NotificationBell from "./NotificationBell";
+import SiteMobileDrawer from "./SiteMobileDrawer";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -17,8 +18,9 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-mist bg-parchment shadow-sm">
-      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-6 py-4 md:px-10">
-        <div className="flex min-w-0 items-center gap-8">
+      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-4 py-4 sm:gap-4 sm:px-6 md:px-10">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4 md:gap-8">
+          <SiteMobileDrawer session={session} />
           {/* Trang chủ render động theo trạng thái đăng ký (huy hiệu "đã
               đăng ký"/"chờ xác nhận"...). Next.js Link tự động prefetch "/"
               ngay khi Navbar mount (kể cả khi đang ở trang khoá học, trước
