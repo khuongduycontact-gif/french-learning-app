@@ -134,10 +134,15 @@ export default async function CourseDetailPage({
   const initial = course.title.trim().slice(0, 1).toUpperCase();
 
   return (
-    <div className="grid gap-8 md:grid-cols-3 md:items-stretch">
+    <div className="grid min-w-0 gap-8 md:grid-cols-3 md:items-stretch">
       {/* Cột chính: banner + nội dung khoá học, theo đúng phong cách thẻ
-          khoá học mẫu (chấm bi, minh hoạ tháp Eiffel, huy hiệu trạng thái). */}
-      <div className="md:col-span-2">
+          khoá học mẫu (chấm bi, minh hoạ tháp Eiffel, huy hiệu trạng thái).
+          min-w-0: theo mặc định, item trong CSS Grid có min-width: auto,
+          tức là cột sẽ không co nhỏ hơn nội dung bên trong (tiêu đề/mô tả
+          dài) dù overflow-x: hidden đã đặt ở body - khiến nội dung bị đẩy
+          tràn ra ngoài và bị cắt cụt ở mép màn hình thay vì tự xuống dòng.
+          min-w-0 cho phép cột co lại đúng theo chiều rộng khả dụng. */}
+      <div className="min-w-0 md:col-span-2">
         <div className="transform-gpu overflow-hidden rounded-2xl border border-mist bg-white shadow-sm">
           <div className="relative aspect-[16/9] w-full overflow-hidden bg-mist sm:aspect-[21/9]">
             {course.videoUrl && isVideoUrl(course.videoUrl) ? (
@@ -248,11 +253,11 @@ export default async function CourseDetailPage({
               {levelLabel[course.level] ?? course.level}
             </span>
 
-            <h1 className="mt-3 font-body text-2xl font-bold text-ink sm:text-3xl">
+            <h1 className="mt-3 break-words font-body text-2xl font-bold text-ink sm:text-3xl">
               {course.title}
             </h1>
 
-            <RichText content={course.description} className="mt-3 text-ink/60" />
+            <RichText content={course.description} className="mt-3 break-words text-ink/60" />
           </div>
         </div>
       </div>
@@ -261,7 +266,7 @@ export default async function CourseDetailPage({
           Không dùng sticky/max-height ở đây nữa để toàn bộ trang cuộn bình
           thường theo một luồng duy nhất, thay vì cột này bị "ghim" và cuộn
           riêng bên trong. */}
-      <div className="flex flex-col gap-6">
+      <div className="min-w-0 flex flex-col gap-6">
         <aside className="rounded-2xl border border-mist bg-white/60 p-6">
           {/* Ô giá tiền / thời lượng - icon nằm trực tiếp trên nền màu,
               không có khung vuông bọc icon, đúng như ảnh mẫu. Chuyển sang

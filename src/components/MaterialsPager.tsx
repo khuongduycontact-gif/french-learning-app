@@ -88,7 +88,7 @@ export default function MaterialsPager({
         <div className="min-w-0">
           <p className="truncate font-medium text-ink">{current.name}</p>
           {current.description && (
-            <p className="mt-0.5 text-sm text-ink/60">{current.description}</p>
+            <p className="mt-0.5 break-words text-sm text-ink/60">{current.description}</p>
           )}
         </div>
         {(() => {

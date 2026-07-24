@@ -12,8 +12,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Chỉ tô đậm mục menu khi đang ở đúng trang đó (VD: "/courses"), không
+  // tính các trang con bên trong (VD: "/courses/mot-khoa-hoc-nao-do") - để
+  // khi xem chi tiết một khoá học, menu không mặc định tô đậm "Khoá học".
   function isActive(href: string) {
-    return pathname === href || pathname?.startsWith(`${href}/`);
+    return pathname === href;
   }
 
   return (

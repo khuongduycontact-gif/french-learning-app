@@ -6,8 +6,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Session } from "next-auth";
 
+// Chỉ tô đậm mục menu khi đang ở đúng trang đó, không tính các trang con
+// bên trong (VD: đang xem chi tiết một khoá học ở "/courses/xyz" thì
+// không tự động tô đậm "Khoá học" - mặc định không mục nào được chọn).
 function isActive(pathname: string | null, href: string) {
-  return pathname === href || pathname?.startsWith(`${href}/`) || false;
+  return pathname === href;
 }
 
 export default function SiteMobileDrawer({
