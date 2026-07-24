@@ -68,6 +68,16 @@ export default function Navbar() {
             )}
             {session?.user && session.user.role !== "ADMIN" && (
               <Link
+                href="/account"
+                className={`transition hover:text-ink ${
+                  isActive("/account") ? "font-semibold text-bordeaux" : ""
+                }`}
+              >
+                Khoá học của tôi
+              </Link>
+            )}
+            {session?.user && session.user.role !== "ADMIN" && (
+              <Link
                 href="/submissions"
                 className={`transition hover:text-ink ${
                   isActive("/submissions") ? "font-semibold text-bordeaux" : ""

@@ -46,6 +46,7 @@ export default function SiteMobileDrawer({
   const links = [
     !isAdmin && { href: "/courses", label: "Khoá học" },
     !isAdmin && { href: "/achievements", label: "Thành tích" },
+    !isAdmin && session?.user && { href: "/account", label: "Khoá học của tôi" },
     !isAdmin && session?.user && { href: "/submissions", label: "Bài tập của tôi" },
     isAdmin && { href: "/admin", label: "Quản trị" },
   ].filter(Boolean) as { href: string; label: string }[];
@@ -93,16 +94,16 @@ export default function SiteMobileDrawer({
               role="dialog"
               aria-modal="true"
               aria-label="Menu"
-              className={`fixed inset-y-0 left-0 z-[90] w-72 max-w-[80vw] transform bg-parchment shadow-2xl transition-transform duration-300 ease-out md:hidden ${
+              className={`fixed inset-y-0 left-0 z-[90] w-[78vw] max-w-64 transform bg-parchment shadow-2xl transition-transform duration-300 ease-out sm:w-72 sm:max-w-80 ${
                 open ? "translate-x-0" : "-translate-x-full"
-              }`}
+              } md:hidden`}
             >
-              <div className="flex items-center justify-between border-b border-mist px-5 py-4">
-                <p className="flex items-baseline gap-1.5 leading-tight">
-                  <span className="font-display text-base font-semibold tracking-tight text-ink">
+              <div className="flex items-center justify-between gap-2 border-b border-mist px-4 py-3 sm:px-5 sm:py-4">
+                <p className="flex min-w-0 flex-wrap items-baseline gap-1.5 leading-tight">
+                  <span className="font-display text-sm font-semibold tracking-tight text-ink sm:text-base">
                     Français
                   </span>
-                  <span className="font-display text-sm italic text-bordeaux">
+                  <span className="font-display text-xs italic text-bordeaux sm:text-sm">
                     avec Céline
                   </span>
                 </p>
@@ -110,7 +111,7 @@ export default function SiteMobileDrawer({
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label="Đóng menu"
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-ink/50 transition hover:bg-mist hover:text-ink"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/50 transition hover:bg-mist hover:text-ink"
                 >
                   <svg className="h-4.5 w-4.5" viewBox="0 0 20 20" fill="none">
                     <path
@@ -123,7 +124,7 @@ export default function SiteMobileDrawer({
                 </button>
               </div>
 
-              <nav className="flex flex-col gap-1 p-4 text-sm">
+              <nav className="flex flex-col gap-1 p-3 text-sm sm:p-4">
                 {links.map((link) => {
                   const active = isActive(pathname, link.href);
                   return (
