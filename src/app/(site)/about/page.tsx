@@ -24,7 +24,7 @@ export default async function AboutPage() {
           <p className="font-body text-xl font-semibold text-ink">{about.heroGreeting}</p>
           <p className="mt-3 text-ink/70">{about.heroDescription}</p>
         </div>
-        <div className="relative ml-auto w-full max-w-[15rem] md:mr-0 md:max-w-xs">
+        <div className="relative mx-auto w-full max-w-[15rem] md:ml-auto md:mr-0 md:max-w-xs">
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-mist bg-white/50">
             {about.heroImageUrl ? (
               <Image

@@ -12,6 +12,8 @@ type Props = {
   onChange: (url: string) => void;
   // Lỗi validate từ form cha (VD: bắt buộc phải chọn tệp), hiển thị ngay bên dưới ô này
   error?: string;
+  // Cho phép tuỳ biến kích thước/tỉ lệ khung xem trước ảnh (mặc định: ngang, cao 8rem)
+  previewClassName?: string;
 };
 
 const acceptByKind: Record<Kind, string> = {
@@ -20,7 +22,14 @@ const acceptByKind: Record<Kind, string> = {
   "image-or-video": "image/*,video/*",
 };
 
-export default function MediaUploader({ label, kind, value, onChange, error: externalError }: Props) {
+export default function MediaUploader({
+  label,
+  kind,
+  value,
+  onChange,
+  error: externalError,
+  previewClassName,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -84,7 +93,10 @@ export default function MediaUploader({ label, kind, value, onChange, error: ext
         <img
           src={value}
           alt=""
-          className="mb-2 h-32 w-full rounded-lg border border-mist object-cover"
+          className={
+            previewClassName ||
+            "mb-2 h-32 w-full rounded-lg border border-mist object-cover"
+          }
         />
       )}
       {value && isVideo && (

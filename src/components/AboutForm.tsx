@@ -168,29 +168,36 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-10">
       {/* --- Hero --- */}
-      <section className="flex flex-col gap-4 rounded-2xl border border-mist bg-white/40 p-5">
-        <TextField label="Câu trích dẫn nhỏ" value={form.heroKicker} onChange={(v) => set("heroKicker", v)} />
-        <TextField label="Tiêu đề lớn" value={form.heroTitle} onChange={(v) => set("heroTitle", v)} />
-        <TextField label="Lời chào" value={form.heroGreeting} onChange={(v) => set("heroGreeting", v)} />
-        <TextField
-          label="Mô tả giới thiệu"
-          value={form.heroDescription}
-          onChange={(v) => set("heroDescription", v)}
-          textarea
-          rows={4}
-        />
-        <MediaUploader
-          label="Ảnh chính"
-          kind="image"
-          value={form.heroImageUrl || ""}
-          onChange={(url) => set("heroImageUrl", url || null)}
-        />
+      <section className="rounded-2xl border border-mist bg-white/40 p-5">
+        <div className="grid gap-6 md:grid-cols-[1fr_180px]">
+          <div className="flex flex-col gap-4">
+            <TextField label="Câu trích dẫn nhỏ" value={form.heroKicker} onChange={(v) => set("heroKicker", v)} />
+            <TextField label="Tiêu đề lớn" value={form.heroTitle} onChange={(v) => set("heroTitle", v)} />
+            <TextField label="Lời chào" value={form.heroGreeting} onChange={(v) => set("heroGreeting", v)} />
+            <TextField
+              label="Mô tả giới thiệu"
+              value={form.heroDescription}
+              onChange={(v) => set("heroDescription", v)}
+              textarea
+              rows={4}
+            />
+          </div>
+          <div className="justify-self-center md:justify-self-end">
+            <MediaUploader
+              label="Ảnh chính"
+              kind="image"
+              value={form.heroImageUrl || ""}
+              onChange={(url) => set("heroImageUrl", url || null)}
+              previewClassName="mb-2 aspect-[3/4] w-[180px] rounded-lg border border-mist object-cover"
+            />
+          </div>
+        </div>
       </section>
 
       {/* --- Hành trình của tôi --- */}
       <section className="flex flex-col gap-4 rounded-2xl border border-mist bg-white/40 p-5">
         <h2 className="font-display text-xl font-semibold text-ink">Hành trình của tôi</h2>
-        <div className="flex flex-col gap-4">
+        <div className="grid gap-4 lg:grid-cols-2">
           {form.timeline.map((item, i) => (
             <ItemCard
               key={item.id}
@@ -200,15 +207,16 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
               onMoveDown={() => moveItem("timeline", i, 1)}
               onRemove={() => removeItem("timeline", i)}
             >
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-[5rem_5rem_1fr]">
                 <TextField label="Năm" value={item.year} onChange={(v) => updateItem("timeline", i, { year: v })} />
                 <AboutIconPicker value={item.icon} onChange={(icon) => updateItem("timeline", i, { icon })} />
+                <TextField label="Tiêu đề" value={item.title} onChange={(v) => updateItem("timeline", i, { title: v })} />
               </div>
-              <TextField label="Tiêu đề" value={item.title} onChange={(v) => updateItem("timeline", i, { title: v })} />
               <TextField
                 label="Mô tả"
                 value={item.description}
                 onChange={(v) => updateItem("timeline", i, { description: v })}
+                rows={1}
                 textarea
               />
             </ItemCard>
@@ -234,7 +242,7 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
       {/* --- Vì sao học cùng Céline --- */}
       <section className="flex flex-col gap-4 rounded-2xl border border-mist bg-white/40 p-5">
         <h2 className="font-display text-xl font-semibold text-ink">Vì sao học cùng Céline</h2>
-        <div className="flex flex-col gap-4">
+        <div className="grid gap-4 lg:grid-cols-2">
           {form.reasons.map((item, i) => (
             <ItemCard
               key={item.id}
@@ -244,12 +252,15 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
               onMoveDown={() => moveItem("reasons", i, 1)}
               onRemove={() => removeItem("reasons", i)}
             >
-              <AboutIconPicker value={item.icon} onChange={(icon) => updateItem("reasons", i, { icon })} />
-              <TextField label="Tiêu đề" value={item.title} onChange={(v) => updateItem("reasons", i, { title: v })} />
+              <div className="grid gap-3 sm:grid-cols-[5rem_1fr]">
+                <AboutIconPicker value={item.icon} onChange={(icon) => updateItem("reasons", i, { icon })} />
+                <TextField label="Tiêu đề" value={item.title} onChange={(v) => updateItem("reasons", i, { title: v })} />
+              </div>
               <TextField
                 label="Mô tả"
                 value={item.description}
                 onChange={(v) => updateItem("reasons", i, { description: v })}
+                rows={1}
                 textarea
               />
             </ItemCard>
@@ -281,7 +292,7 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
           value={form.methodImageUrl || ""}
           onChange={(url) => set("methodImageUrl", url || null)}
         />
-        <div className="flex flex-col gap-4">
+        <div className="grid gap-4 lg:grid-cols-2">
           {form.methods.map((item, i) => (
             <ItemCard
               key={item.id}
@@ -296,6 +307,7 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
                 label="Mô tả"
                 value={item.description}
                 onChange={(v) => updateItem("methods", i, { description: v })}
+                rows={2}
                 textarea
               />
             </ItemCard>
