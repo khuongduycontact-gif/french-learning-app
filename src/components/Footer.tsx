@@ -211,63 +211,72 @@ export default function Footer() {
 
         <div className="mt-8 flex items-center gap-4 sm:gap-6">
           <span className="h-px flex-1 bg-gradient-to-r from-transparent via-bordeaux/30 to-bordeaux/30" />
-          <svg viewBox="0 0 64 60" className="h-10 w-10 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
-            {/* Dải ruy băng tạo hình trái tim */}
-            <path
-              d="M32,54 C10,38 2,24 10,14 C16,7 26,10 27,20 C27,20 24,16 18,17 C13,18 12,23 16,25"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M32,54 C54,38 62,24 54,14 C48,7 38,10 37,20 C37,20 40,16 46,17 C51,18 52,23 48,25"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            {/* Ba thân lúa mọc lên từ giữa trái tim */}
-            <path d="M32,32 C29,24 26,14 24,6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-            <path d="M32,32 C32,22 32,12 32,4" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-            <path d="M32,32 C35,24 38,14 40,6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-
-            {/* Hạt lúa - thân trái */}
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(30.5,24) rotate(-49) scale(1)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(30.5,24) rotate(19) scale(1)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(28.5,17) rotate(-43) scale(0.85)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(28.5,17) rotate(13) scale(0.85)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(27,12.5) rotate(-37) scale(0.7)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(27,12.5) rotate(7) scale(0.7)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(25.5,8) rotate(-31) scale(0.55)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(25.5,8) rotate(1) scale(0.55)" />
-
-            {/* Hạt lúa - thân giữa */}
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(32,24) rotate(-34) scale(1)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(32,24) rotate(34) scale(1)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(32,17) rotate(-28) scale(0.85)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(32,17) rotate(28) scale(0.85)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(32,11) rotate(-22) scale(0.7)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(32,11) rotate(22) scale(0.7)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.9" transform="translate(32,5.5) rotate(-16) scale(0.55)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.9" transform="translate(32,5.5) rotate(16) scale(0.55)" />
-
-            {/* Hạt lúa - thân phải */}
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(34,24) rotate(-19) scale(1)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(34,24) rotate(49) scale(1)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(36,17) rotate(-13) scale(0.85)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(36,17) rotate(43) scale(0.85)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(38,12.5) rotate(-7) scale(0.7)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(38,12.5) rotate(37) scale(0.7)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(39.5,8) rotate(-1) scale(0.55)" />
-            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(39.5,8) rotate(31) scale(0.55)" />
+          <svg viewBox="0 0 56 44" className="h-6 w-8 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
+            {/* Hoa diên vĩ - trái */}
+            <g transform="translate(2,0)">
+              <path
+                d="M16,32 C11,28 10,17 16,4 C22,17 21,28 16,32 Z"
+                fill="currentColor"
+                fillOpacity="0.85"
+              />
+              <path
+                d="M13,29 C6,27 0,24 0,17 C0,11 6,9 10,12 C7,11 5,14 6,17 C7,20 11,20 13,18"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M19,29 C26,27 32,24 32,17 C32,11 26,9 22,12 C25,11 27,14 26,17 C25,20 21,20 19,18"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <rect x="9" y="30" width="14" height="2.6" rx="1.3" fill="currentColor" fillOpacity="0.75" />
+              <path
+                d="M16,33 C14,36 14,40 16,44 C18,40 18,36 16,33 Z"
+                fill="currentColor"
+                fillOpacity="0.75"
+              />
+            </g>
+            {/* Hoa diên vĩ - phải */}
+            <g transform="translate(22,0)">
+              <path
+                d="M16,32 C11,28 10,17 16,4 C22,17 21,28 16,32 Z"
+                fill="currentColor"
+                fillOpacity="0.85"
+              />
+              <path
+                d="M13,29 C6,27 0,24 0,17 C0,11 6,9 10,12 C7,11 5,14 6,17 C7,20 11,20 13,18"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M19,29 C26,27 32,24 32,17 C32,11 26,9 22,12 C25,11 27,14 26,17 C25,20 21,20 19,18"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <rect x="9" y="30" width="14" height="2.6" rx="1.3" fill="currentColor" fillOpacity="0.75" />
+              <path
+                d="M16,33 C14,36 14,40 16,44 C18,40 18,36 16,33 Z"
+                fill="currentColor"
+                fillOpacity="0.75"
+              />
+            </g>
           </svg>
           <span className="h-px flex-1 bg-gradient-to-l from-transparent via-bordeaux/30 to-bordeaux/30" />
         </div>
 
-        <div className="mt-4 flex items-center justify-center gap-1.5 text-center text-sm text-ink/60">
-          <span>
+        <div className="mt-4 flex items-center justify-center gap-1.5 text-center text-sm">
+          <span
+            className="bg-clip-text font-medium text-transparent [background-image:linear-gradient(90deg,#0055A4_0%,#0055A4_33%,#FFFFFF_33%,#FFFFFF_66%,#EF4135_66%,#EF4135_100%)]"
+            style={{ WebkitTextStroke: "0.4px rgba(27,42,74,0.35)" }}
+          >
             © {year} Français avec Céline
           </span>
           <svg viewBox="0 0 20 18" className="h-3.5 w-3.5 shrink-0" aria-hidden>
