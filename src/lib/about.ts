@@ -39,7 +39,6 @@ export function serializeAboutPage(record: any): AboutPage {
     heroGreeting: record.heroGreeting,
     heroDescription: record.heroDescription,
     heroImageUrl: record.heroImageUrl,
-    heroBadgeUrl: record.heroBadgeUrl,
     timeline: toArray(record.timeline),
     reasons: toArray(record.reasons),
     methodTitle: record.methodTitle,

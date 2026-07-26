@@ -86,7 +86,6 @@ export interface AboutPage {
   heroGreeting: string;
   heroDescription: string;
   heroImageUrl: string | null;
-  heroBadgeUrl: string | null;
   timeline: AboutTimelineItem[];
   reasons: AboutReason[];
   methodTitle: string;

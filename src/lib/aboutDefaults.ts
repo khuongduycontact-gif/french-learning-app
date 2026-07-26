@@ -41,7 +41,6 @@ export const defaultAboutContent = {
   heroDescription:
     "Mình là giáo viên tiếng Pháp với hơn 5 năm kinh nghiệm giảng dạy và luyện thi DELF theo khung tham chiếu Châu Âu (CEFR). Mình tin rằng học một ngôn ngữ là mở ra một thế giới mới, và mình ở đây để đồng hành cùng bạn trên hành trình đó.",
   heroImageUrl: null as string | null,
-  heroBadgeUrl: null as string | null,
   timeline: defaultTimeline,
   reasons: defaultReasons,
   methodTitle: "Phương pháp giảng dạy",

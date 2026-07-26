@@ -44,11 +44,11 @@ export default function SiteMobileDrawer({
   const isAdmin = session?.user?.role === "ADMIN";
 
   const links = [
-    !isAdmin && { href: "/about", label: "Giới thiệu" },
     !isAdmin && { href: "/courses", label: "Khoá học" },
-    !isAdmin && { href: "/achievements", label: "Thành tích" },
     !isAdmin && session?.user && { href: "/account", label: "Khoá học của tôi" },
     !isAdmin && session?.user && { href: "/submissions", label: "Bài tập của tôi" },
+    !isAdmin && { href: "/achievements", label: "Thành tích" },
+    !isAdmin && { href: "/about", label: "Giới thiệu về Céline" },
     isAdmin && { href: "/admin", label: "Quản trị" },
   ].filter(Boolean) as { href: string; label: string }[];
 

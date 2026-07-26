@@ -179,20 +179,12 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
           textarea
           rows={4}
         />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <MediaUploader
-            label="Ảnh chính"
-            kind="image"
-            value={form.heroImageUrl || ""}
-            onChange={(url) => set("heroImageUrl", url || null)}
-          />
-          <MediaUploader
-            label="Ảnh huy hiệu tròn (tuỳ chọn)"
-            kind="image"
-            value={form.heroBadgeUrl || ""}
-            onChange={(url) => set("heroBadgeUrl", url || null)}
-          />
-        </div>
+        <MediaUploader
+          label="Ảnh chính"
+          kind="image"
+          value={form.heroImageUrl || ""}
+          onChange={(url) => set("heroImageUrl", url || null)}
+        />
       </section>
 
       {/* --- Hành trình của tôi --- */}

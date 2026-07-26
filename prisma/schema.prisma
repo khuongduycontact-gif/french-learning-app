@@ -222,7 +222,6 @@ model AboutPage {
   heroGreeting    String @default("Bonjour ! Mình là Céline.")
   heroDescription String @db.Text
   heroImageUrl    String? @db.Text
-  heroBadgeUrl    String? @db.Text
 
   // --- Hành trình của tôi (timeline mốc năm) ---
   // [{ id, year, icon, title, description }]

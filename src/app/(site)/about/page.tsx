@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { Fragment } from "react";
 import Image from "next/image";
 import { getAboutPage } from "@/lib/about";
 import { AboutIcon } from "@/components/AboutIcons";
@@ -22,27 +23,22 @@ export default async function AboutPage() {
           </h1>
           <div className="ribbon-rule my-6" />
           <p className="font-body text-xl font-semibold text-ink">{about.heroGreeting}</p>
-          <p className="mt-3 max-w-md text-ink/70">{about.heroDescription}</p>
+          <p className="mt-3 text-ink/70">{about.heroDescription}</p>
         </div>
-        <div className="relative ml-auto w-full max-w-sm md:mr-0">
+        <div className="relative ml-auto w-full max-w-[15rem] md:mr-0 md:max-w-xs">
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-mist bg-white/50">
             {about.heroImageUrl ? (
               <Image
                 src={about.heroImageUrl}
                 alt={about.heroGreeting}
                 fill
-                sizes="384px"
+                sizes="320px"
                 className="object-cover"
               />
             ) : (
               <div className="flex h-full items-center justify-center text-ink/30">Chưa có ảnh</div>
             )}
           </div>
-          {about.heroBadgeUrl && (
-            <div className="absolute -right-4 -top-4 aspect-square w-24 overflow-hidden rounded-full border-4 border-parchment shadow-lg sm:w-28">
-              <Image src={about.heroBadgeUrl} alt="" fill sizes="112px" className="object-cover" />
-            </div>
-          )}
         </div>
       </section>
 
@@ -51,28 +47,31 @@ export default async function AboutPage() {
         <section>
           <h2 className="font-display text-2xl font-semibold text-ink">Hành trình của tôi</h2>
           <div className="ribbon-rule mt-3" />
-          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:flex lg:items-start lg:gap-0">
             {about.timeline.map((item, i) => (
-              <div key={item.id} className="relative flex flex-col items-center text-center">
+              <Fragment key={item.id}>
+                <div className="flex flex-1 flex-col items-center text-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux ring-4 ring-parchment">
+                    <AboutIcon name={item.icon} className="h-6 w-6" />
+                  </div>
+                  <p className="mt-3 font-body text-lg font-semibold text-ink">{item.year}</p>
+                  <p className="mt-1 text-sm font-semibold text-ink">{item.title}</p>
+                  <p className="mt-1 text-xs text-ink/60">{item.description}</p>
+                </div>
                 {i < about.timeline.length - 1 && (
-                  <div className="pointer-events-none absolute left-[calc(50%+2rem)] top-7 hidden h-0 w-[calc(100%-2rem)] -translate-y-1/2 lg:block">
-                    <div className="h-0.5 w-full bg-bordeaux/25" />
-                    <svg
-                      viewBox="0 0 12 12"
-                      className="absolute -right-1 -top-[5px] h-3 w-3 text-bordeaux/40"
-                      fill="currentColor"
-                    >
-                      <path d="M1 1 11 6 1 11Z" />
+                  <div className="hidden shrink-0 items-center justify-center pt-7 lg:flex lg:w-8 xl:w-12">
+                    <svg viewBox="0 0 32 10" className="h-2.5 w-full text-bordeaux/50" fill="none">
+                      <path
+                        d="M1 5H28M28 5L21 1.5M28 5L21 8.5"
+                        stroke="currentColor"
+                        strokeWidth="1.75"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </div>
                 )}
-                <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux ring-4 ring-parchment">
-                  <AboutIcon name={item.icon} className="h-6 w-6" />
-                </div>
-                <p className="mt-3 font-body text-lg font-semibold text-ink">{item.year}</p>
-                <p className="mt-1 text-sm font-semibold text-ink">{item.title}</p>
-                <p className="mt-1 text-xs text-ink/60">{item.description}</p>
-              </div>
+              </Fragment>
             ))}
           </div>
         </section>
@@ -99,30 +98,53 @@ export default async function AboutPage() {
 
       {/* --- Phương pháp giảng dạy --- */}
       {about.methods.length > 0 && (
-        <section>
-          <h2 className="font-display text-2xl font-semibold text-ink">{about.methodTitle}</h2>
-          <div className="ribbon-rule mt-3" />
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 sm:items-center">
-            {about.methodImageUrl && (
-              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-mist">
-                <Image src={about.methodImageUrl} alt={about.methodTitle} fill sizes="320px" className="object-cover" />
-              </div>
-            )}
-            <ul className="flex flex-col gap-4">
-              {about.methods.map((m) => (
-                <li key={m.id} className="flex gap-3">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux">
-                    <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none">
-                      <path d="M4 10.5 8 14l8-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-ink">{m.title}</p>
-                    <p className="text-xs text-ink/60">{m.description}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-white/50 py-16">
+          <div className="mx-auto max-w-[1400px] px-6 md:px-10">
+            <h2 className="text-center font-display text-2xl font-semibold text-ink md:text-3xl">
+              {about.methodTitle}
+            </h2>
+            <div className="ribbon-rule mx-auto mt-3" />
+            <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-center">
+              {about.methodImageUrl && (
+                <div className="relative mx-auto aspect-[4/5] w-full max-w-xs overflow-hidden rounded-2xl border border-mist shadow-sm lg:max-w-none">
+                  <Image
+                    src={about.methodImageUrl}
+                    alt={about.methodTitle}
+                    fill
+                    sizes="(min-width: 1024px) 352px, 320px"
+                    className="object-cover"
+                  />
+                </div>
+              )}
+              <ul
+                className={`grid gap-5 sm:grid-cols-2 ${
+                  about.methods.length >= 4 ? "xl:grid-cols-4" : ""
+                } ${about.methodImageUrl ? "" : "lg:grid-cols-3"}`}
+              >
+                {about.methods.map((m) => (
+                  <li
+                    key={m.id}
+                    className="flex gap-3 rounded-2xl border border-mist bg-white/70 p-4 shadow-sm"
+                  >
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux">
+                      <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none">
+                        <path
+                          d="M4 10.5 8 14l8-8"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-ink">{m.title}</p>
+                      <p className="mt-1 text-xs text-ink/60">{m.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
       )}
