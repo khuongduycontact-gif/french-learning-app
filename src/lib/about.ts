@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { defaultAboutContent } from "@/lib/aboutDefaults";
 import type { AboutPage } from "@/types";
 
@@ -12,6 +13,12 @@ export async function getAboutPage(): Promise<AboutPage> {
     create: {
       id: "main",
       ...defaultAboutContent,
+      // Các mảng mặc định có kiểu cụ thể (AboutTimelineItem[]...) nên TS
+      // không tự suy ra được là hợp lệ với cột Json của Prisma - ép kiểu
+      // tường minh sang Prisma.InputJsonValue để khớp đúng input type.
+      timeline: defaultAboutContent.timeline as unknown as Prisma.InputJsonValue,
+      reasons: defaultAboutContent.reasons as unknown as Prisma.InputJsonValue,
+      methods: defaultAboutContent.methods as unknown as Prisma.InputJsonValue,
     },
   });
 
