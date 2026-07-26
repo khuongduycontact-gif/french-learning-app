@@ -96,7 +96,7 @@ export default async function AboutPage() {
       {about.methods.length > 0 && (
         <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen">
           <div className="mx-auto max-w-[1400px] px-6 md:px-10">
-            <h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">
+            <h2 className="font-display text-2xl font-semibold text-ink">
               {about.methodTitle}
             </h2>
             <div className="ribbon-rule mt-3" />

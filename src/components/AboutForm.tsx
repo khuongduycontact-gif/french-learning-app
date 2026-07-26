@@ -216,7 +216,7 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
                 label="Mô tả"
                 value={item.description}
                 onChange={(v) => updateItem("timeline", i, { description: v })}
-                rows={1}
+                rows={3}
                 textarea
               />
             </ItemCard>
@@ -260,7 +260,7 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
                 label="Mô tả"
                 value={item.description}
                 onChange={(v) => updateItem("reasons", i, { description: v })}
-                rows={1}
+                rows={3}
                 textarea
               />
             </ItemCard>
@@ -285,7 +285,6 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
       {/* --- Phương pháp giảng dạy --- */}
       <section className="flex flex-col gap-4 rounded-2xl border border-mist bg-white/40 p-5">
         <h2 className="font-display text-xl font-semibold text-ink">Phương pháp giảng dạy</h2>
-        <TextField label="Tiêu đề mục" value={form.methodTitle} onChange={(v) => set("methodTitle", v)} />
         <MediaUploader
           label="Ảnh minh hoạ"
           kind="image"
@@ -307,7 +306,7 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
                 label="Mô tả"
                 value={item.description}
                 onChange={(v) => updateItem("methods", i, { description: v })}
-                rows={2}
+                rows={3}
                 textarea
               />
             </ItemCard>
