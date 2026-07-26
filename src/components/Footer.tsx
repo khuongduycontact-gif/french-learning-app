@@ -134,9 +134,9 @@ export default function Footer() {
   return (
     <footer className="relative overflow-hidden border-t border-mist bg-parchment bg-[length:220px_auto] bg-[position:left_bottom,right_bottom] bg-no-repeat [background-image:url('/images/footer-corner-left.webp'),url('/images/footer-corner-right.webp')] sm:bg-[length:280px_auto,320px_auto]">
       <div className="relative mx-auto max-w-[1400px] px-6 py-10 md:px-10">
-        <div className="flex flex-col gap-y-8 md:flex-row md:flex-wrap md:justify-between md:gap-x-8">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 md:flex md:flex-row md:flex-wrap md:justify-between md:gap-x-8 md:gap-y-0">
           {/* --- Thương hiệu --- */}
-          <div className="md:max-w-[240px]">
+          <div className="col-span-2 md:col-span-1 md:max-w-[240px]">
             <div className="flex flex-col leading-tight sm:flex-row sm:items-baseline sm:gap-2">
               <span className="font-display text-xl font-semibold text-ink">Français</span>
               <span className="font-display text-lg italic text-bordeaux">avec Céline</span>
@@ -191,7 +191,7 @@ export default function Footer() {
           </div>
 
           {/* --- Liên hệ --- */}
-          <div>
+          <div className="col-span-2 md:col-span-1">
             <ColumnHeading>Liên hệ</ColumnHeading>
             <ul className="flex flex-col gap-3 text-sm">
               <li>
@@ -209,7 +209,26 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 text-center text-sm text-ink/60">
+        <div className="mt-8 flex items-center gap-4 sm:gap-6">
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent via-bordeaux/30 to-bordeaux/30" />
+          <svg viewBox="0 0 40 24" className="h-4 w-7 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
+            <path
+              d="M2 12c4 0 6-3 8-3s3 2 3 2-2-6 3-6 5 5 5 5-2-6 3-6 5 4 5 4-2 3 1.5 3.5"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M20 8c-2.6 0-4.7 2.1-4.7 4.7 0 3.5 4.7 7 4.7 7s4.7-3.5 4.7-7C24.7 10.1 22.6 8 20 8Z"
+              fill="currentColor"
+              fillOpacity="0.85"
+            />
+          </svg>
+          <span className="h-px flex-1 bg-gradient-to-l from-transparent via-bordeaux/30 to-bordeaux/30" />
+        </div>
+
+        <div className="mt-4 text-center text-sm text-ink/60">
           <p className="sm:hidden">
             © {year} Français avec Céline.
             <br />♥ Học tiếng Pháp cùng Céline ♥

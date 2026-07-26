@@ -99,12 +99,12 @@ export default function SiteMobileDrawer({
                 open ? "translate-x-0" : "-translate-x-full"
               } md:hidden`}
             >
-              <div className="flex items-center justify-between gap-2 border-b border-mist px-4 py-3 sm:px-5 sm:py-4">
-                <p className="flex min-w-0 flex-wrap items-baseline gap-1.5 leading-tight">
-                  <span className="font-display text-sm font-semibold tracking-tight text-ink sm:text-base">
+              <div className="relative flex items-center justify-center gap-2 border-b border-mist px-4 py-4 sm:px-5 sm:py-5">
+                <p className="flex min-w-0 flex-wrap items-baseline justify-center gap-1.5 text-center leading-tight">
+                  <span className="font-display text-lg font-semibold tracking-tight text-ink sm:text-xl">
                     Français
                   </span>
-                  <span className="font-display text-xs italic text-bordeaux sm:text-sm">
+                  <span className="font-display text-base italic text-bordeaux sm:text-lg">
                     avec Céline
                   </span>
                 </p>
@@ -112,7 +112,7 @@ export default function SiteMobileDrawer({
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label="Đóng menu"
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/50 transition hover:bg-mist hover:text-ink"
+                  className="absolute right-4 top-1/2 flex h-8 w-8 shrink-0 -translate-y-1/2 items-center justify-center rounded-full text-ink/50 transition hover:bg-mist hover:text-ink sm:right-5"
                 >
                   <svg className="h-4.5 w-4.5" viewBox="0 0 20 20" fill="none">
                     <path
