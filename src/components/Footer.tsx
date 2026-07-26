@@ -211,16 +211,19 @@ export default function Footer() {
 
         <div className="mt-8 flex items-center gap-4 sm:gap-6">
           <span className="h-px flex-1 bg-gradient-to-r from-transparent via-bordeaux/30 to-bordeaux/30" />
-          <svg viewBox="0 0 40 24" className="h-4 w-7 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
+          <svg viewBox="0 0 44 24" className="h-4 w-8 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
             <path
-              d="M2 12c4 0 6-3 8-3s3 2 3 2-2-6 3-6 5 5 5 5-2-6 3-6 5 4 5 4-2 3 1.5 3.5"
+              d="M2 13c4.5-1 8-3.5 9-5.5M7.5 9.5c-1-.3-2-1.4-2.3-2.7M9.5 6.7c.5-1.1.4-2.3-.1-3.2M13 6.8c-.2-1.1.2-2.3 1-3.1M11 8.5c1-.2 2.2.1 3 .8"
               stroke="currentColor"
-              strokeWidth="1.2"
+              strokeWidth="1"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
+            <circle cx="4.7" cy="6.2" r="1.1" fill="currentColor" fillOpacity="0.7" />
+            <circle cx="9" cy="3" r="1" fill="currentColor" fillOpacity="0.7" />
+            <circle cx="14.6" cy="3.4" r="1" fill="currentColor" fillOpacity="0.7" />
             <path
-              d="M20 8c-2.6 0-4.7 2.1-4.7 4.7 0 3.5 4.7 7 4.7 7s4.7-3.5 4.7-7C24.7 10.1 22.6 8 20 8Z"
+              d="M27 8.8c-2.4 0-4.4 2-4.4 4.4 0 3.3 4.4 6.5 4.4 6.5s4.4-3.2 4.4-6.5c0-2.4-2-4.4-4.4-4.4Z"
               fill="currentColor"
               fillOpacity="0.85"
             />
