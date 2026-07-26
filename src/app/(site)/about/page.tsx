@@ -47,20 +47,57 @@ export default async function AboutPage() {
         <section>
           <h2 className="font-display text-2xl font-semibold text-ink">Hành trình của tôi</h2>
           <div className="ribbon-rule mt-3" />
-          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:flex lg:items-start lg:gap-0">
+
+          {/* Màn nhỏ/trung: xếp dạng lưới đơn giản, không có mũi tên nối */}
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:hidden">
+            {about.timeline.map((item) => (
+              <div key={item.id} className="flex flex-col items-center text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux ring-4 ring-parchment">
+                  <AboutIcon name={item.icon} className="h-6 w-6" />
+                </div>
+                <p className="mt-3 font-body text-lg font-semibold text-ink">{item.year}</p>
+                <p className="mt-1 text-sm font-semibold text-ink">{item.title}</p>
+                <p className="mt-1 text-xs text-ink/60">{item.description}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Màn lớn: lưới chính xác để mũi tên chạm sát mép 2 hình tròn */}
+          <div
+            className="mt-10 hidden lg:grid"
+            style={{
+              gridTemplateColumns: about.timeline
+                .map((_, i) => (i === 0 ? "3.5rem" : "1fr 3.5rem"))
+                .join(" "),
+            }}
+          >
             {about.timeline.map((item, i) => (
               <Fragment key={item.id}>
-                <div className="flex shrink-0 flex-col items-center text-center lg:w-40 xl:w-44">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux ring-4 ring-parchment">
-                    <AboutIcon name={item.icon} className="h-6 w-6" />
-                  </div>
-                  <p className="mt-3 font-body text-lg font-semibold text-ink">{item.year}</p>
+                <div
+                  className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux ring-4 ring-parchment"
+                  style={{ gridColumn: 2 * i + 1, gridRow: 1 }}
+                >
+                  <AboutIcon name={item.icon} className="h-6 w-6" />
+                </div>
+                <div
+                  className="w-40 justify-self-center pt-3 text-center"
+                  style={{ gridColumn: 2 * i + 1, gridRow: 2 }}
+                >
+                  <p className="font-body text-lg font-semibold text-ink">{item.year}</p>
                   <p className="mt-1 text-sm font-semibold text-ink">{item.title}</p>
                   <p className="mt-1 text-xs text-ink/60">{item.description}</p>
                 </div>
                 {i < about.timeline.length - 1 && (
-                  <div className="hidden flex-1 items-center justify-center px-1 pt-7 lg:flex">
-                    <svg viewBox="0 0 32 10" preserveAspectRatio="none" className="h-2.5 w-full text-bordeaux/50" fill="none">
+                  <div
+                    className="flex items-center justify-center"
+                    style={{ gridColumn: 2 * i + 2, gridRow: 1 }}
+                  >
+                    <svg
+                      viewBox="0 0 32 10"
+                      preserveAspectRatio="none"
+                      className="h-2.5 w-full text-bordeaux/50"
+                      fill="none"
+                    >
                       <path
                         d="M1 5H28M28 5L21 1.5M28 5L21 8.5"
                         stroke="currentColor"
@@ -99,7 +136,7 @@ export default async function AboutPage() {
 
       {/* --- Phương pháp giảng dạy --- */}
       {about.methods.length > 0 && (
-        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen py-16">
+        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen">
           <div className="mx-auto max-w-[1400px] px-6 md:px-10">
             <h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">
               {about.methodTitle}
