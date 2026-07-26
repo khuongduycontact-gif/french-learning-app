@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
 
-import { Fragment } from "react";
 import Image from "next/image";
 import { getAboutPage } from "@/lib/about";
 import { AboutIcon } from "@/components/AboutIcons";
@@ -47,75 +46,28 @@ export default async function AboutPage() {
         <section>
           <h2 className="font-display text-2xl font-semibold text-ink">Hành trình của tôi</h2>
           <div className="ribbon-rule mt-3" />
-
-          {/* Màn nhỏ/trung: xếp dạng lưới đơn giản, không có mũi tên nối */}
-          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:hidden">
-            {about.timeline.map((item) => (
-              <div key={item.id} className="flex flex-col items-center text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux ring-4 ring-parchment">
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
+            {about.timeline.map((item, i) => (
+              <div key={item.id} className="relative flex flex-col items-center text-center">
+                {i < about.timeline.length - 1 && (
+                  <div className="pointer-events-none absolute left-[calc(50%+2rem)] top-7 hidden h-0 w-[calc(100%-2rem)] -translate-y-1/2 lg:block">
+                    <div className="h-0.5 w-full bg-bordeaux/25" />
+                    <svg
+                      viewBox="0 0 12 12"
+                      className="absolute -right-1 -top-[5px] h-3 w-3 text-bordeaux/40"
+                      fill="currentColor"
+                    >
+                      <path d="M1 1 11 6 1 11Z" />
+                    </svg>
+                  </div>
+                )}
+                <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux ring-4 ring-parchment">
                   <AboutIcon name={item.icon} className="h-6 w-6" />
                 </div>
                 <p className="mt-3 font-body text-lg font-semibold text-ink">{item.year}</p>
                 <p className="mt-1 text-sm font-semibold text-ink">{item.title}</p>
                 <p className="mt-1 text-xs text-ink/60">{item.description}</p>
               </div>
-            ))}
-          </div>
-
-          {/* Màn lớn: lưới chính xác để mũi tên chạm sát mép 2 hình tròn */}
-          <div
-            className="mt-10 hidden lg:grid"
-            style={{
-              gridTemplateColumns: about.timeline
-                .map((_, i) => (i === 0 ? "3.5rem" : "1fr 3.5rem"))
-                .join(" "),
-            }}
-          >
-            {about.timeline.map((item, i) => (
-              <Fragment key={item.id}>
-                <div
-                  className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux ring-4 ring-parchment"
-                  style={{ gridColumn: 2 * i + 1, gridRow: 1 }}
-                >
-                  <AboutIcon name={item.icon} className="h-6 w-6" />
-                </div>
-                <div
-                  className="w-40 pt-3 text-left"
-                  style={{
-                    gridColumn:
-                      i < about.timeline.length - 1
-                        ? `${2 * i + 1} / ${2 * i + 3}`
-                        : `${2 * i + 1} / ${2 * i + 2}`,
-                    gridRow: 2,
-                  }}
-                >
-                  <p className="font-body text-lg font-semibold text-ink">{item.year}</p>
-                  <p className="mt-1 text-sm font-semibold text-ink">{item.title}</p>
-                  <p className="mt-1 text-xs text-ink/60">{item.description}</p>
-                </div>
-                {i < about.timeline.length - 1 && (
-                  <div
-                    className="flex items-center justify-center"
-                    style={{ gridColumn: 2 * i + 2, gridRow: 1 }}
-                  >
-                    <svg
-                      viewBox="0 0 32 10"
-                      preserveAspectRatio="none"
-                      className="h-2.5 w-full text-bordeaux/50"
-                      fill="none"
-                    >
-                      <path
-                        d="M1 5H28M28 5L21 1.5M28 5L21 8.5"
-                        stroke="currentColor"
-                        strokeWidth="1.75"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        vectorEffect="non-scaling-stroke"
-                      />
-                    </svg>
-                  </div>
-                )}
-              </Fragment>
             ))}
           </div>
         </section>
