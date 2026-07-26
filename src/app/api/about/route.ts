@@ -4,6 +4,16 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAboutPage, serializeAboutPage } from "@/lib/about";
 
+// Hàm GET() bên dưới không dùng tham số `request` hay bất kỳ API động nào
+// (cookies, headers...), nên theo mặc định Next.js sẽ coi route này là TĨNH
+// và build ra 1 file HTML tĩnh cho GET. Khi đó, trên Vercel mọi method khác
+// (PUT ở dưới) sẽ bị chặn thẳng ở tầng edge với lỗi 405 (cache HIT), request
+// không hề chạm tới code PUT - đây chính là lý do local (`next dev`, luôn
+// chạy động) vẫn PUT được bình thường nhưng bản deploy trên Vercel thì 405.
+// Khai báo dynamic = "force-dynamic" để route này luôn được coi là động,
+// đảm bảo PUT/GET đều thực sự chạy qua server function, không bị cache tĩnh.
+export const dynamic = "force-dynamic";
+
 // GET /api/about - công khai, ai cũng xem được (trang Giới thiệu)
 export async function GET() {
   const about = await getAboutPage();
