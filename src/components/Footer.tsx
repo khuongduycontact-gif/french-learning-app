@@ -92,19 +92,6 @@ function PinIcon({ className }: IconProps) {
   );
 }
 
-function HeartIcon({ className }: IconProps) {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
-      <path
-        d="M10 16.5S3 12.3 3 7.8a3.3 3.3 0 0 1 6-1.9A3.3 3.3 0 0 1 15 6a3.3 3.3 0 0 1 2 5.8c-1.6 1.7-4.3 3.4-7 4.7Z"
-        stroke="currentColor"
-        strokeWidth="1.3"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function ColumnHeading({ children }: { children: React.ReactNode }) {
   return (
     <div className="mb-4">
@@ -146,8 +133,8 @@ export default function Footer() {
 
   return (
     <footer className="relative overflow-hidden border-t border-mist bg-parchment bg-[length:220px_auto] bg-[position:left_bottom,right_bottom] bg-no-repeat [background-image:url('/images/footer-corner-left.webp'),url('/images/footer-corner-right.webp')] sm:bg-[length:280px_auto,320px_auto]">
-      <div className="relative mx-auto max-w-[1400px] px-6 py-14 md:px-10">
-        <div className="flex flex-col gap-y-10 md:flex-row md:flex-wrap md:justify-between md:gap-x-8">
+      <div className="relative mx-auto max-w-[1400px] px-6 py-10 md:px-10">
+        <div className="flex flex-col gap-y-8 md:flex-row md:flex-wrap md:justify-between md:gap-x-8">
           {/* --- Thương hiệu --- */}
           <div className="md:max-w-[240px]">
             <div className="flex flex-col leading-tight sm:flex-row sm:items-baseline sm:gap-2">
@@ -222,14 +209,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* --- Đường kẻ trang trí + dòng bản quyền --- */}
-        <div className="mx-auto mt-12 flex max-w-3xl items-center gap-4 text-ink/20">
-          <span className="h-px flex-1 bg-current" />
-          <HeartIcon className="h-3.5 w-3.5 shrink-0 text-bordeaux/50" />
-          <span className="h-px flex-1 bg-current" />
-        </div>
-
-        <div className="mt-5 text-center text-sm text-ink/60">
+        <div className="mt-8 text-center text-sm text-ink/60">
           <p className="sm:hidden">
             © {year} Français avec Céline.
             <br />♥ Học tiếng Pháp cùng Céline ♥
