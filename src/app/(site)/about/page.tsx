@@ -59,7 +59,7 @@ export default async function AboutPage() {
                   <p className="mt-1 text-xs text-ink/60">{item.description}</p>
                 </div>
                 {i < about.timeline.length - 1 && (
-                  <div className="hidden shrink-0 items-center justify-center pt-7 lg:flex lg:w-8 xl:w-12">
+                  <div className="hidden shrink-0 items-center justify-center pt-7 lg:flex lg:w-16 xl:w-28">
                     <svg viewBox="0 0 32 10" className="h-2.5 w-full text-bordeaux/50" fill="none">
                       <path
                         d="M1 5H28M28 5L21 1.5M28 5L21 8.5"
@@ -104,46 +104,35 @@ export default async function AboutPage() {
               {about.methodTitle}
             </h2>
             <div className="ribbon-rule mx-auto mt-3" />
-            <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-center">
-              {about.methodImageUrl && (
-                <div className="relative mx-auto aspect-[4/5] w-full max-w-xs overflow-hidden rounded-2xl border border-mist shadow-sm lg:max-w-none">
-                  <Image
-                    src={about.methodImageUrl}
-                    alt={about.methodTitle}
-                    fill
-                    sizes="(min-width: 1024px) 352px, 320px"
-                    className="object-cover"
-                  />
+            {about.methodImageUrl && (
+              <div className="relative mx-auto mt-8 aspect-[21/9] w-full max-w-2xl overflow-hidden rounded-2xl border border-mist shadow-sm">
+                <Image
+                  src={about.methodImageUrl}
+                  alt={about.methodTitle}
+                  fill
+                  sizes="(min-width: 768px) 672px, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            )}
+            <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {about.methods.map((m) => (
+                <div key={m.id} className="rounded-2xl border border-mist bg-white/70 p-4 shadow-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux">
+                    <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none">
+                      <path
+                        d="M4 10.5 8 14l8-8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <p className="mt-3 text-sm font-semibold text-ink">{m.title}</p>
+                  <p className="mt-1 text-xs text-ink/60">{m.description}</p>
                 </div>
-              )}
-              <ul
-                className={`grid gap-5 sm:grid-cols-2 ${
-                  about.methods.length >= 4 ? "xl:grid-cols-4" : ""
-                } ${about.methodImageUrl ? "" : "lg:grid-cols-3"}`}
-              >
-                {about.methods.map((m) => (
-                  <li
-                    key={m.id}
-                    className="flex gap-3 rounded-2xl border border-mist bg-white/70 p-4 shadow-sm"
-                  >
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux">
-                      <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none">
-                        <path
-                          d="M4 10.5 8 14l8-8"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold text-ink">{m.title}</p>
-                      <p className="mt-1 text-xs text-ink/60">{m.description}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              ))}
             </div>
           </div>
         </section>
