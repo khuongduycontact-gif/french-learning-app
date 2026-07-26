@@ -50,7 +50,7 @@ export default async function AboutPage() {
           <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:flex lg:items-start lg:gap-0">
             {about.timeline.map((item, i) => (
               <Fragment key={item.id}>
-                <div className="flex flex-1 flex-col items-center text-center">
+                <div className="flex shrink-0 flex-col items-center text-center lg:w-40 xl:w-44">
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-bordeaux/10 text-bordeaux ring-4 ring-parchment">
                     <AboutIcon name={item.icon} className="h-6 w-6" />
                   </div>
@@ -59,14 +59,15 @@ export default async function AboutPage() {
                   <p className="mt-1 text-xs text-ink/60">{item.description}</p>
                 </div>
                 {i < about.timeline.length - 1 && (
-                  <div className="hidden shrink-0 items-center justify-center pt-7 lg:flex lg:w-16 xl:w-28">
-                    <svg viewBox="0 0 32 10" className="h-2.5 w-full text-bordeaux/50" fill="none">
+                  <div className="hidden flex-1 items-center justify-center px-1 pt-7 lg:flex">
+                    <svg viewBox="0 0 32 10" preserveAspectRatio="none" className="h-2.5 w-full text-bordeaux/50" fill="none">
                       <path
                         d="M1 5H28M28 5L21 1.5M28 5L21 8.5"
                         stroke="currentColor"
                         strokeWidth="1.75"
                         strokeLinecap="round"
                         strokeLinejoin="round"
+                        vectorEffect="non-scaling-stroke"
                       />
                     </svg>
                   </div>
@@ -98,12 +99,12 @@ export default async function AboutPage() {
 
       {/* --- Phương pháp giảng dạy --- */}
       {about.methods.length > 0 && (
-        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-white/50 py-16">
+        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen py-16">
           <div className="mx-auto max-w-[1400px] px-6 md:px-10">
-            <h2 className="text-center font-display text-2xl font-semibold text-ink md:text-3xl">
+            <h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">
               {about.methodTitle}
             </h2>
-            <div className="ribbon-rule mx-auto mt-3" />
+            <div className="ribbon-rule mt-3" />
             {about.methodImageUrl && (
               <div className="relative mx-auto mt-8 aspect-[21/9] w-full max-w-2xl overflow-hidden rounded-2xl border border-mist shadow-sm">
                 <Image
