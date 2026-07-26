@@ -50,7 +50,7 @@ export default async function AboutPage() {
             {about.timeline.map((item, i) => (
               <div key={item.id} className="relative flex flex-col items-center text-center">
                 {i < about.timeline.length - 1 && (
-                  <div className="pointer-events-none absolute left-[calc(50%+2rem)] top-7 hidden h-0 w-[calc(100%-2rem)] -translate-y-1/2 lg:block">
+                  <div className="pointer-events-none absolute left-[calc(50%+2rem)] top-7 hidden h-0 w-[calc(100%-2.5rem)] -translate-y-1/2 lg:block">
                     <div className="h-0.5 w-full bg-bordeaux/25" />
                     <svg
                       viewBox="0 0 12 12"
