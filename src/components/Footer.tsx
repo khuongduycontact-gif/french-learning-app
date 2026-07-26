@@ -211,46 +211,57 @@ export default function Footer() {
 
         <div className="mt-8 flex items-center gap-4 sm:gap-6">
           <span className="h-px flex-1 bg-gradient-to-r from-transparent via-bordeaux/30 to-bordeaux/30" />
-          <svg viewBox="0 0 60 64" className="h-8 w-7 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
-            {/* Thân lúa */}
-            <path d="M20,58 C19,42 18,26 18,10" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-            <path d="M24,58 C27,46 32,34 38,20" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-            {/* Lá cong xoắn */}
+          <svg viewBox="0 0 64 60" className="h-10 w-10 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
+            {/* Dải ruy băng tạo hình trái tim */}
             <path
-              d="M9,44 C2,44 -1,37 3,32 C7,27 14,29 13,35 C12,40 6,39 7,35"
+              d="M32,54 C10,38 2,24 10,14 C16,7 26,10 27,20 C27,20 24,16 18,17 C13,18 12,23 16,25"
               stroke="currentColor"
-              strokeWidth="1"
+              strokeWidth="2"
               strokeLinecap="round"
+              strokeLinejoin="round"
             />
-            {/* Hai cọng dài phía sau */}
-            <path d="M27,52 C36,42 48,28 57,12" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
-            <path d="M22,55 C35,50 47,43 58,34" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
+            <path
+              d="M32,54 C54,38 62,24 54,14 C48,7 38,10 37,20 C37,20 40,16 46,17 C51,18 52,23 48,25"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
 
-            {/* Hạt lúa - bông bên trái */}
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.7,50) rotate(-42) scale(1.15)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.7,50) rotate(42) scale(1.15)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.4,44) rotate(-38) scale(1.05)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.4,44) rotate(38) scale(1.05)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.1,38) rotate(-34) scale(1)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.1,38) rotate(34) scale(1)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(18.8,32) rotate(-30) scale(0.9)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(18.8,32) rotate(30) scale(0.9)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(18.5,26) rotate(-25) scale(0.8)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(18.5,26) rotate(25) scale(0.8)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(18.2,20) rotate(-18) scale(0.65)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(18.2,20) rotate(18) scale(0.65)" />
+            {/* Ba thân lúa mọc lên từ giữa trái tim */}
+            <path d="M32,32 C29,24 26,14 24,6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+            <path d="M32,32 C32,22 32,12 32,4" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+            <path d="M32,32 C35,24 38,14 40,6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
 
-            {/* Hạt lúa - bông bên phải */}
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(25.5,50) rotate(-8) scale(1.05)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(25.5,50) rotate(60) scale(1.05)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(28.5,44) rotate(-8) scale(0.95)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(28.5,44) rotate(52) scale(0.95)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(31.5,38) rotate(-8) scale(0.85)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(31.5,38) rotate(44) scale(0.85)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(34,32) rotate(-8) scale(0.75)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(34,32) rotate(36) scale(0.75)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(36,26) rotate(-8) scale(0.65)" />
-            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(36,26) rotate(28) scale(0.65)" />
+            {/* Hạt lúa - thân trái */}
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(30.5,24) rotate(-49) scale(1)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(30.5,24) rotate(19) scale(1)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(28.5,17) rotate(-43) scale(0.85)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(28.5,17) rotate(13) scale(0.85)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(27,12.5) rotate(-37) scale(0.7)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(27,12.5) rotate(7) scale(0.7)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(25.5,8) rotate(-31) scale(0.55)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(25.5,8) rotate(1) scale(0.55)" />
+
+            {/* Hạt lúa - thân giữa */}
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(32,24) rotate(-34) scale(1)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(32,24) rotate(34) scale(1)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(32,17) rotate(-28) scale(0.85)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(32,17) rotate(28) scale(0.85)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(32,11) rotate(-22) scale(0.7)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(32,11) rotate(22) scale(0.7)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.9" transform="translate(32,5.5) rotate(-16) scale(0.55)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.9" transform="translate(32,5.5) rotate(16) scale(0.55)" />
+
+            {/* Hạt lúa - thân phải */}
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(34,24) rotate(-19) scale(1)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(34,24) rotate(49) scale(1)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(36,17) rotate(-13) scale(0.85)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(36,17) rotate(43) scale(0.85)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(38,12.5) rotate(-7) scale(0.7)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(38,12.5) rotate(37) scale(0.7)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(39.5,8) rotate(-1) scale(0.55)" />
+            <path d="M0,0 C-2.6,-0.8 -2.8,-4.4 0,-7.2 C2.8,-4.4 2.6,-0.8 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(39.5,8) rotate(31) scale(0.55)" />
           </svg>
           <span className="h-px flex-1 bg-gradient-to-l from-transparent via-bordeaux/30 to-bordeaux/30" />
         </div>
@@ -259,12 +270,23 @@ export default function Footer() {
           <span>
             © {year} Français avec Céline
           </span>
-          <svg viewBox="0 0 20 18" className="h-3.5 w-3.5 shrink-0 text-ink" aria-hidden>
+          <svg viewBox="0 0 20 18" className="h-3.5 w-3.5 shrink-0" aria-hidden>
+            <defs>
+              <clipPath id="footerHeartFrClip">
+                <path d="M10 17S1.5 11.8 1.5 6.4A4.4 4.4 0 0 1 10 4.3a4.4 4.4 0 0 1 8.5 2.1C18.5 11.8 10 17 10 17Z" />
+              </clipPath>
+            </defs>
+            <g clipPath="url(#footerHeartFrClip)">
+              <rect x="0" y="0" width="6.7" height="18" fill="#0055A4" />
+              <rect x="6.7" y="0" width="6.6" height="18" fill="#FFFFFF" />
+              <rect x="13.3" y="0" width="6.7" height="18" fill="#EF4135" />
+            </g>
             <path
               d="M10 17S1.5 11.8 1.5 6.4A4.4 4.4 0 0 1 10 4.3a4.4 4.4 0 0 1 8.5 2.1C18.5 11.8 10 17 10 17Z"
-              fill="white"
+              fill="none"
               stroke="currentColor"
-              strokeWidth="1.3"
+              strokeWidth="0.6"
+              strokeOpacity="0.3"
               strokeLinejoin="round"
             />
           </svg>
