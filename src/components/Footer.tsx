@@ -211,16 +211,46 @@ export default function Footer() {
 
         <div className="mt-8 flex items-center gap-4 sm:gap-6">
           <span className="h-px flex-1 bg-gradient-to-r from-transparent via-bordeaux/30 to-bordeaux/30" />
-          <svg viewBox="0 0 24 28" className="h-6 w-5 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
-            <path d="M12 24V5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-            <path d="M8.3 20.5 15.7 17.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-            <ellipse cx="9" cy="17.3" rx="1.6" ry="3.3" fill="currentColor" fillOpacity="0.75" transform="rotate(-25 9 17.3)" />
-            <ellipse cx="15" cy="17.3" rx="1.6" ry="3.3" fill="currentColor" fillOpacity="0.75" transform="rotate(25 15 17.3)" />
-            <ellipse cx="8.4" cy="13" rx="1.5" ry="3.1" fill="currentColor" fillOpacity="0.75" transform="rotate(-20 8.4 13)" />
-            <ellipse cx="15.6" cy="13" rx="1.5" ry="3.1" fill="currentColor" fillOpacity="0.75" transform="rotate(20 15.6 13)" />
-            <ellipse cx="9.4" cy="9" rx="1.3" ry="2.7" fill="currentColor" fillOpacity="0.75" transform="rotate(-15 9.4 9)" />
-            <ellipse cx="14.6" cy="9" rx="1.3" ry="2.7" fill="currentColor" fillOpacity="0.75" transform="rotate(15 14.6 9)" />
-            <ellipse cx="12" cy="5.2" rx="1.2" ry="2.8" fill="currentColor" fillOpacity="0.85" />
+          <svg viewBox="0 0 60 64" className="h-8 w-7 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
+            {/* Thân lúa */}
+            <path d="M20,58 C19,42 18,26 18,10" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+            <path d="M24,58 C27,46 32,34 38,20" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+            {/* Lá cong xoắn */}
+            <path
+              d="M9,44 C2,44 -1,37 3,32 C7,27 14,29 13,35 C12,40 6,39 7,35"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeLinecap="round"
+            />
+            {/* Hai cọng dài phía sau */}
+            <path d="M27,52 C36,42 48,28 57,12" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
+            <path d="M22,55 C35,50 47,43 58,34" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
+
+            {/* Hạt lúa - bông bên trái */}
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.7,50) rotate(-42) scale(1.15)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.7,50) rotate(42) scale(1.15)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.4,44) rotate(-38) scale(1.05)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.4,44) rotate(38) scale(1.05)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.1,38) rotate(-34) scale(1)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(19.1,38) rotate(34) scale(1)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(18.8,32) rotate(-30) scale(0.9)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(18.8,32) rotate(30) scale(0.9)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(18.5,26) rotate(-25) scale(0.8)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(18.5,26) rotate(25) scale(0.8)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(18.2,20) rotate(-18) scale(0.65)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(18.2,20) rotate(18) scale(0.65)" />
+
+            {/* Hạt lúa - bông bên phải */}
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(25.5,50) rotate(-8) scale(1.05)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(25.5,50) rotate(60) scale(1.05)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(28.5,44) rotate(-8) scale(0.95)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(28.5,44) rotate(52) scale(0.95)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(31.5,38) rotate(-8) scale(0.85)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.8" transform="translate(31.5,38) rotate(44) scale(0.85)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(34,32) rotate(-8) scale(0.75)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(34,32) rotate(36) scale(0.75)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(36,26) rotate(-8) scale(0.65)" />
+            <path d="M0,0 C-3.2,-1 -3.5,-5.5 0,-9 C3.5,-5.5 3.2,-1 0,0 Z" fill="currentColor" fillOpacity="0.85" transform="translate(36,26) rotate(28) scale(0.65)" />
           </svg>
           <span className="h-px flex-1 bg-gradient-to-l from-transparent via-bordeaux/30 to-bordeaux/30" />
         </div>
@@ -229,10 +259,13 @@ export default function Footer() {
           <span>
             © {year} Français avec Céline
           </span>
-          <svg viewBox="0 0 20 18" className="h-3.5 w-3.5 shrink-0 text-bordeaux/70" aria-hidden>
+          <svg viewBox="0 0 20 18" className="h-3.5 w-3.5 shrink-0 text-ink" aria-hidden>
             <path
               d="M10 17S1.5 11.8 1.5 6.4A4.4 4.4 0 0 1 10 4.3a4.4 4.4 0 0 1 8.5 2.1C18.5 11.8 10 17 10 17Z"
-              fill="currentColor"
+              fill="white"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinejoin="round"
             />
           </svg>
         </div>
