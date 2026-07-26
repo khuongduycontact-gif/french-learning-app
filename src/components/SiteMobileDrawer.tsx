@@ -108,21 +108,6 @@ export default function SiteMobileDrawer({
                     avec Céline
                   </span>
                 </p>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  aria-label="Đóng menu"
-                  className="absolute right-4 top-1/2 flex h-8 w-8 shrink-0 -translate-y-1/2 items-center justify-center rounded-full text-ink/50 transition hover:bg-mist hover:text-ink sm:right-5"
-                >
-                  <svg className="h-4.5 w-4.5" viewBox="0 0 20 20" fill="none">
-                    <path
-                      d="M5 5L15 15M15 5L5 15"
-                      stroke="currentColor"
-                      strokeWidth="1.75"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </button>
               </div>
 
               <nav className="flex flex-col gap-1 p-3 text-sm sm:p-4">

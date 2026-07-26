@@ -211,32 +211,30 @@ export default function Footer() {
 
         <div className="mt-8 flex items-center gap-4 sm:gap-6">
           <span className="h-px flex-1 bg-gradient-to-r from-transparent via-bordeaux/30 to-bordeaux/30" />
-          <svg viewBox="0 0 44 24" className="h-4 w-8 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
-            <path
-              d="M2 13c4.5-1 8-3.5 9-5.5M7.5 9.5c-1-.3-2-1.4-2.3-2.7M9.5 6.7c.5-1.1.4-2.3-.1-3.2M13 6.8c-.2-1.1.2-2.3 1-3.1M11 8.5c1-.2 2.2.1 3 .8"
-              stroke="currentColor"
-              strokeWidth="1"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle cx="4.7" cy="6.2" r="1.1" fill="currentColor" fillOpacity="0.7" />
-            <circle cx="9" cy="3" r="1" fill="currentColor" fillOpacity="0.7" />
-            <circle cx="14.6" cy="3.4" r="1" fill="currentColor" fillOpacity="0.7" />
-            <path
-              d="M27 8.8c-2.4 0-4.4 2-4.4 4.4 0 3.3 4.4 6.5 4.4 6.5s4.4-3.2 4.4-6.5c0-2.4-2-4.4-4.4-4.4Z"
-              fill="currentColor"
-              fillOpacity="0.85"
-            />
+          <svg viewBox="0 0 24 28" className="h-6 w-5 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
+            <path d="M12 24V5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+            <path d="M8.3 20.5 15.7 17.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+            <ellipse cx="9" cy="17.3" rx="1.6" ry="3.3" fill="currentColor" fillOpacity="0.75" transform="rotate(-25 9 17.3)" />
+            <ellipse cx="15" cy="17.3" rx="1.6" ry="3.3" fill="currentColor" fillOpacity="0.75" transform="rotate(25 15 17.3)" />
+            <ellipse cx="8.4" cy="13" rx="1.5" ry="3.1" fill="currentColor" fillOpacity="0.75" transform="rotate(-20 8.4 13)" />
+            <ellipse cx="15.6" cy="13" rx="1.5" ry="3.1" fill="currentColor" fillOpacity="0.75" transform="rotate(20 15.6 13)" />
+            <ellipse cx="9.4" cy="9" rx="1.3" ry="2.7" fill="currentColor" fillOpacity="0.75" transform="rotate(-15 9.4 9)" />
+            <ellipse cx="14.6" cy="9" rx="1.3" ry="2.7" fill="currentColor" fillOpacity="0.75" transform="rotate(15 14.6 9)" />
+            <ellipse cx="12" cy="5.2" rx="1.2" ry="2.8" fill="currentColor" fillOpacity="0.85" />
           </svg>
           <span className="h-px flex-1 bg-gradient-to-l from-transparent via-bordeaux/30 to-bordeaux/30" />
         </div>
 
-        <div className="mt-4 text-center text-sm text-ink/60">
-          <p className="sm:hidden">
-            © {year} Français avec Céline.
-            <br />♥ Học tiếng Pháp cùng Céline ♥
-          </p>
-          <p className="hidden sm:block">© {year} Français avec Céline. Học tiếng Pháp cùng Céline</p>
+        <div className="mt-4 flex items-center justify-center gap-1.5 text-center text-sm text-ink/60">
+          <span>
+            © {year} Français avec Céline
+          </span>
+          <svg viewBox="0 0 20 18" className="h-3.5 w-3.5 shrink-0 text-bordeaux/70" aria-hidden>
+            <path
+              d="M10 17S1.5 11.8 1.5 6.4A4.4 4.4 0 0 1 10 4.3a4.4 4.4 0 0 1 8.5 2.1C18.5 11.8 10 17 10 17Z"
+              fill="currentColor"
+            />
+          </svg>
         </div>
       </div>
     </footer>
