@@ -80,8 +80,14 @@ export default async function AboutPage() {
                   <AboutIcon name={item.icon} className="h-6 w-6" />
                 </div>
                 <div
-                  className="w-40 justify-self-center pt-3 text-center"
-                  style={{ gridColumn: 2 * i + 1, gridRow: 2 }}
+                  className="w-40 pt-3 text-left"
+                  style={{
+                    gridColumn:
+                      i < about.timeline.length - 1
+                        ? `${2 * i + 1} / ${2 * i + 3}`
+                        : `${2 * i + 1} / ${2 * i + 2}`,
+                    gridRow: 2,
+                  }}
                 >
                   <p className="font-body text-lg font-semibold text-ink">{item.year}</p>
                   <p className="mt-1 text-sm font-semibold text-ink">{item.title}</p>
