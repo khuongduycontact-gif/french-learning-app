@@ -1,8 +1,5 @@
 import Link from "next/link";
 
-// Liên hệ nhanh - dùng lại đúng số Zalo/Messenger đang cấu hình ở nút Liên hệ nổi (ContactButton).
-const ZALO_LINK = "https://zalo.me/84356935918";
-const MESSENGER_LINK = "https://m.me/thu.uyen.909934";
 const CONTACT_EMAIL = "celinenguyen2207@gmail.com";
 
 type IconProps = { className?: string };
@@ -95,27 +92,6 @@ function PinIcon({ className }: IconProps) {
   );
 }
 
-function ZaloBadge() {
-  return (
-    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0068FF]">
-      <span className="text-[8px] font-extrabold tracking-tight text-white">Zalo</span>
-    </span>
-  );
-}
-
-function MessengerBadge() {
-  return (
-    <span
-      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-      style={{ background: "linear-gradient(135deg, #00B2FF 0%, #006AFF 50%, #B900F9 100%)" }}
-    >
-      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="white" aria-hidden="true">
-        <path d="M12 2C6.48 2 2 6.15 2 11.26c0 2.9 1.44 5.49 3.7 7.19V22l3.38-1.86c.9.25 1.87.38 2.92.38 5.52 0 10-4.15 10-9.26C22 6.15 17.52 2 12 2Zm1.02 12.47-2.55-2.72-4.98 2.72 5.48-5.82 2.6 2.72 4.93-2.72-5.48 5.82Z" />
-      </svg>
-    </span>
-  );
-}
-
 function HeartIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
@@ -133,7 +109,7 @@ function ColumnHeading({ children }: { children: React.ReactNode }) {
   return (
     <div className="mb-4">
       <h3 className="font-display text-base font-semibold text-ink">{children}</h3>
-      <div className="ribbon-rule mt-2 !w-10" />
+      <div className="ribbon-rule mt-2 !w-16" />
     </div>
   );
 }
@@ -169,12 +145,12 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-mist bg-white/40">
-      <div className="mx-auto max-w-[1400px] px-6 py-14 md:px-10">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4 md:gap-8">
+    <footer className="relative overflow-hidden border-t border-mist bg-parchment bg-[length:220px_auto] bg-[position:left_bottom,right_bottom] bg-no-repeat [background-image:url('/images/footer-corner-left.webp'),url('/images/footer-corner-right.webp')] sm:bg-[length:280px_auto,320px_auto]">
+      <div className="relative mx-auto max-w-[1400px] px-6 py-14 md:px-10">
+        <div className="flex flex-col gap-y-10 md:flex-row md:flex-wrap md:justify-between md:gap-x-8">
           {/* --- Thương hiệu --- */}
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col leading-tight">
+          <div className="md:max-w-[240px]">
+            <div className="flex flex-col leading-tight sm:flex-row sm:items-baseline sm:gap-2">
               <span className="font-display text-xl font-semibold text-ink">Français</span>
               <span className="font-display text-lg italic text-bordeaux">avec Céline</span>
             </div>
@@ -242,24 +218,12 @@ export default function Footer() {
                   Hà Nội, Việt Nam
                 </span>
               </li>
-              <li>
-                <a href={ZALO_LINK} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 text-ink/70 transition hover:text-bordeaux">
-                  <ZaloBadge />
-                  Nhắn tin qua Zalo
-                </a>
-              </li>
-              <li>
-                <a href={MESSENGER_LINK} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 text-ink/70 transition hover:text-bordeaux">
-                  <MessengerBadge />
-                  Nhắn tin qua Messenger
-                </a>
-              </li>
             </ul>
           </div>
         </div>
 
         {/* --- Đường kẻ trang trí + dòng bản quyền --- */}
-        <div className="mx-auto mt-12 flex max-w-xs items-center gap-3 text-ink/20">
+        <div className="mx-auto mt-12 flex max-w-3xl items-center gap-4 text-ink/20">
           <span className="h-px flex-1 bg-current" />
           <HeartIcon className="h-3.5 w-3.5 shrink-0 text-bordeaux/50" />
           <span className="h-px flex-1 bg-current" />
@@ -271,15 +235,6 @@ export default function Footer() {
             <br />♥ Học tiếng Pháp cùng Céline ♥
           </p>
           <p className="hidden sm:block">© {year} Français avec Céline. Học tiếng Pháp cùng Céline</p>
-          <p className="mt-2">
-            <Link href="/privacy" className="hover:text-ink">
-              Chính sách bảo mật
-            </Link>
-            <span className="mx-2">·</span>
-            <Link href="/terms" className="hover:text-ink">
-              Điều khoản sử dụng
-            </Link>
-          </p>
         </div>
       </div>
     </footer>
