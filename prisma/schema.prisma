@@ -208,6 +208,39 @@ model Achievement {
   @@index([level])
 }
 
+// Trang "Giới thiệu về tôi" (Céline) - chỉ có đúng 1 bản ghi (id cố định
+// "main"). Các mục dạng danh sách (hành trình, lý do chọn học, thành tích,
+// phương pháp giảng dạy, chứng chỉ, đánh giá học viên) được lưu dưới dạng
+// Json để admin có thể thêm/sửa/xoá/sắp xếp tự do từ 1 trang quản trị duy
+// nhất, không cần bảng riêng cho từng loại mục.
+model AboutPage {
+  id String @id @default("main")
+
+  // --- Khối giới thiệu đầu trang (hero) ---
+  heroKicker      String @default("Apprendre, c'est grandir")
+  heroTitle       String @default("Giới thiệu về tôi")
+  heroGreeting    String @default("Bonjour ! Mình là Céline.")
+  heroDescription String @db.Text
+  heroImageUrl    String? @db.Text
+  heroBadgeUrl    String? @db.Text
+
+  // --- Hành trình của tôi (timeline mốc năm) ---
+  // [{ id, year, icon, title, description }]
+  timeline Json
+
+  // --- Vì sao học cùng Céline (4 lý do) ---
+  // [{ id, icon, title, description }]
+  reasons Json
+
+  // --- Phương pháp giảng dạy ---
+  methodTitle    String  @default("Phương pháp giảng dạy")
+  methodImageUrl String? @db.Text
+  // [{ id, title, description }]
+  methods Json
+
+  updatedAt DateTime @updatedAt
+}
+
 model Notification {
   id        String           @id @default(cuid())
   userId    String           // người nhận thông báo

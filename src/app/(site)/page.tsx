@@ -68,7 +68,7 @@ export default async function HomePage() {
     <div className="flex flex-col gap-20">
       <section className="grid gap-10 md:grid-cols-2 md:items-center">
         <div>
-          <span className="font-display text-sm italic text-bordeaux">
+          <span className="font-body text-sm italic text-bordeaux">
             Apprendre, c'est grandir
           </span>
           <h1 className="mt-3 font-display text-4xl font-semibold leading-tight text-ink md:text-5xl">

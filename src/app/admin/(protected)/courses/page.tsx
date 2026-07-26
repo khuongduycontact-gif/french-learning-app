@@ -6,6 +6,7 @@ import type { Course } from "@/types";
 import { useToast } from "@/components/Toast";
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
+import Select from "@/components/Select";
 import { formatVnd } from "@/lib/format";
 
 const PAGE_SIZE = 10;
@@ -132,28 +133,8 @@ export default function AdminCoursesPage() {
           placeholder="Tìm khoá học..."
           className="max-w-sm flex-1 rounded-full border border-mist bg-white px-5 py-2.5 text-sm"
         />
-        <select
-          value={level}
-          onChange={(e) => setLevel(e.target.value)}
-          className="rounded-full border border-mist bg-white px-5 py-2.5 text-sm"
-        >
-          {LEVEL_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          className="rounded-full border border-mist bg-white px-5 py-2.5 text-sm"
-        >
-          {SORT_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+        <Select value={level} onChange={setLevel} options={LEVEL_OPTIONS} />
+        <Select value={sort} onChange={setSort} options={SORT_OPTIONS} />
       </div>
 
       <div className="scroll-x-fancy overflow-x-auto rounded-lg border border-mist bg-white/60">

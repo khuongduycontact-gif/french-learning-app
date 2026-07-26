@@ -190,6 +190,97 @@ select:focus-visible {
   padding: 0;
 }
 
+/* Dropdown tự dựng (component Select.tsx) dùng chung cho cả dự án - nút bấm
+   (trigger) + phần danh sách lựa chọn (panel) đều tự vẽ bằng CSS/SVG thay vì
+   thẻ <select> gốc, nên có thể đồng bộ hoàn toàn với màu thương hiệu, bo góc,
+   đổ bóng, hiệu ứng mở/đóng... Cùng trạng thái hover/focus với ô lọc ngày
+   (.admin-date-input) để toàn bộ control lọc/nhập liệu trong dự án nhất quán. */
+.select-field,
+.select-pill {
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.select-field:hover,
+.select-pill:hover {
+  border-color: theme("colors.gold/60%");
+}
+.select-field:focus-visible,
+.select-pill:focus-visible,
+.select-field[aria-expanded="true"],
+.select-pill[aria-expanded="true"] {
+  border-color: theme("colors.bordeaux/50%");
+  box-shadow: 0 0 0 3px theme("colors.gold/20%");
+}
+.select-field:disabled,
+.select-pill:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Biến thể chữ nhật, rộng hết khung - dùng trong các form (thêm/sửa khoá
+   học, thành tích...), đồng bộ với các ô TextField/MediaUploader xung quanh. */
+.select-field {
+  @apply w-full rounded-lg border border-mist bg-white py-2.5 pl-4 pr-3 text-sm text-ink shadow-sm;
+}
+
+/* Biến thể viên nhộng - dùng cho các bộ lọc (trình độ, khoá học, sắp xếp...)
+   trên thanh công cụ, đồng bộ dáng với .admin-date-input bên cạnh. */
+.select-pill {
+  @apply rounded-full border border-mist bg-white py-2 pl-4 pr-3.5 text-sm text-ink shadow-sm;
+}
+
+/* Icon chevron của select - vẽ bằng SVG riêng (không phải background-image)
+   để xoay 180 độ mượt mà khi mở dropdown, đồng bộ với trạng thái viền/bóng
+   focus ở trên. */
+.select-chevron {
+  transition: transform 0.2s ease, color 0.15s ease;
+  color: theme("colors.bordeaux");
+}
+.select-chevron.select-chevron-open {
+  transform: rotate(180deg);
+}
+
+/* Panel danh sách lựa chọn - bo góc rộng hơn nút bấm một chút, đổ bóng sâu để
+   nổi hẳn lên trên nền, viền mảnh cùng tông với các khung khác trong app, và
+   hiệu ứng mở nhẹ (mờ dần + trượt lên + phóng to nhẹ) thay vì bật ra đột ngột. */
+.select-panel {
+  @apply absolute z-30 mt-2 max-h-64 w-full min-w-[10rem] overflow-y-auto rounded-2xl border border-mist bg-white p-1.5 shadow-xl shadow-ink/10;
+  transform-origin: top center;
+  animation: select-panel-in 0.14s ease-out;
+}
+@keyframes select-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Từng lựa chọn trong panel - bo góc đồng bộ với panel cha, khoảng đệm rộng
+   rãi cho dễ bấm trên di động, chuyển màu mượt khi hover/đang chọn bằng bàn
+   phím, và trạng thái "đang chọn" nổi bật bằng nền + chữ tông bordeaux kèm
+   dấu tick, thay vì chỉ đổi màu chữ đơn thuần. */
+.select-option {
+  @apply flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-left text-sm transition-colors duration-100;
+}
+.select-option-selected {
+  @apply bg-bordeaux/10 font-semibold text-bordeaux;
+}
+.select-option-active:not(.select-option-selected) {
+  @apply bg-mist/60 text-ink;
+}
+.select-option:not(.select-option-selected):not(.select-option-active) {
+  @apply text-ink;
+}
+
+/* Trạng thái không có lựa chọn nào để hiển thị trong panel. */
+.select-empty {
+  @apply px-3 py-4 text-center text-sm text-ink/50;
+}
+
 /* Ribbon đánh dấu trạng thái khoá học (VD: "ĐÃ ĐĂNG KÝ") - dán chéo góc
    trên-phải của cả thẻ, viền đứt nét kiểu chỉ may, hai đầu gập vào trong
    nhờ được cắt bởi khung .corner-ribbon (overflow: hidden). */

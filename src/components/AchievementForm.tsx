@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import type { Achievement, AchievementInput } from "@/types";
 import MediaUploader from "./MediaUploader";
 import MultiImageUploader from "./MultiImageUploader";
+import Select from "./Select";
 import { useToast } from "./Toast";
 
 const levels = ["A1", "A2", "B1", "B2", "C1"];
+const levelOptions = levels.map((l) => ({ value: l, label: l }));
 
 export default function AchievementForm({
   initial,
@@ -90,17 +92,12 @@ export default function AchievementForm({
         <div className="flex flex-col gap-5 rounded-2xl border border-mist bg-white/60 p-6 lg:col-span-1">
           <div>
             <label className="mb-1 block text-sm font-medium text-ink">Trình độ</label>
-            <select
+            <Select
               value={form.level}
-              onChange={(e) => update("level", e.target.value as any)}
-              className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
-            >
-              {levels.map((l) => (
-                <option key={l} value={l}>
-                  {l}
-                </option>
-              ))}
-            </select>
+              onChange={(v) => update("level", v as any)}
+              options={levelOptions}
+              variant="field"
+            />
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium text-ink">Tên học viên</label>

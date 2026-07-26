@@ -48,6 +48,16 @@ export default function Navbar() {
           <nav className="hidden items-center gap-6 text-sm font-medium text-ink/80 md:flex">
             {session?.user?.role !== "ADMIN" && (
               <Link
+                href="/about"
+                className={`transition hover:text-ink ${
+                  isActive("/about") ? "font-semibold text-bordeaux" : ""
+                }`}
+              >
+                Giới thiệu
+              </Link>
+            )}
+            {session?.user?.role !== "ADMIN" && (
+              <Link
                 href="/courses"
                 className={`transition hover:text-ink ${
                   isActive("/courses") ? "font-semibold text-bordeaux" : ""

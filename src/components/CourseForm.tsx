@@ -6,6 +6,7 @@ import type { Course, CourseInput } from "@/types";
 import MediaUploader from "./MediaUploader";
 import CourseMaterialsEditor, { type MaterialDraft } from "./CourseMaterialsEditor";
 import RichTextEditor from "./RichTextEditor";
+import Select from "./Select";
 import { useToast } from "./Toast";
 
 function ClockIcon({ className }: { className?: string }) {
@@ -24,6 +25,7 @@ function ClockIcon({ className }: { className?: string }) {
 }
 
 const levels = ["A1", "A2", "B1", "B2", "C1"];
+const levelOptions = levels.map((l) => ({ value: l, label: l }));
 
 type NumberFieldKey = "price" | "lessons";
 
@@ -311,17 +313,12 @@ export default function CourseForm({
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-ink">Trình độ</label>
-            <select
+            <Select
               value={form.level}
-              onChange={(e) => update("level", e.target.value as any)}
-              className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
-            >
-              {levels.map((l) => (
-                <option key={l} value={l}>
-                  {l}
-                </option>
-              ))}
-            </select>
+              onChange={(v) => update("level", v as any)}
+              options={levelOptions}
+              variant="field"
+            />
           </div>
           <div className="relative" ref={durationPickerRef}>
             <label className="mb-1 block text-sm font-medium text-ink">

@@ -3,6 +3,17 @@ export function formatVnd(amount: number): string {
   return `${amount.toLocaleString("vi-VN")} vnđ`;
 }
 
+/** Định dạng ngày kiểu Việt Nam, không kèm giờ (VD: "23/07/2026"), dùng
+ * thống nhất trên toàn app cho các mốc chỉ cần hiển thị ngày. */
+export function formatDate(date: string | Date): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
 /** Định dạng ngày giờ kiểu Việt Nam (VD: "23/07/2026 14:05"), dùng cho các
  * mốc thời gian như nộp bài, chữa bài. */
 export function formatDateTime(date: string | Date): string {

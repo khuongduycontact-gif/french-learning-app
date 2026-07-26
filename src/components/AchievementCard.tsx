@@ -303,7 +303,7 @@ export default function AchievementCard({ achievement }: { achievement: Achievem
           </span>
           <div className="flex min-w-0 items-center gap-1.5">
             <UserIcon className="h-4 w-4 shrink-0 text-bordeaux" />
-            <p className="truncate font-display text-base font-semibold text-ink">
+            <p className="truncate font-body text-base font-semibold text-ink">
               {achievement.studentName}
             </p>
           </div>

@@ -15,7 +15,7 @@ export default async function AdminDangNhapPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-parchment px-6">
       <div className="w-full max-w-sm rounded-2xl border border-mist bg-white/60 p-10 text-center">
-        <span className="font-display text-sm italic text-bordeaux">
+        <span className="font-body text-sm italic text-bordeaux">
           Khu vực quản trị
         </span>
         <h1 className="mt-2 font-display text-2xl font-semibold text-ink">

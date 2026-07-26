@@ -44,6 +44,7 @@ export default function SiteMobileDrawer({
   const isAdmin = session?.user?.role === "ADMIN";
 
   const links = [
+    !isAdmin && { href: "/about", label: "Giới thiệu" },
     !isAdmin && { href: "/courses", label: "Khoá học" },
     !isAdmin && { href: "/achievements", label: "Thành tích" },
     !isAdmin && session?.user && { href: "/account", label: "Khoá học của tôi" },

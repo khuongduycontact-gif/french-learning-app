@@ -4,6 +4,7 @@ export const adminNavLinks = [
   { href: "/admin/courses", label: "Khoá học", exact: false },
   { href: "/admin/submissions", label: "Bài nộp", exact: false },
   { href: "/admin/achievements", label: "Thành tích", exact: false },
+  { href: "/admin/about", label: "Giới thiệu", exact: false },
 ];
 
 export function isAdminNavActive(

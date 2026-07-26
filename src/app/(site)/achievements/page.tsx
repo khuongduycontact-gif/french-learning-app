@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import AchievementCard from "@/components/AchievementCard";
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
+import Select from "@/components/Select";
 import type { Achievement } from "@/types";
 
 const PAGE_SIZE = 12;
@@ -83,27 +84,21 @@ export default function AchievementsPage() {
             rel="noopener noreferrer"
             className="whitespace-nowrap"
           >
-            <span className="font-display font-semibold text-ink">Français</span>{" "}
-            <span className="font-display italic text-bordeaux">avec Céline</span>
+            <span className="font-body font-semibold text-ink">Français</span>{" "}
+            <span className="font-body italic text-bordeaux">avec Céline</span>
           </a>
           .
         </p>
       </div>
 
       <div className="flex items-center gap-3">
-        <select
+        <Select
           id="level-filter"
-          aria-label="Lọc theo trình độ"
+          ariaLabel="Lọc theo trình độ"
           value={level}
-          onChange={(e) => setLevel(e.target.value)}
-          className="rounded-full border border-mist bg-white px-5 py-2.5 text-sm text-ink outline-none transition focus:border-bordeaux focus:ring-2 focus:ring-bordeaux/20"
-        >
-          {LEVEL_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+          onChange={setLevel}
+          options={LEVEL_OPTIONS}
+        />
       </div>
 
       {loading ? (

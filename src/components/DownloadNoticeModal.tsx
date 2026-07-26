@@ -45,7 +45,7 @@ export default function DownloadNoticeModal({
         <p className="text-xs font-semibold uppercase tracking-wide text-bordeaux">
           Lưu ý thời gian nộp bài
         </p>
-        <h2 className="mt-1 font-body text-xl font-semibold text-ink">
+        <h2 className="mt-1 font-display text-xl font-semibold text-ink">
           Bạn cần nộp bài trong {hours} tiếng
         </h2>
         <p className="mt-3 text-sm text-ink/70">

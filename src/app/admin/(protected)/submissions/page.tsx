@@ -11,6 +11,7 @@ import Pagination from "@/components/Pagination";
 import MaterialFileAction from "@/components/MaterialFileAction";
 import SubmissionFilesUploader from "@/components/SubmissionFilesUploader";
 import AdminDeadlinesPanel from "@/components/AdminDeadlinesPanel";
+import Select from "@/components/Select";
 import { formatDateTime } from "@/lib/format";
 
 const PAGE_SIZE = 10;
@@ -90,7 +91,10 @@ export default function AdminSubmissionsPage() {
     submissions.forEach((s) => {
       if (s.course) map.set(s.course.id, s.course.title);
     });
-    return Array.from(map.entries()).map(([id, title]) => ({ id, title }));
+    return [
+      { value: "", label: "Tất cả khoá học" },
+      ...Array.from(map.entries()).map(([id, title]) => ({ value: id, label: title })),
+    ];
   }, [submissions]);
 
   const materialOptions = useMemo(() => {
@@ -100,7 +104,10 @@ export default function AdminSubmissionsPage() {
       .forEach((s) => {
         if (s.material) map.set(s.material.id, s.material.name);
       });
-    return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
+    return [
+      { value: "", label: "Tất cả bài tập" },
+      ...Array.from(map.entries()).map(([id, name]) => ({ value: id, label: name })),
+    ];
   }, [submissions, courseFilter]);
 
   useEffect(() => {
@@ -188,31 +195,19 @@ export default function AdminSubmissionsPage() {
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <select
+          <Select
             value={courseFilter}
-            onChange={(e) => setCourseFilter(e.target.value)}
-            className="rounded-full border border-mist bg-white px-4 py-2 text-sm text-ink focus:border-bordeaux/40 focus:outline-none sm:w-64"
-          >
-            <option value="">Tất cả khoá học</option>
-            {courseOptions.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.title}
-              </option>
-            ))}
-          </select>
+            onChange={setCourseFilter}
+            options={courseOptions}
+            className="sm:w-64"
+          />
 
-          <select
+          <Select
             value={materialFilter}
-            onChange={(e) => setMaterialFilter(e.target.value)}
-            className="rounded-full border border-mist bg-white px-4 py-2 text-sm text-ink focus:border-bordeaux/40 focus:outline-none sm:w-64"
-          >
-            <option value="">Tất cả bài tập</option>
-            {materialOptions.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name}
-              </option>
-            ))}
-          </select>
+            onChange={setMaterialFilter}
+            options={materialOptions}
+            className="sm:w-64"
+          />
 
           <div className="relative w-full sm:ml-auto sm:w-[24rem]">
             <svg
@@ -321,7 +316,7 @@ export default function AdminSubmissionsPage() {
                       <span className="cell-nowrap">{s.material?.name}</span>
                     </td>
                     <td className="px-4 py-3 text-ink/70">
-                      <span className="cell-nowrap">{formatDateTime(s.submittedAt)}</span>
+                      <span className="cell-nowrap tabular-nums">{formatDateTime(s.submittedAt)}</span>
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">
                       <span

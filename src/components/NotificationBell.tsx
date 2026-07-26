@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import type { Notification } from "@/types";
+import { formatDate } from "@/lib/format";
 
 const POLL_INTERVAL_MS = 20000;
 
@@ -16,7 +17,7 @@ function timeAgo(iso: string) {
   if (hours < 24) return `${hours} giờ trước`;
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days} ngày trước`;
-  return new Date(iso).toLocaleDateString("vi-VN");
+  return formatDate(iso);
 }
 
 export default function NotificationBell({

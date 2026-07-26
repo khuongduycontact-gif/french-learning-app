@@ -6,6 +6,8 @@ import type { Achievement } from "@/types";
 import { useToast } from "@/components/Toast";
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
+import Select from "@/components/Select";
+import { formatDate } from "@/lib/format";
 
 const PAGE_SIZE = 10;
 
@@ -110,17 +112,7 @@ export default function AdminAchievementsPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <select
-          value={level}
-          onChange={(e) => setLevel(e.target.value)}
-          className="rounded-full border border-mist bg-white px-5 py-2.5 text-sm"
-        >
-          {LEVEL_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+        <Select value={level} onChange={setLevel} options={LEVEL_OPTIONS} />
       </div>
 
       <div className="scroll-x-fancy overflow-x-auto rounded-lg border border-mist bg-white/60">
@@ -180,8 +172,8 @@ export default function AdminAchievementsPage() {
                     </Link>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">{a.level}</td>
-                  <td className="whitespace-nowrap px-4 py-3">
-                    {new Date(a.createdAt).toLocaleDateString("vi-VN")}
+                  <td className="whitespace-nowrap px-4 py-3 tabular-nums text-ink/70">
+                    {formatDate(a.createdAt)}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-3">

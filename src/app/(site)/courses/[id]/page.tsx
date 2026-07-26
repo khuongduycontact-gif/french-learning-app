@@ -172,7 +172,7 @@ export default async function CourseDetailPage({
                 />
 
                 {/* Chữ cái đầu tên khoá học */}
-                <span className="pointer-events-none absolute left-[16%] top-1/2 -translate-y-1/2 select-none font-display text-8xl font-bold leading-none text-indigo-400 sm:text-9xl">
+                <span className="pointer-events-none absolute left-[16%] top-1/2 -translate-y-1/2 select-none font-body text-8xl font-bold leading-none text-indigo-400 sm:text-9xl">
                   {initial}
                 </span>
 
@@ -253,7 +253,7 @@ export default async function CourseDetailPage({
               {levelLabel[course.level] ?? course.level}
             </span>
 
-            <h1 className="mt-3 break-words font-body text-2xl font-bold text-ink sm:text-3xl">
+            <h1 className="mt-3 break-words font-display text-2xl font-bold text-ink sm:text-3xl">
               {course.title}
             </h1>
 

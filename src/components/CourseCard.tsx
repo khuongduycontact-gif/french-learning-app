@@ -153,7 +153,7 @@ export default function CourseCard({
             />
 
             {/* Chữ cái đầu tên khoá học - phông chữ display cỡ lớn */}
-            <span className="pointer-events-none absolute left-[16%] top-1/2 -translate-y-1/2 select-none font-display text-7xl font-bold leading-none text-indigo-400">
+            <span className="pointer-events-none absolute left-[16%] top-1/2 -translate-y-1/2 select-none font-body text-7xl font-bold leading-none text-indigo-400">
               {initial}
             </span>
 
@@ -244,7 +244,7 @@ export default function CourseCard({
           {levelLabel[course.level] ?? course.level}
         </span>
 
-        <h3 className="line-clamp-1 font-body text-lg font-bold leading-snug text-ink">
+        <h3 className="line-clamp-1 font-display text-lg font-bold leading-snug text-ink">
           {course.title}
         </h3>
 

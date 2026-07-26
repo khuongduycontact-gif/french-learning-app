@@ -58,6 +58,43 @@ export interface CourseInput {
   materials?: CourseMaterialInput[];
 }
 
+export interface AboutTimelineItem {
+  id: string;
+  year: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface AboutReason {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface AboutMethodItem {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export interface AboutPage {
+  id: string;
+  heroKicker: string;
+  heroTitle: string;
+  heroGreeting: string;
+  heroDescription: string;
+  heroImageUrl: string | null;
+  heroBadgeUrl: string | null;
+  timeline: AboutTimelineItem[];
+  reasons: AboutReason[];
+  methodTitle: string;
+  methodImageUrl: string | null;
+  methods: AboutMethodItem[];
+  updatedAt: string;
+}
+
 export interface Achievement {
   id: string;
   level: Level;

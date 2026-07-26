@@ -7,6 +7,7 @@ import { isDeadlinePassed, getDeadlineDate } from "@/lib/deadline";
 import { formatDateTime } from "@/lib/format";
 import Loader from "@/components/Loader";
 import DeadlineCountdown from "@/components/DeadlineCountdown";
+import Select from "@/components/Select";
 import { useToast } from "@/components/Toast";
 
 export default function AdminDeadlinesPanel() {
@@ -46,7 +47,10 @@ export default function AdminDeadlinesPanel() {
     deadlines.forEach((d) => {
       if (d.course) map.set(d.course.id, d.course.title);
     });
-    return Array.from(map.entries()).map(([id, title]) => ({ id, title }));
+    return [
+      { value: "", label: "Tất cả khoá học" },
+      ...Array.from(map.entries()).map(([id, title]) => ({ value: id, label: title })),
+    ];
   }, [deadlines]);
 
   const filtered = useMemo(() => {
@@ -99,18 +103,12 @@ export default function AdminDeadlinesPanel() {
       </p>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <select
+        <Select
           value={courseFilter}
-          onChange={(e) => setCourseFilter(e.target.value)}
-          className="rounded-full border border-mist bg-white px-4 py-2 text-sm text-ink focus:border-bordeaux/40 focus:outline-none sm:w-64"
-        >
-          <option value="">Tất cả khoá học</option>
-          {courseOptions.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.title}
-            </option>
-          ))}
-        </select>
+          onChange={setCourseFilter}
+          options={courseOptions}
+          className="sm:w-64"
+        />
 
         <div className="flex gap-2">
           {[
@@ -214,7 +212,7 @@ export default function AdminDeadlinesPanel() {
                       <span className="cell-nowrap">{d.material?.name}</span>
                     </td>
                     <td className="px-4 py-3 text-ink/70">
-                      <span className="cell-nowrap">{formatDateTime(d.startedAt)}</span>
+                      <span className="cell-nowrap tabular-nums">{formatDateTime(d.startedAt)}</span>
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">
                       <div className="flex flex-col gap-1">
