@@ -211,92 +211,22 @@ export default function Footer() {
 
         <div className="mt-8 flex items-center gap-4 sm:gap-6">
           <span className="h-px flex-1 bg-gradient-to-r from-transparent via-bordeaux/30 to-bordeaux/30" />
-          <svg viewBox="0 0 56 44" className="h-6 w-8 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
-            {/* Hoa diên vĩ - trái */}
-            <g transform="translate(2,0)">
-              <path
-                d="M16,32 C11,28 10,17 16,4 C22,17 21,28 16,32 Z"
-                fill="currentColor"
-                fillOpacity="0.85"
-              />
-              <path
-                d="M13,29 C6,27 0,24 0,17 C0,11 6,9 10,12 C7,11 5,14 6,17 C7,20 11,20 13,18"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M19,29 C26,27 32,24 32,17 C32,11 26,9 22,12 C25,11 27,14 26,17 C25,20 21,20 19,18"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <rect x="9" y="30" width="14" height="2.6" rx="1.3" fill="currentColor" fillOpacity="0.75" />
-              <path
-                d="M16,33 C14,36 14,40 16,44 C18,40 18,36 16,33 Z"
-                fill="currentColor"
-                fillOpacity="0.75"
-              />
-            </g>
-            {/* Hoa diên vĩ - phải */}
-            <g transform="translate(22,0)">
-              <path
-                d="M16,32 C11,28 10,17 16,4 C22,17 21,28 16,32 Z"
-                fill="currentColor"
-                fillOpacity="0.85"
-              />
-              <path
-                d="M13,29 C6,27 0,24 0,17 C0,11 6,9 10,12 C7,11 5,14 6,17 C7,20 11,20 13,18"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M19,29 C26,27 32,24 32,17 C32,11 26,9 22,12 C25,11 27,14 26,17 C25,20 21,20 19,18"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <rect x="9" y="30" width="14" height="2.6" rx="1.3" fill="currentColor" fillOpacity="0.75" />
-              <path
-                d="M16,33 C14,36 14,40 16,44 C18,40 18,36 16,33 Z"
-                fill="currentColor"
-                fillOpacity="0.75"
-              />
-            </g>
+          <svg viewBox="0 0 20 18" className="h-4 w-4 shrink-0 text-bordeaux/60" fill="none" aria-hidden>
+            <path
+              d="M10 17S1.5 11.8 1.5 6.4A4.4 4.4 0 0 1 10 4.3a4.4 4.4 0 0 1 8.5 2.1C18.5 11.8 10 17 10 17Z"
+              fill="currentColor"
+              fillOpacity="0.85"
+            />
           </svg>
           <span className="h-px flex-1 bg-gradient-to-l from-transparent via-bordeaux/30 to-bordeaux/30" />
         </div>
 
-        <div className="mt-4 flex items-center justify-center gap-1.5 text-center text-sm">
-          <span
-            className="bg-clip-text font-medium text-transparent [background-image:linear-gradient(90deg,#0055A4_0%,#0055A4_33%,#FFFFFF_33%,#FFFFFF_66%,#EF4135_66%,#EF4135_100%)]"
-            style={{ WebkitTextStroke: "0.4px rgba(27,42,74,0.35)" }}
-          >
-            © {year} Français avec Céline
-          </span>
+        <div className="mt-4 flex items-center justify-center gap-1.5 text-center text-sm text-gray-500">
+          <span>© {year} Français avec Céline</span>
           <svg viewBox="0 0 20 18" className="h-3.5 w-3.5 shrink-0" aria-hidden>
-            <defs>
-              <clipPath id="footerHeartFrClip">
-                <path d="M10 17S1.5 11.8 1.5 6.4A4.4 4.4 0 0 1 10 4.3a4.4 4.4 0 0 1 8.5 2.1C18.5 11.8 10 17 10 17Z" />
-              </clipPath>
-            </defs>
-            <g clipPath="url(#footerHeartFrClip)">
-              <rect x="0" y="0" width="6.7" height="18" fill="#0055A4" />
-              <rect x="6.7" y="0" width="6.6" height="18" fill="#FFFFFF" />
-              <rect x="13.3" y="0" width="6.7" height="18" fill="#EF4135" />
-            </g>
             <path
               d="M10 17S1.5 11.8 1.5 6.4A4.4 4.4 0 0 1 10 4.3a4.4 4.4 0 0 1 8.5 2.1C18.5 11.8 10 17 10 17Z"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="0.6"
-              strokeOpacity="0.3"
-              strokeLinejoin="round"
+              fill="currentColor"
             />
           </svg>
         </div>
