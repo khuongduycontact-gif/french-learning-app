@@ -59,20 +59,24 @@ export default function AdminMobileDrawer() {
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-mist px-5 py-4">
-          <p className="flex items-baseline gap-1.5 leading-tight">
+        <div className="relative flex items-center justify-center gap-2 border-b border-mist px-5 py-4">
+          <Link
+            href="/admin"
+            onClick={() => setOpen(false)}
+            className="flex min-w-0 flex-wrap items-baseline justify-center gap-1.5 text-center leading-tight transition hover:opacity-80"
+          >
             <span className="font-display text-base font-semibold tracking-tight text-ink">
               Français
             </span>
             <span className="font-display text-sm italic text-bordeaux">
               avec Céline
             </span>
-          </p>
+          </Link>
           <button
             type="button"
             onClick={() => setOpen(false)}
             aria-label="Đóng menu"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-ink/50 transition hover:bg-mist hover:text-ink"
+            className="absolute right-3 flex h-8 w-8 items-center justify-center rounded-full text-ink/50 transition hover:bg-mist hover:text-ink"
           >
             <svg className="h-4.5 w-4.5" viewBox="0 0 20 20" fill="none">
               <path

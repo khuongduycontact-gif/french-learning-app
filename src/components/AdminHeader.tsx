@@ -16,8 +16,11 @@ export default function AdminHeader() {
             className="min-w-0 truncate font-display text-lg font-semibold tracking-tight text-ink transition hover:text-bordeaux sm:text-xl"
           >
             <span className="hidden md:inline">Quản trị</span>
-            <span className="font-display text-base italic text-bordeaux md:ml-2">
-              Français avec Céline
+            <span className="font-display text-base md:ml-2">
+              <span className="not-italic text-ink md:italic md:text-bordeaux">
+                Français
+              </span>{" "}
+              <span className="italic text-bordeaux">avec Céline</span>
             </span>
           </Link>
         </div>

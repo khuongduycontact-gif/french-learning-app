@@ -83,7 +83,7 @@ export default async function HomePage() {
           </p>
           <Link
             href="/courses"
-            className="mt-8 inline-block rounded-full bg-bordeaux px-6 py-3 text-sm font-semibold text-parchment transition hover:bg-bordeaux/90"
+            className="mt-8 block w-fit mx-auto rounded-full bg-bordeaux px-6 py-3 text-sm font-semibold text-parchment transition hover:bg-bordeaux/90 md:mx-0 md:inline-block"
           >
             Khám phá khoá học
           </Link>
