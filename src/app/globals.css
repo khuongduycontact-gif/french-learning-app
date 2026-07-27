@@ -291,6 +291,23 @@ select:focus-visible {
   box-shadow: inset 0 0 0 1.5px theme("colors.gold/70%");
 }
 
+/* Biến thể "gộp nhóm" cho DatePicker - dùng khi 2 DatePicker (từ ngày / đến
+   ngày) được đặt cạnh nhau trong CÙNG 1 khung viên nhộng (VD: bộ lọc "Bài
+   nộp & chữa bài"). Bỏ viền/bóng/nền riêng của từng nút bấm để cả cụm trông
+   như 1 control liền mạch thay vì 2 ô tách rời. */
+.date-picker-grouped .date-picker-trigger {
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  padding: 0.25rem;
+}
+.date-picker-grouped .date-picker-trigger:focus-visible,
+.date-picker-grouped .date-picker-trigger[aria-expanded="true"] {
+  box-shadow: none;
+  border-radius: 999px;
+  background-color: theme("colors.gold/10%");
+}
+
 /* Ribbon đánh dấu trạng thái khoá học (VD: "ĐÃ ĐĂNG KÝ") - dán chéo góc
    trên-phải của cả thẻ, viền đứt nét kiểu chỉ may, hai đầu gập vào trong
    nhờ được cắt bởi khung .corner-ribbon (overflow: hidden). */

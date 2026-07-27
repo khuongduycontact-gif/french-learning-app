@@ -205,56 +205,59 @@ export default function AdminSubmissionsPage() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
-          <Select
-            value={courseFilter}
-            onChange={setCourseFilter}
-            options={courseOptions}
-            className="sm:w-64"
-          />
+        <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">
+          <div className="flex flex-wrap gap-2">
+            <Select
+              value={courseFilter}
+              onChange={setCourseFilter}
+              options={courseOptions}
+              className="w-full sm:w-56"
+            />
 
-          <Select
-            value={materialFilter}
-            onChange={setMaterialFilter}
-            options={materialOptions}
-            disabled={!courseFilter}
-            className="sm:w-64"
-          />
+            <Select
+              value={materialFilter}
+              onChange={setMaterialFilter}
+              options={materialOptions}
+              disabled={!courseFilter}
+              className="w-full sm:w-56"
+            />
+          </div>
 
-          <DatePicker
-            id="submissions-from"
-            ariaLabel="Nộp từ ngày"
-            placeholder="Nộp từ ngày"
-            value={fromDate}
-            max={toDate || undefined}
-            onChange={setFromDate}
-          />
+          <div className="flex flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1.5">
+            <DatePicker
+              id="submissions-from"
+              ariaLabel="Nộp ngày"
+              placeholder="Nộp ngày"
+              value={fromDate}
+              max={toDate || undefined}
+              onChange={setFromDate}
+              className="date-picker-grouped"
+            />
+            <span className="text-ink/30">—</span>
+            <DatePicker
+              id="submissions-to"
+              ariaLabel="Đến ngày"
+              placeholder="Đến ngày"
+              value={toDate}
+              min={fromDate || undefined}
+              onChange={setToDate}
+              className="date-picker-grouped"
+            />
+            {(fromDate || toDate) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFromDate("");
+                  setToDate("");
+                }}
+                className="rounded-full px-2 py-1 text-xs font-medium text-bordeaux hover:bg-bordeaux/5"
+              >
+                Xoá
+              </button>
+            )}
+          </div>
 
-          <span className="hidden text-ink/30 sm:inline">—</span>
-
-          <DatePicker
-            id="submissions-to"
-            ariaLabel="Nộp đến ngày"
-            placeholder="Nộp đến ngày"
-            value={toDate}
-            min={fromDate || undefined}
-            onChange={setToDate}
-          />
-
-          {(fromDate || toDate) && (
-            <button
-              type="button"
-              onClick={() => {
-                setFromDate("");
-                setToDate("");
-              }}
-              className="text-sm font-medium text-bordeaux hover:underline"
-            >
-              Xoá lọc ngày
-            </button>
-          )}
-
-          <div className="relative w-full sm:ml-auto sm:w-[24rem]">
+          <div className="relative w-full lg:ml-auto lg:w-80">
             <svg
               className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40"
               viewBox="0 0 20 20"

@@ -66,6 +66,9 @@ export default function SubmissionCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
+          {submission.course?.title && (
+            <p className="text-xs font-medium text-bordeaux/70">{submission.course.title}</p>
+          )}
           <p className="font-medium text-ink">{submission.material?.name}</p>
           <p className="text-xs text-ink/50">
             Nộp lúc {formatDateTime(submission.submittedAt)}
