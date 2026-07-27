@@ -174,12 +174,12 @@ export default function DatePicker({
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={handleTriggerClick}
-        className={`date-picker-trigger flex items-center gap-2 rounded-full border border-mist bg-white px-4 py-2 text-sm shadow-sm transition ${
+        className={`date-picker-trigger flex w-full items-center gap-2 rounded-full border border-mist bg-white px-4 py-2 text-sm shadow-sm transition ${
           value ? "text-ink" : "text-ink/40"
         }`}
       >
         <CalendarGlyph className="h-4 w-4 shrink-0 text-bordeaux/70" />
-        <span>{value ? formatDisplay(value) : placeholder}</span>
+        <span className="truncate">{value ? formatDisplay(value) : placeholder}</span>
       </button>
 
       {open && (

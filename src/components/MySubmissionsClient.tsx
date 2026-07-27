@@ -156,7 +156,7 @@ export default function MySubmissionsClient() {
             </button>
           ))}
 
-          <div className="flex flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1.5 sm:ml-auto">
+          <div className="flex w-full flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1.5 sm:ml-auto sm:w-auto">
             <DatePicker
               id="my-submissions-from"
               ariaLabel="Nộp ngày"
@@ -164,7 +164,7 @@ export default function MySubmissionsClient() {
               value={fromDate}
               max={toDate || undefined}
               onChange={setFromDate}
-              className="date-picker-grouped"
+              className="date-picker-grouped min-w-0 flex-1 sm:flex-none"
             />
             <span className="text-ink/30">—</span>
             <DatePicker
@@ -174,7 +174,7 @@ export default function MySubmissionsClient() {
               value={toDate}
               min={fromDate || undefined}
               onChange={setToDate}
-              className="date-picker-grouped"
+              className="date-picker-grouped min-w-0 flex-1 sm:flex-none"
             />
             {(fromDate || toDate) && (
               <button

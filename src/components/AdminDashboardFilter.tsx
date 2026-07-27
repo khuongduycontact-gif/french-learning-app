@@ -25,7 +25,7 @@ export default function AdminDashboardFilter() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-mist bg-white/60 px-4 py-3">
+    <div className="flex w-full flex-wrap items-center gap-4 rounded-2xl border border-mist bg-white/60 px-4 py-3 sm:w-auto">
       <DatePicker
         id="dashboard-from"
         ariaLabel="Từ ngày"
@@ -33,6 +33,7 @@ export default function AdminDashboardFilter() {
         value={from}
         max={to || undefined}
         onChange={(v) => updateParams({ from: v })}
+        className="min-w-0 flex-1 sm:flex-none"
       />
 
       <span className="hidden text-ink/30 sm:inline">—</span>
@@ -44,6 +45,7 @@ export default function AdminDashboardFilter() {
         value={to}
         min={from || undefined}
         onChange={(v) => updateParams({ to: v })}
+        className="min-w-0 flex-1 sm:flex-none"
       />
 
       {(from || to) && (

@@ -221,7 +221,7 @@ export default function AdminSubmissionsPage() {
             className="w-full sm:w-48"
           />
 
-          <div className="flex flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1.5">
+          <div className="flex w-full flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1.5 sm:w-auto">
             <DatePicker
               id="submissions-from"
               ariaLabel="Nộp ngày"
@@ -229,7 +229,7 @@ export default function AdminSubmissionsPage() {
               value={fromDate}
               max={toDate || undefined}
               onChange={setFromDate}
-              className="date-picker-grouped"
+              className="date-picker-grouped min-w-0 flex-1 sm:flex-none"
             />
             <span className="text-ink/30">—</span>
             <DatePicker
@@ -239,7 +239,7 @@ export default function AdminSubmissionsPage() {
               value={toDate}
               min={fromDate || undefined}
               onChange={setToDate}
-              className="date-picker-grouped"
+              className="date-picker-grouped min-w-0 flex-1 sm:flex-none"
             />
             {(fromDate || toDate) && (
               <button
