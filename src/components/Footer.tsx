@@ -231,7 +231,6 @@ export default function Footer() {
           >
             <path d="M12 2.5l2.85 6.05 6.65.73-4.95 4.6 1.3 6.62L12 17.3l-5.85 3.2 1.3-6.62-4.95-4.6 6.65-.73L12 2.5z" />
           </svg>
-          </svg>
         </div>
       </div>
     </footer>
