@@ -225,32 +225,12 @@ export default function Footer() {
           <span>© {year} Français avec Céline</span>
           <svg
             viewBox="0 0 24 24"
-            className="h-[1em] w-[1em] shrink-0"
-            fill="none"
-            stroke="url(#eiffelFrFlag)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            className="h-[1em] w-[1em] shrink-0 text-gray-400"
+            fill="currentColor"
             aria-hidden
           >
-            <defs>
-              <linearGradient id="eiffelFrFlag" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#0055A4" />
-                <stop offset="33%" stopColor="#0055A4" />
-                <stop offset="33%" stopColor="#FFFFFF" />
-                <stop offset="66%" stopColor="#FFFFFF" />
-                <stop offset="66%" stopColor="#EF4135" />
-                <stop offset="100%" stopColor="#EF4135" />
-              </linearGradient>
-            </defs>
-            <path d="M11 4c0 4.889 -2.292 12.111 -5 17" />
-            <path d="M13 4c0 4.889 2.292 12.111 5 17" />
-            <path d="M3 21h18" />
-            <path d="M8 14h8" />
-            <path d="M9 10h6" />
-            <path d="M10 4h4" />
-            <path d="M12 2v1.778" />
-            <path d="M10 21s.27 -1.406 .667 -2c.333 -.5 .666 -1 1.333 -1s1 .5 1.333 1c.448 .672 .667 2 .667 2" />
+            <path d="M12 2.5l2.85 6.05 6.65.73-4.95 4.6 1.3 6.62L12 17.3l-5.85 3.2 1.3-6.62-4.95-4.6 6.65-.73L12 2.5z" />
+          </svg>
           </svg>
         </div>
       </div>
