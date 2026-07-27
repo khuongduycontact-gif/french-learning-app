@@ -160,36 +160,6 @@ select:focus-visible {
   background-color: theme("colors.bordeaux/0.55");
 }
 
-/* Ô lọc theo ngày (dashboard admin): dáng viên nhộng theo tông màu chung,
-   viền hoá vàng nhẹ khi focus/hover, icon lịch nhuộm theo màu bordeaux. */
-.admin-date-input {
-  @apply rounded-full border border-mist bg-white px-4 py-2 pr-3 text-sm text-ink shadow-sm transition;
-  color-scheme: light;
-}
-.admin-date-input:hover {
-  border-color: theme("colors.gold/60%");
-}
-.admin-date-input:focus-visible {
-  border-color: theme("colors.bordeaux/50%");
-  box-shadow: 0 0 0 3px theme("colors.gold/20%");
-}
-.admin-date-input::-webkit-calendar-picker-indicator {
-  margin-left: 0.5rem;
-  padding: 2px;
-  border-radius: 999px;
-  cursor: pointer;
-  filter: invert(16%) sepia(46%) saturate(1719%) hue-rotate(315deg) brightness(93%) contrast(89%);
-  opacity: 0.75;
-  transition: opacity 0.15s ease, background-color 0.15s ease;
-}
-.admin-date-input::-webkit-calendar-picker-indicator:hover {
-  opacity: 1;
-  background-color: theme("colors.gold/15%");
-}
-.admin-date-input::-webkit-datetime-edit {
-  padding: 0;
-}
-
 /* Dropdown tự dựng (component Select.tsx) dùng chung cho cả dự án - nút bấm
    (trigger) + phần danh sách lựa chọn (panel) đều tự vẽ bằng CSS/SVG thay vì
    thẻ <select> gốc, nên có thể đồng bộ hoàn toàn với màu thương hiệu, bo góc,
@@ -224,7 +194,7 @@ select:focus-visible {
 }
 
 /* Biến thể viên nhộng - dùng cho các bộ lọc (trình độ, khoá học, sắp xếp...)
-   trên thanh công cụ, đồng bộ dáng với .admin-date-input bên cạnh. */
+   trên thanh công cụ */
 .select-pill {
   @apply rounded-full border border-mist bg-white py-2 pl-4 pr-3.5 text-sm text-ink shadow-sm;
 }
@@ -279,6 +249,46 @@ select:focus-visible {
 /* Trạng thái không có lựa chọn nào để hiển thị trong panel. */
 .select-empty {
   @apply px-3 py-4 text-center text-sm text-ink/50;
+}
+
+/* DatePicker.tsx - tự dựng thay cho input[type=date] gốc, để đồng bộ 100%
+   trên mọi trình duyệt (kể cả Firefox, nơi CSS không can thiệp được vào UI
+   ngày/tháng/năm gốc). Nút bấm dùng chung dáng viên nhộng với select-pill/
+   .admin-date-input; panel lịch dùng chung ngôn ngữ đổ bóng + hiệu ứng mở
+   với .select-panel. */
+.date-picker-trigger:hover {
+  border-color: theme("colors.gold/60%");
+}
+.date-picker-trigger:focus-visible,
+.date-picker-trigger[aria-expanded="true"] {
+  border-color: theme("colors.bordeaux/50%");
+  box-shadow: 0 0 0 3px theme("colors.gold/20%");
+  outline: none;
+}
+.date-picker-panel {
+  transform-origin: top left;
+  animation: select-panel-in 0.14s ease-out;
+}
+.date-picker-nav {
+  display: flex;
+  height: 1.75rem;
+  width: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: theme("colors.ink/50%");
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.date-picker-nav:hover {
+  background-color: theme("colors.mist/60%");
+  color: theme("colors.ink");
+}
+.date-picker-day.is-selected {
+  background-color: theme("colors.bordeaux");
+  color: #fff;
+}
+.date-picker-day.is-today:not(.is-selected) {
+  box-shadow: inset 0 0 0 1.5px theme("colors.gold/70%");
 }
 
 /* Ribbon đánh dấu trạng thái khoá học (VD: "ĐÃ ĐĂNG KÝ") - dán chéo góc

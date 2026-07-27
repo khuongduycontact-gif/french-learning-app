@@ -12,9 +12,13 @@ import MaterialFileAction from "@/components/MaterialFileAction";
 import SubmissionFilesUploader from "@/components/SubmissionFilesUploader";
 import AdminDeadlinesPanel from "@/components/AdminDeadlinesPanel";
 import Select from "@/components/Select";
+import DatePicker from "@/components/DatePicker";
 import { formatDateTime } from "@/lib/format";
 
 const PAGE_SIZE = 10;
+
+type FilterMaterial = { id: string; name: string };
+type FilterCourse = { id: string; title: string; materials: FilterMaterial[] };
 
 const statusFilters: { value: string; label: string }[] = [
   { value: "", label: "Tất cả" },
@@ -33,10 +37,13 @@ export default function AdminSubmissionsPage() {
   const highlightId = searchParams.get("highlight");
 
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [filterCourses, setFilterCourses] = useState<FilterCourse[]>([]);
   const [view, setView] = useState<"submissions" | "deadlines">("submissions");
   const [statusFilter, setStatusFilter] = useState("");
   const [courseFilter, setCourseFilter] = useState("");
   const [materialFilter, setMaterialFilter] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -59,13 +66,18 @@ export default function AdminSubmissionsPage() {
     function run() {
       setLoading(true);
       setError("");
-      fetch(`/api/submissions?scope=admin`, { signal: controller.signal })
-        .then((res) => {
-          if (!res.ok) throw new Error("Không tải được danh sách bài nộp.");
-          return res.json();
-        })
-        .then((data: Submission[]) => {
-          setSubmissions(data);
+      Promise.all([
+        fetch(`/api/submissions?scope=admin`, { signal: controller.signal }),
+        fetch(`/api/submissions/filters`, { signal: controller.signal }),
+      ])
+        .then(async ([subRes, filterRes]) => {
+          if (!subRes.ok) throw new Error("Không tải được danh sách bài nộp.");
+          const subData: Submission[] = await subRes.json();
+          setSubmissions(subData);
+          if (filterRes.ok) {
+            const filterData: FilterCourse[] = await filterRes.json();
+            setFilterCourses(filterData);
+          }
           setLoading(false);
         })
         .catch((err) => {
@@ -84,31 +96,22 @@ export default function AdminSubmissionsPage() {
     return () => controller.abort();
   }, [reloadKey]);
 
-  // Danh sách khoá học / bài tập duy nhất, lấy từ chính dữ liệu bài nộp, để
-  // admin lọc đúng khoá học -> đúng bài tập cần chữa.
+  // Danh sách khoá học / bài tập lấy từ TOÀN BỘ dữ liệu khoá học (kể cả khoá
+  // học/bài tập chưa có ai nộp bài), không chỉ suy ra từ dữ liệu bài nộp.
   const courseOptions = useMemo(() => {
-    const map = new Map<string, string>();
-    submissions.forEach((s) => {
-      if (s.course) map.set(s.course.id, s.course.title);
-    });
     return [
       { value: "", label: "Tất cả khoá học" },
-      ...Array.from(map.entries()).map(([id, title]) => ({ value: id, label: title })),
+      ...filterCourses.map((c) => ({ value: c.id, label: c.title })),
     ];
-  }, [submissions]);
+  }, [filterCourses]);
 
   const materialOptions = useMemo(() => {
-    const map = new Map<string, string>();
-    submissions
-      .filter((s) => !courseFilter || s.courseId === courseFilter)
-      .forEach((s) => {
-        if (s.material) map.set(s.material.id, s.material.name);
-      });
+    const course = filterCourses.find((c) => c.id === courseFilter);
     return [
       { value: "", label: "Tất cả bài tập" },
-      ...Array.from(map.entries()).map(([id, name]) => ({ value: id, label: name })),
+      ...(course ? course.materials.map((m) => ({ value: m.id, label: m.name })) : []),
     ];
-  }, [submissions, courseFilter]);
+  }, [filterCourses, courseFilter]);
 
   useEffect(() => {
     // Đổi khoá học -> bỏ chọn bài tập cũ nếu không còn thuộc khoá học này
@@ -117,10 +120,18 @@ export default function AdminSubmissionsPage() {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
+    // Nộp lúc 00:00:00 của "Từ ngày" đến 23:59:59 của "Đến ngày".
+    const fromTime = fromDate ? new Date(`${fromDate}T00:00:00`).getTime() : null;
+    const toTime = toDate ? new Date(`${toDate}T23:59:59.999`).getTime() : null;
     return submissions.filter((s) => {
       if (statusFilter && s.status !== statusFilter) return false;
       if (courseFilter && s.courseId !== courseFilter) return false;
       if (materialFilter && s.materialId !== materialFilter) return false;
+      if (fromTime !== null || toTime !== null) {
+        const submittedTime = new Date(s.submittedAt).getTime();
+        if (fromTime !== null && submittedTime < fromTime) return false;
+        if (toTime !== null && submittedTime > toTime) return false;
+      }
       if (!q) return true;
       const userName = s.user?.name?.toLowerCase() || "";
       const userEmail = s.user?.email?.toLowerCase() || "";
@@ -133,14 +144,14 @@ export default function AdminSubmissionsPage() {
         materialName.includes(q)
       );
     });
-  }, [submissions, statusFilter, courseFilter, materialFilter, search]);
+  }, [submissions, statusFilter, courseFilter, materialFilter, fromDate, toDate, search]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   useEffect(() => {
     setPage(1);
-  }, [statusFilter, courseFilter, materialFilter, search]);
+  }, [statusFilter, courseFilter, materialFilter, fromDate, toDate, search]);
 
   function handleGraded(updated: Submission) {
     setSubmissions((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
@@ -194,7 +205,7 @@ export default function AdminSubmissionsPage() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
           <Select
             value={courseFilter}
             onChange={setCourseFilter}
@@ -206,8 +217,42 @@ export default function AdminSubmissionsPage() {
             value={materialFilter}
             onChange={setMaterialFilter}
             options={materialOptions}
+            disabled={!courseFilter}
             className="sm:w-64"
           />
+
+          <DatePicker
+            id="submissions-from"
+            ariaLabel="Nộp từ ngày"
+            placeholder="Nộp từ ngày"
+            value={fromDate}
+            max={toDate || undefined}
+            onChange={setFromDate}
+          />
+
+          <span className="hidden text-ink/30 sm:inline">—</span>
+
+          <DatePicker
+            id="submissions-to"
+            ariaLabel="Nộp đến ngày"
+            placeholder="Nộp đến ngày"
+            value={toDate}
+            min={fromDate || undefined}
+            onChange={setToDate}
+          />
+
+          {(fromDate || toDate) && (
+            <button
+              type="button"
+              onClick={() => {
+                setFromDate("");
+                setToDate("");
+              }}
+              className="text-sm font-medium text-bordeaux hover:underline"
+            >
+              Xoá lọc ngày
+            </button>
+          )}
 
           <div className="relative w-full sm:ml-auto sm:w-[24rem]">
             <svg
@@ -264,7 +309,7 @@ export default function AdminSubmissionsPage() {
             ) : filtered.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-ink/50">
-                  {search || statusFilter || courseFilter || materialFilter
+                  {search || statusFilter || courseFilter || materialFilter || fromDate || toDate
                     ? "Không tìm thấy kết quả phù hợp."
                     : "Chưa có bài nộp nào."}
                 </td>

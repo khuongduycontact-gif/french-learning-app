@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import DatePicker from "@/components/DatePicker";
 
-export default function AdminDashboardFilter() {
+export default function SubmissionsDateFilter() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from") || "";
@@ -21,14 +21,16 @@ export default function AdminDashboardFilter() {
     else params.delete("to");
 
     const qs = params.toString();
-    router.push(qs ? `/admin?${qs}` : "/admin");
+    router.push(qs ? `/submissions?${qs}` : "/submissions");
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-mist bg-white/60 px-4 py-3">
+    <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-mist bg-white/60 px-4 py-3">
+      <span className="text-sm font-medium text-ink/60">Nộp bài trong khoảng:</span>
+
       <DatePicker
-        id="dashboard-from"
-        ariaLabel="Từ ngày"
+        id="my-submissions-from"
+        ariaLabel="Nộp từ ngày"
         placeholder="Từ ngày"
         value={from}
         max={to || undefined}
@@ -38,8 +40,8 @@ export default function AdminDashboardFilter() {
       <span className="hidden text-ink/30 sm:inline">—</span>
 
       <DatePicker
-        id="dashboard-to"
-        ariaLabel="Đến ngày"
+        id="my-submissions-to"
+        ariaLabel="Nộp đến ngày"
         placeholder="Đến ngày"
         value={to}
         min={from || undefined}
@@ -49,7 +51,7 @@ export default function AdminDashboardFilter() {
       {(from || to) && (
         <button
           type="button"
-          onClick={() => router.push("/admin")}
+          onClick={() => router.push("/submissions")}
           className="text-sm font-medium text-bordeaux hover:underline"
         >
           Xoá lọc

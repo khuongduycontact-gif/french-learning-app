@@ -3,19 +3,33 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import SubmissionCard from "@/components/SubmissionCard";
+import SubmissionsDateFilter from "@/components/SubmissionsDateFilter";
 import type { Submission } from "@/types";
 
 export default async function MySubmissionsPage({
   searchParams,
 }: {
-  searchParams: { highlight?: string };
+  searchParams: { highlight?: string; from?: string; to?: string };
 }) {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
   if (session.user.role === "ADMIN") redirect("/admin");
 
+  const from = searchParams?.from;
+  const to = searchParams?.to;
+
   const submissions = await prisma.submission.findMany({
-    where: { userId: session.user.id },
+    where: {
+      userId: session.user.id,
+      ...(from || to
+        ? {
+            submittedAt: {
+              ...(from ? { gte: new Date(`${from}T00:00:00`) } : {}),
+              ...(to ? { lte: new Date(`${to}T23:59:59.999`) } : {}),
+            },
+          }
+        : {}),
+    },
     include: {
       course: { select: { id: true, title: true } },
       material: { select: { id: true, name: true } },
@@ -48,9 +62,13 @@ export default async function MySubmissionsPage({
         </p>
       </div>
 
+      <SubmissionsDateFilter />
+
       {grouped.size === 0 ? (
         <p className="rounded-2xl border border-mist bg-white/60 p-6 text-center text-ink/50">
-          Bạn chưa nộp bài tập nào. Vào phần &quot;Tài liệu học&quot; trong khoá học đã đăng ký để nộp bài.
+          {from || to
+            ? "Không có bài nộp nào trong khoảng ngày đã chọn."
+            : 'Bạn chưa nộp bài tập nào. Vào phần "Tài liệu học" trong khoá học đã đăng ký để nộp bài.'}
         </p>
       ) : (
         Array.from(grouped.entries()).map(([courseId, group]) => (
