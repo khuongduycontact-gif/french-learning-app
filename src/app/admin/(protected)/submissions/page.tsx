@@ -68,7 +68,7 @@ export default function AdminSubmissionsPage() {
       setError("");
       Promise.all([
         fetch(`/api/submissions?scope=admin`, { signal: controller.signal }),
-        fetch(`/api/submissions/filters`, { signal: controller.signal }),
+        fetch(`/api/submissions/filters?scope=admin`, { signal: controller.signal }),
       ])
         .then(async ([subRes, filterRes]) => {
           if (!subRes.ok) throw new Error("Không tải được danh sách bài nộp.");
@@ -205,23 +205,21 @@ export default function AdminSubmissionsPage() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">
-          <div className="flex flex-wrap gap-2">
-            <Select
-              value={courseFilter}
-              onChange={setCourseFilter}
-              options={courseOptions}
-              className="w-full sm:w-56"
-            />
+        <div className="flex flex-wrap items-center gap-2">
+          <Select
+            value={courseFilter}
+            onChange={setCourseFilter}
+            options={courseOptions}
+            className="w-full sm:w-56"
+          />
 
-            <Select
-              value={materialFilter}
-              onChange={setMaterialFilter}
-              options={materialOptions}
-              disabled={!courseFilter}
-              className="w-full sm:w-56"
-            />
-          </div>
+          <Select
+            value={materialFilter}
+            onChange={setMaterialFilter}
+            options={materialOptions}
+            disabled={!courseFilter}
+            className="w-full sm:w-56"
+          />
 
           <div className="flex flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1.5">
             <DatePicker
@@ -256,24 +254,24 @@ export default function AdminSubmissionsPage() {
               </button>
             )}
           </div>
+        </div>
 
-          <div className="relative w-full lg:ml-auto lg:w-80">
-            <svg
-              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40"
-              viewBox="0 0 20 20"
-              fill="none"
-            >
-              <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.6" />
-              <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Tìm theo tên học viên, khoá học, bài tập..."
-              className="w-full rounded-full border border-mist bg-white py-2 pl-9 pr-8 text-sm text-ink placeholder:text-ink/40 focus:border-bordeaux/40 focus:outline-none"
-            />
-          </div>
+        <div className="relative w-full">
+          <svg
+            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40"
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.6" />
+            <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Tìm theo tên học viên, khoá học, bài tập..."
+            className="w-full rounded-full border border-mist bg-white py-2.5 pl-10 pr-8 text-sm text-ink placeholder:text-ink/40 focus:border-bordeaux/40 focus:outline-none"
+          />
         </div>
       </div>
 

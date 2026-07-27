@@ -6,9 +6,13 @@ import type { Submission } from "@/types";
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
 import DatePicker from "@/components/DatePicker";
+import Select from "@/components/Select";
 import SubmissionCard from "@/components/SubmissionCard";
 
 const PAGE_SIZE = 10;
+
+type FilterMaterial = { id: string; name: string };
+type FilterCourse = { id: string; title: string; materials: FilterMaterial[] };
 
 const statusFilters: { value: string; label: string }[] = [
   { value: "", label: "Tất cả" },
@@ -21,7 +25,10 @@ export default function MySubmissionsClient() {
   const highlightId = searchParams.get("highlight");
 
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [filterCourses, setFilterCourses] = useState<FilterCourse[]>([]);
   const [statusFilter, setStatusFilter] = useState("");
+  const [courseFilter, setCourseFilter] = useState("");
+  const [materialFilter, setMaterialFilter] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [search, setSearch] = useState("");
@@ -37,13 +44,18 @@ export default function MySubmissionsClient() {
     function run() {
       setLoading(true);
       setError("");
-      fetch(`/api/submissions`, { signal: controller.signal })
-        .then((res) => {
-          if (!res.ok) throw new Error("Không tải được danh sách bài tập.");
-          return res.json();
-        })
-        .then((data: Submission[]) => {
-          setSubmissions(data);
+      Promise.all([
+        fetch(`/api/submissions`, { signal: controller.signal }),
+        fetch(`/api/submissions/filters`, { signal: controller.signal }),
+      ])
+        .then(async ([subRes, filterRes]) => {
+          if (!subRes.ok) throw new Error("Không tải được danh sách bài tập.");
+          const subData: Submission[] = await subRes.json();
+          setSubmissions(subData);
+          if (filterRes.ok) {
+            const filterData: FilterCourse[] = await filterRes.json();
+            setFilterCourses(filterData);
+          }
           setLoading(false);
         })
         .catch((err) => {
@@ -62,12 +74,36 @@ export default function MySubmissionsClient() {
     return () => controller.abort();
   }, [reloadKey]);
 
+  // Danh sách khoá học chỉ gồm khoá học học viên đã đăng ký & được xác nhận,
+  // bài tập chỉ gồm những bài tập của khoá học đang chọn.
+  const courseOptions = useMemo(() => {
+    return [
+      { value: "", label: "Khoá học đã đăng ký" },
+      ...filterCourses.map((c) => ({ value: c.id, label: c.title })),
+    ];
+  }, [filterCourses]);
+
+  const materialOptions = useMemo(() => {
+    const course = filterCourses.find((c) => c.id === courseFilter);
+    return [
+      { value: "", label: "Tất cả bài tập" },
+      ...(course ? course.materials.map((m) => ({ value: m.id, label: m.name })) : []),
+    ];
+  }, [filterCourses, courseFilter]);
+
+  useEffect(() => {
+    // Đổi khoá học -> bỏ chọn bài tập cũ nếu không còn thuộc khoá học này
+    setMaterialFilter("");
+  }, [courseFilter]);
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     const fromTime = fromDate ? new Date(`${fromDate}T00:00:00`).getTime() : null;
     const toTime = toDate ? new Date(`${toDate}T23:59:59.999`).getTime() : null;
     return submissions.filter((s) => {
       if (statusFilter && s.status !== statusFilter) return false;
+      if (courseFilter && s.courseId !== courseFilter) return false;
+      if (materialFilter && s.materialId !== materialFilter) return false;
       if (fromTime !== null || toTime !== null) {
         const submittedTime = new Date(s.submittedAt).getTime();
         if (fromTime !== null && submittedTime < fromTime) return false;
@@ -78,14 +114,14 @@ export default function MySubmissionsClient() {
       const materialName = s.material?.name?.toLowerCase() || "";
       return courseTitle.includes(q) || materialName.includes(q);
     });
-  }, [submissions, statusFilter, fromDate, toDate, search]);
+  }, [submissions, statusFilter, courseFilter, materialFilter, fromDate, toDate, search]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   useEffect(() => {
     setPage(1);
-  }, [statusFilter, fromDate, toDate, search]);
+  }, [statusFilter, courseFilter, materialFilter, fromDate, toDate, search]);
 
   useEffect(() => {
     if (highlightId) {
@@ -121,7 +157,22 @@ export default function MySubmissionsClient() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">
+        <div className="flex flex-wrap items-center gap-2">
+          <Select
+            value={courseFilter}
+            onChange={setCourseFilter}
+            options={courseOptions}
+            className="w-full sm:w-56"
+          />
+
+          <Select
+            value={materialFilter}
+            onChange={setMaterialFilter}
+            options={materialOptions}
+            disabled={!courseFilter}
+            className="w-full sm:w-56"
+          />
+
           <div className="flex flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1.5">
             <DatePicker
               id="my-submissions-from"
@@ -155,24 +206,24 @@ export default function MySubmissionsClient() {
               </button>
             )}
           </div>
+        </div>
 
-          <div className="relative w-full lg:ml-auto lg:w-80">
-            <svg
-              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40"
-              viewBox="0 0 20 20"
-              fill="none"
-            >
-              <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.6" />
-              <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Tìm theo tên khoá học, bài tập..."
-              className="w-full rounded-full border border-mist bg-white py-2 pl-9 pr-8 text-sm text-ink placeholder:text-ink/40 focus:border-bordeaux/40 focus:outline-none"
-            />
-          </div>
+        <div className="relative w-full">
+          <svg
+            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40"
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.6" />
+            <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Tìm theo tên khoá học, tên bài tập..."
+            className="w-full rounded-full border border-mist bg-white py-2.5 pl-10 pr-8 text-sm text-ink placeholder:text-ink/40 focus:border-bordeaux/40 focus:outline-none"
+          />
         </div>
       </div>
 
@@ -191,7 +242,7 @@ export default function MySubmissionsClient() {
         </div>
       ) : filtered.length === 0 ? (
         <p className="rounded-2xl border border-mist bg-white/60 p-6 text-center text-ink/50">
-          {search || statusFilter || fromDate || toDate
+          {search || statusFilter || courseFilter || materialFilter || fromDate || toDate
             ? "Không tìm thấy kết quả phù hợp."
             : 'Bạn chưa nộp bài tập nào. Vào phần "Tài liệu học" trong khoá học đã đăng ký để nộp bài.'}
         </p>
@@ -208,3 +259,4 @@ export default function MySubmissionsClient() {
     </div>
   );
 }
+
