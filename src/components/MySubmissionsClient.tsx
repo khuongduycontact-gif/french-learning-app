@@ -248,7 +248,7 @@ export default function MySubmissionsClient() {
         </p>
       ) : (
         <>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             {pageItems.map((s) => (
               <SubmissionCard key={s.id} submission={s} highlighted={s.id === highlightId} />
             ))}

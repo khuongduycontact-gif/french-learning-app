@@ -223,12 +223,12 @@ export default function AdminEnrollmentsPage() {
         <table className="w-full min-w-[760px] text-left text-sm">
           <thead className="border-b border-mist text-ink/60">
             <tr>
-              <th className="px-4 py-3 font-medium">Học viên</th>
-              <th className="px-4 py-3 font-medium">Khoá học</th>
-              <th className="px-4 py-3 font-medium">Số tiền</th>
-              <th className="px-4 py-3 font-medium">Nội dung CK</th>
-              <th className="px-4 py-3 font-medium">Trạng thái</th>
-              <th className="px-4 py-3 font-medium">Thao tác</th>
+              <th className="px-4 py-3.5 font-medium">Học viên</th>
+              <th className="px-4 py-3.5 font-medium">Khoá học</th>
+              <th className="px-4 py-3.5 font-medium">Số tiền</th>
+              <th className="px-4 py-3.5 font-medium">Nội dung CK</th>
+              <th className="px-4 py-3.5 font-medium">Trạng thái</th>
+              <th className="px-4 py-3.5 font-medium">Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -265,7 +265,7 @@ export default function AdminEnrollmentsPage() {
                   className={`border-b border-mist last:border-0 align-top ${
                     e.id === highlightId ? "bg-gold/10" : ""
                   }`}
-                >                  <td className="px-4 py-3">
+                >                  <td className="px-4 py-3.5">
                     <div className="flex items-center gap-2.5">
                       {e.user?.image ? (
                         <Image
@@ -286,7 +286,7 @@ export default function AdminEnrollmentsPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-medium text-ink">
+                  <td className="px-4 py-3.5 font-medium text-ink">
                     {e.course?.id ? (
                       <Link
                         href={`/admin/courses/${e.course.id}/edit`}
@@ -298,10 +298,10 @@ export default function AdminEnrollmentsPage() {
                       <span className="cell-nowrap">{e.course?.title}</span>
                     )}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3">
+                  <td className="whitespace-nowrap px-4 py-3.5">
                     {e.paidAmount > 0 ? formatVnd(e.paidAmount) : "Miễn phí"}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3.5">
                     {e.paymentNote ? (
                       <span className="inline-block max-w-[220px] overflow-x-auto whitespace-nowrap rounded-full bg-mist px-2 py-0.5 font-mono text-xs align-top">
                         {e.paymentNote}
@@ -310,14 +310,14 @@ export default function AdminEnrollmentsPage() {
                       "—"
                     )}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3">
+                  <td className="whitespace-nowrap px-4 py-3.5">
                     <span
                       className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusLabel[e.status].className}`}
                     >
                       {statusLabel[e.status].label}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3.5">
                     {e.status === "AWAITING_CONFIRMATION" ? (
                       <div className="flex justify-start gap-3">
                         <button

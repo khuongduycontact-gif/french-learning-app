@@ -141,12 +141,12 @@ export default function AdminCoursesPage() {
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="border-b border-mist text-ink/60">
             <tr>
-              <th className="px-4 py-3 font-medium">Tiêu đề</th>
-              <th className="px-4 py-3 font-medium">Trình độ</th>
-              <th className="px-4 py-3 font-medium">Học phí</th>
-              <th className="px-4 py-3 font-medium">Đăng ký</th>
-              <th className="px-4 py-3 font-medium">Trạng thái</th>
-              <th className="px-4 py-3 font-medium text-right">Thao tác</th>
+              <th className="px-4 py-3.5 font-medium">Tiêu đề</th>
+              <th className="px-4 py-3.5 font-medium">Trình độ</th>
+              <th className="px-4 py-3.5 font-medium">Học phí</th>
+              <th className="px-4 py-3.5 font-medium">Đăng ký</th>
+              <th className="px-4 py-3.5 font-medium">Trạng thái</th>
+              <th className="px-4 py-3.5 font-medium text-right">Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -178,7 +178,7 @@ export default function AdminCoursesPage() {
             ) : (
               pageCourses.map((c) => (
                 <tr key={c.id} className="border-b border-mist last:border-0">
-                  <td className="px-4 py-3 font-medium text-ink">
+                  <td className="px-4 py-3.5 font-medium text-ink">
                     <Link
                       href={`/admin/courses/${c.id}/edit`}
                       className="cell-nowrap"
@@ -186,12 +186,12 @@ export default function AdminCoursesPage() {
                       {c.title}
                     </Link>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3">{c.level}</td>
-                  <td className="whitespace-nowrap px-4 py-3">
+                  <td className="whitespace-nowrap px-4 py-3.5">{c.level}</td>
+                  <td className="whitespace-nowrap px-4 py-3.5">
                     {c.price > 0 ? formatVnd(c.price) : "Miễn phí"}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3">{c._count?.enrollments ?? 0}</td>
-                  <td className="whitespace-nowrap px-4 py-3">
+                  <td className="whitespace-nowrap px-4 py-3.5">{c._count?.enrollments ?? 0}</td>
+                  <td className="whitespace-nowrap px-4 py-3.5">
                     <span
                       className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
                         c.published ? "bg-ink/10 text-ink" : "bg-mist text-ink/60"
@@ -200,7 +200,7 @@ export default function AdminCoursesPage() {
                       {c.published ? "Đã xuất bản" : "Bản nháp"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3.5 text-right">
                     <div className="flex justify-end gap-3">
                       <Link
                         href={`/admin/courses/${c.id}/edit`}

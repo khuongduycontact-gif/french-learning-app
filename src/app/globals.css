@@ -214,7 +214,7 @@ select:focus-visible {
    nổi hẳn lên trên nền, viền mảnh cùng tông với các khung khác trong app, và
    hiệu ứng mở nhẹ (mờ dần + trượt lên + phóng to nhẹ) thay vì bật ra đột ngột. */
 .select-panel {
-  @apply absolute z-30 mt-2 max-h-64 w-full min-w-[10rem] overflow-y-auto rounded-2xl border border-mist bg-white p-1.5 shadow-xl shadow-ink/10;
+  @apply absolute z-30 mt-2 max-h-64 w-max min-w-full max-w-[24rem] overflow-y-auto rounded-2xl border border-mist bg-white p-1.5 shadow-xl shadow-ink/10;
   transform-origin: top center;
   animation: select-panel-in 0.14s ease-out;
 }

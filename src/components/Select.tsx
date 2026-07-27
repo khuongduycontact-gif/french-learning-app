@@ -133,7 +133,7 @@ export default function Select({
                   }}
                   className={`select-option ${isSelected ? "select-option-selected" : isActive ? "select-option-active" : ""}`}
                 >
-                  <span className="truncate">{opt.label}</span>
+                  <span>{opt.label}</span>
                   {isSelected && (
                     <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0" fill="none">
                       <path

@@ -144,12 +144,12 @@ export default function AdminDeadlinesPanel() {
         <table className="w-full min-w-[860px] text-left text-sm">
           <thead className="border-b border-mist text-ink/60">
             <tr>
-              <th className="px-4 py-3 font-medium">Học viên</th>
-              <th className="px-4 py-3 font-medium">Khoá học</th>
-              <th className="px-4 py-3 font-medium">Bài tập</th>
-              <th className="px-4 py-3 font-medium">Tải lúc</th>
-              <th className="px-4 py-3 font-medium">Trạng thái</th>
-              <th className="px-4 py-3 font-medium">Thao tác</th>
+              <th className="px-4 py-3.5 font-medium">Học viên</th>
+              <th className="px-4 py-3.5 font-medium">Khoá học</th>
+              <th className="px-4 py-3.5 font-medium">Bài tập</th>
+              <th className="px-4 py-3.5 font-medium">Tải lúc</th>
+              <th className="px-4 py-3.5 font-medium">Trạng thái</th>
+              <th className="px-4 py-3.5 font-medium">Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -184,7 +184,7 @@ export default function AdminDeadlinesPanel() {
               filtered.map((d) => {
                 return (
                   <tr key={d.id} className="border-b border-mist align-top last:border-0">
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2.5">
                         {d.user?.image ? (
                           <Image
@@ -205,16 +205,16 @@ export default function AdminDeadlinesPanel() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-medium text-ink">
+                    <td className="px-4 py-3.5 font-medium text-ink">
                       <span className="cell-nowrap">{d.course?.title}</span>
                     </td>
-                    <td className="px-4 py-3 text-ink">
+                    <td className="px-4 py-3.5 text-ink">
                       <span className="cell-nowrap">{d.material?.name}</span>
                     </td>
-                    <td className="px-4 py-3 text-ink/70">
+                    <td className="px-4 py-3.5 text-ink/70">
                       <span className="cell-nowrap tabular-nums">{formatDateTime(d.startedAt)}</span>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3">
+                    <td className="whitespace-nowrap px-4 py-3.5">
                       <div className="flex flex-col gap-1">
                         <DeadlineCountdown deadline={{ startedAt: d.startedAt, hours: d.hours }} />
                         <span className="text-xs text-ink/40">
@@ -222,7 +222,7 @@ export default function AdminDeadlinesPanel() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <button
                         type="button"
                         onClick={() => handleReset(d.id)}

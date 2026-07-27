@@ -279,12 +279,12 @@ export default function AdminSubmissionsPage() {
         <table className="w-full min-w-[820px] text-left text-sm">
           <thead className="border-b border-mist text-ink/60">
             <tr>
-              <th className="px-4 py-3 font-medium">Học viên</th>
-              <th className="px-4 py-3 font-medium">Khoá học</th>
-              <th className="px-4 py-3 font-medium">Bài tập</th>
-              <th className="px-4 py-3 font-medium">Nộp lúc</th>
-              <th className="px-4 py-3 font-medium">Trạng thái</th>
-              <th className="px-4 py-3 font-medium">Thao tác</th>
+              <th className="px-4 py-3.5 font-medium">Học viên</th>
+              <th className="px-4 py-3.5 font-medium">Khoá học</th>
+              <th className="px-4 py-3.5 font-medium">Bài tập</th>
+              <th className="px-4 py-3.5 font-medium">Nộp lúc</th>
+              <th className="px-4 py-3.5 font-medium">Trạng thái</th>
+              <th className="px-4 py-3.5 font-medium">Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -325,7 +325,7 @@ export default function AdminSubmissionsPage() {
                       s.id === highlightId ? "bg-gold/10" : ""
                     } ${expandedId === s.id ? "border-b-0" : ""}`}
                   >
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2.5">
                         {s.user?.image ? (
                           <Image
@@ -346,7 +346,7 @@ export default function AdminSubmissionsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-medium text-ink">
+                    <td className="px-4 py-3.5 font-medium text-ink">
                       {s.course?.id ? (
                         <Link
                           href={`/admin/courses/${s.course.id}/edit`}
@@ -358,20 +358,20 @@ export default function AdminSubmissionsPage() {
                         <span className="cell-nowrap">{s.course?.title}</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-ink">
+                    <td className="px-4 py-3.5 text-ink">
                       <span className="cell-nowrap">{s.material?.name}</span>
                     </td>
-                    <td className="px-4 py-3 text-ink/70">
+                    <td className="px-4 py-3.5 text-ink/70">
                       <span className="cell-nowrap tabular-nums">{formatDateTime(s.submittedAt)}</span>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3">
+                    <td className="whitespace-nowrap px-4 py-3.5">
                       <span
                         className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusLabel[s.status].className}`}
                       >
                         {statusLabel[s.status].label}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <button
                         type="button"
                         onClick={() => setExpandedId(expandedId === s.id ? null : s.id)}

@@ -119,11 +119,11 @@ export default function AdminAchievementsPage() {
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="border-b border-mist text-ink/60">
             <tr>
-              <th className="px-4 py-3 font-medium">Ảnh minh chứng</th>
-              <th className="px-4 py-3 font-medium">Tên học viên</th>
-              <th className="px-4 py-3 font-medium">Trình độ</th>
-              <th className="px-4 py-3 font-medium">Ngày thêm</th>
-              <th className="px-4 py-3 font-medium text-right">Thao tác</th>
+              <th className="px-4 py-3.5 font-medium">Ảnh minh chứng</th>
+              <th className="px-4 py-3.5 font-medium">Tên học viên</th>
+              <th className="px-4 py-3.5 font-medium">Trình độ</th>
+              <th className="px-4 py-3.5 font-medium">Ngày thêm</th>
+              <th className="px-4 py-3.5 font-medium text-right">Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -155,7 +155,7 @@ export default function AdminAchievementsPage() {
             ) : (
               pageAchievements.map((a) => (
                 <tr key={a.id} className="border-b border-mist last:border-0">
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3.5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={a.evidenceUrl}
@@ -163,7 +163,7 @@ export default function AdminAchievementsPage() {
                       className="h-12 w-16 rounded-lg border border-mist object-cover"
                     />
                   </td>
-                  <td className="px-4 py-3 font-medium text-ink">
+                  <td className="px-4 py-3.5 font-medium text-ink">
                     <Link
                       href={`/admin/achievements/${a.id}/edit`}
                       className="cell-nowrap hover:underline"
@@ -171,11 +171,11 @@ export default function AdminAchievementsPage() {
                       {a.studentName}
                     </Link>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3">{a.level}</td>
-                  <td className="whitespace-nowrap px-4 py-3 tabular-nums text-ink/70">
+                  <td className="whitespace-nowrap px-4 py-3.5">{a.level}</td>
+                  <td className="whitespace-nowrap px-4 py-3.5 tabular-nums text-ink/70">
                     {formatDate(a.createdAt)}
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3.5 text-right">
                     <div className="flex justify-end gap-3">
                       <Link
                         href={`/admin/achievements/${a.id}/edit`}
