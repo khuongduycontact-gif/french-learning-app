@@ -139,14 +139,14 @@ export default function MySubmissionsClient() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
           {statusFilters.map((f) => (
             <button
               key={f.value}
               type="button"
               onClick={() => setStatusFilter(f.value)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+              className={`rounded-full border border-transparent px-4 py-2 text-sm font-medium transition ${
                 statusFilter === f.value
                   ? "bg-bordeaux text-parchment"
                   : "bg-white text-ink hover:bg-mist"
@@ -156,7 +156,7 @@ export default function MySubmissionsClient() {
             </button>
           ))}
 
-          <div className="flex w-full flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1.5 sm:ml-auto sm:w-auto">
+          <div className="flex w-full flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1 sm:ml-auto sm:w-auto">
             <DatePicker
               id="my-submissions-from"
               ariaLabel="Nộp ngày"

@@ -188,13 +188,13 @@ export default function AdminSubmissionsPage() {
         <AdminDeadlinesPanel />
       ) : (
         <>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
         <div className="flex flex-wrap gap-2">
           {statusFilters.map((f) => (
             <button
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+              className={`rounded-full border border-transparent px-4 py-2 text-sm font-medium transition ${
                 statusFilter === f.value
                   ? "bg-bordeaux text-parchment"
                   : "bg-white text-ink hover:bg-mist"
@@ -221,7 +221,7 @@ export default function AdminSubmissionsPage() {
             className="w-full sm:w-48"
           />
 
-          <div className="flex w-full flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1.5 sm:w-auto">
+          <div className="flex w-full flex-wrap items-center gap-2 rounded-full border border-mist bg-white/60 px-3 py-1 sm:w-auto">
             <DatePicker
               id="submissions-from"
               ariaLabel="Nộp ngày"
@@ -269,7 +269,7 @@ export default function AdminSubmissionsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Tìm theo tên học viên, khoá học, bài tập..."
-              className="w-full rounded-full border border-mist bg-white py-2.5 pl-10 pr-8 text-sm text-ink placeholder:text-ink/40 focus:border-bordeaux/40 focus:outline-none"
+              className="w-full rounded-full border border-mist bg-white py-2 pl-10 pr-8 text-sm text-ink placeholder:text-ink/40 focus:border-bordeaux/40 focus:outline-none"
             />
           </div>
         </div>
