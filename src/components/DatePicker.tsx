@@ -95,8 +95,26 @@ export default function DatePicker({
 
   const [viewYear, setViewYear] = useState(() => (selected ?? today).getFullYear());
   const [viewMonth, setViewMonth] = useState(() => (selected ?? today).getMonth());
+  const [align, setAlign] = useState<"left" | "right">("left");
 
   const ref = useRef<HTMLDivElement>(null);
+  const PANEL_WIDTH = 288; // khớp với w-72 bên dưới
+
+  function handleTriggerClick() {
+    if (open) {
+      setOpen(false);
+      return;
+    }
+    // Nếu mở lịch bên trái nút mà bị tràn ra ngoài mép phải màn hình
+    // (ví dụ nút "Đến ngày" nằm ở nửa phải), mở ngược lại sang bên phải
+    // (canh theo mép phải của nút) để lịch luôn nằm gọn trong màn hình.
+    const rect = ref.current?.getBoundingClientRect();
+    if (rect) {
+      const overflowsRight = rect.left + PANEL_WIDTH > window.innerWidth - 16;
+      setAlign(overflowsRight ? "right" : "left");
+    }
+    setOpen(true);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -155,7 +173,7 @@ export default function DatePicker({
         aria-label={ariaLabel}
         aria-haspopup="dialog"
         aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
+        onClick={handleTriggerClick}
         className={`date-picker-trigger flex items-center gap-2 rounded-full border border-mist bg-white px-4 py-2 text-sm shadow-sm transition ${
           value ? "text-ink" : "text-ink/40"
         }`}
@@ -168,7 +186,9 @@ export default function DatePicker({
         <div
           role="dialog"
           aria-modal="true"
-          className="date-picker-panel absolute left-0 top-[calc(100%+0.5rem)] z-50 w-72 rounded-2xl border border-mist bg-white p-4 shadow-xl"
+          className={`date-picker-panel absolute top-[calc(100%+0.5rem)] z-50 w-72 max-w-[calc(100vw-2rem)] rounded-2xl border border-mist bg-white p-4 shadow-xl ${
+            align === "right" ? "right-0" : "left-0"
+          }`}
         >
           <div className="flex items-center justify-between">
             <button type="button" onClick={goPrevMonth} aria-label="Tháng trước" className="date-picker-nav">
