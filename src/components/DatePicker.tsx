@@ -174,8 +174,8 @@ export default function DatePicker({
             <button type="button" onClick={goPrevMonth} aria-label="Tháng trước" className="date-picker-nav">
               <ChevronGlyph className="h-4 w-4 rotate-180" />
             </button>
-            <span className="font-display text-sm font-semibold text-ink">
-              {MONTH_LABELS[viewMonth]} {viewYear}
+            <span className="font-body text-sm font-semibold text-ink">
+              {MONTH_LABELS[viewMonth]}/{viewYear}
             </span>
             <button type="button" onClick={goNextMonth} aria-label="Tháng sau" className="date-picker-nav">
               <ChevronGlyph className="h-4 w-4" />
