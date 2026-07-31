@@ -257,13 +257,20 @@ export default function AdminSchedulesPage() {
                                 aria-hidden="true"
                               >
                                 <path
-                                  d="M10 5.2C8.6 4.3 6.7 3.9 5 4.2v9.6c1.7-.3 3.6.1 5 1 1.4-.9 3.3-1.3 5-1V4.2c-1.7-.3-3.6.1-5 1Z"
+                                  d="M10 6.5C8.3 5.4 6 4.9 2.9 5.3v9.6c3.1-.4 5.4.1 7.1 1.2"
                                   stroke="currentColor"
                                   strokeWidth="1.4"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                 />
-                                <path d="M10 5.2v9.6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                                <path
+                                  d="M10 6.5c1.7-1.1 4-1.6 7.1-1.2v9.6c-3.1-.4-5.4.1-7.1 1.2"
+                                  stroke="currentColor"
+                                  strokeWidth="1.4"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path d="M10 6.5v9.6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                               </svg>
                               <MarqueeText
                                 text={schedule.className}
