@@ -116,6 +116,23 @@ select:focus-visible {
   border-radius: 999px;
 }
 
+/* Giống .cell-nowrap (vẫn cuộn ngang được khi nội dung dài) nhưng ẩn hẳn
+   thanh cuộn - dùng cho các ô nhỏ (VD thẻ ca học ở thời khoá biểu) nơi
+   thanh cuộn hiển thị thường trực trông rối mắt; người dùng vẫn vuốt/cuộn
+   ngang được bình thường, chỉ là không thấy thanh cuộn. */
+.cell-nowrap-noscrollbar {
+  display: block;
+  max-width: 220px;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge cũ */
+}
+.cell-nowrap-noscrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Edge (Chromium) */
+  height: 0;
+}
+
 
 .scroll-x-fancy {
   scrollbar-width: thin;

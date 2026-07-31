@@ -265,7 +265,7 @@ export default function AdminSchedulesPage() {
                                   strokeLinecap="round"
                                 />
                               </svg>
-                              <p className="cell-nowrap min-w-0 font-semibold text-ink">
+                              <p className="cell-nowrap-noscrollbar min-w-0 font-semibold text-ink">
                                 {schedule.className}
                               </p>
                             </div>
@@ -285,7 +285,7 @@ export default function AdminSchedulesPage() {
                                   strokeLinejoin="round"
                                 />
                               </svg>
-                              <p className="cell-nowrap min-w-0 text-ink/50">
+                              <p className="cell-nowrap-noscrollbar min-w-0 text-ink/50">
                                 {schedule.studentEmails}
                               </p>
                             </div>
