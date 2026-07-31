@@ -1,33 +1,28 @@
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 import { formatWeekdayDateVN, formatTimeVN } from "./schedule";
 import { parseEmailList } from "./emailList";
 
-// Gửi mail qua Gmail SMTP bằng App Password (không dùng mật khẩu Gmail
-// thật). Xem hướng dẫn lấy App Password trong README.
-// Chỉ khởi tạo transporter khi đã có đủ cấu hình - tránh crash lúc
-// build/dev nếu chưa cấu hình .env (tính năng gửi mail nhắc lịch sẽ tự báo
-// lỗi rõ ràng khi thật sự được gọi mà thiếu cấu hình, thay vì lỗi ngay lúc
-// import).
-const transporter =
-  process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD
-    ? nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.GMAIL_USER,
-          pass: process.env.GMAIL_APP_PASSWORD,
-        },
-        // Timeout ngắn để tránh 1 request treo quá lâu nếu Gmail phản hồi
-        // chậm/không phản hồi (endpoint cron chạy trong giới hạn thời gian
-        // của Vercel function, không nên để 1 mail lỗi kéo dài cả request).
-        connectionTimeout: 10_000,
-        greetingTimeout: 10_000,
-        socketTimeout: 15_000,
-      })
-    : null;
+// Gửi mail qua SendGrid API (HTTP request, không phải SMTP) - ổn định hơn
+// nhiều so với SMTP khi chạy trên serverless (Vercel), vì không cần giữ
+// kết nối lâu và không bị Gmail/Google chặn/timeout bất thường theo IP.
+//
+// Không cần domain thật: dùng "Single Sender Verification" của SendGrid
+// (Settings -> Sender Authentication -> Verify a Single Sender), chỉ cần
+// verify 1 địa chỉ email cụ thể (VD gmail của bạn) thay vì cả 1 domain.
+// SENDGRID_FROM_EMAIL phải đúng y hệt địa chỉ đã verify ở bước đó.
+//
+// Chỉ set API key khi đã có đủ cấu hình - tránh crash lúc build/dev nếu
+// chưa cấu hình .env (tính năng gửi mail nhắc lịch sẽ tự báo lỗi rõ ràng
+// khi thật sự được gọi mà thiếu cấu hình, thay vì lỗi ngay lúc import).
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
+
+const isConfigured = Boolean(process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL);
 
 const FROM_EMAIL = process.env.GMAIL_FROM_NAME
-  ? `"${process.env.GMAIL_FROM_NAME}" <${process.env.GMAIL_USER}>`
-  : process.env.GMAIL_USER;
+  ? `"${process.env.GMAIL_FROM_NAME}" <${process.env.SENDGRID_FROM_EMAIL}>`
+  : process.env.SENDGRID_FROM_EMAIL;
 
 function escapeHtml(str: string): string {
   return str
@@ -46,9 +41,9 @@ export async function sendClassReminderEmail(params: {
   duration: number;
   note?: string | null;
 }): Promise<void> {
-  if (!transporter) {
+  if (!isConfigured) {
     throw new Error(
-      "Chưa cấu hình GMAIL_USER / GMAIL_APP_PASSWORD, không thể gửi mail nhắc lịch."
+      "Chưa cấu hình SENDGRID_API_KEY / SENDGRID_FROM_EMAIL, không thể gửi mail nhắc lịch."
     );
   }
 
@@ -156,11 +151,25 @@ export async function sendClassReminderEmail(params: {
     "Đây là email tự động, vui lòng không phản hồi lại email này.",
   ].join("\n");
 
-  await transporter.sendMail({
-    from: FROM_EMAIL,
-    to: recipients.join(", "),
-    subject,
-    text,
-    html,
-  });
+  // SendGrid trả lỗi nếu "to" có nhiều địa chỉ mà không bật
+  // isMultiple/personalizations - dùng field "to" dạng mảng là đủ, SendGrid
+  // tự gửi 1 mail cho tất cả người nhận trong cùng 1 lần gọi.
+  try {
+    await sgMail.send({
+      from: FROM_EMAIL as string,
+      to: recipients,
+      subject,
+      text,
+      html,
+    });
+  } catch (err: any) {
+    // Log chi tiết lỗi trả về từ SendGrid (body.errors) để dễ chẩn đoán
+    // (VD sender chưa verify, API key sai quyền...) thay vì chỉ thấy lỗi
+    // HTTP chung chung.
+    const details = err?.response?.body?.errors;
+    if (details) {
+      console.error("[mailer] SendGrid error details:", JSON.stringify(details));
+    }
+    throw err;
+  }
 }
