@@ -9,7 +9,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { StudentSchedule, StudentScheduleInput, RecurringScheduleInput } from "@/types";
 import DatePicker from "./DatePicker";
-import ConfirmDialog from "./ConfirmDialog";
 import { useToast } from "./Toast";
 import { formatWeekdayDate, toISODateLocal } from "@/lib/schedule";
 import { handleTimeSegmentKeyDown } from "@/lib/timeFieldKeyNav";
@@ -76,11 +75,6 @@ export default function ScheduleFormModal({
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-
-  // Trạng thái đóng/mở 2 modal xác nhận (xoá ca học / dừng lịch lặp) - thay
-  // cho confirm() mặc định của trình duyệt để đồng bộ giao diện.
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const [confirmStopOpen, setConfirmStopOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -238,13 +232,14 @@ export default function ScheduleFormModal({
     }
   }
 
-  function handleStopRecurring() {
+  async function handleStopRecurring() {
     if (!schedule?.recurringId) return;
-    setConfirmStopOpen(true);
-  }
-
-  async function performStopRecurring() {
-    if (!schedule?.recurringId) return;
+    if (
+      !confirm(
+        "Dừng lịch lặp này? Các buổi sắp tới (chưa diễn ra) trong chuỗi lặp sẽ bị xoá, buổi đã qua vẫn được giữ lại."
+      )
+    )
+      return;
     setStoppingRecurring(true);
     try {
       const res = await fetch(`/api/schedules/recurring/${schedule.recurringId}`, {
@@ -261,17 +256,12 @@ export default function ScheduleFormModal({
       showToast("Có lỗi xảy ra, vui lòng thử lại.", "error");
     } finally {
       setStoppingRecurring(false);
-      setConfirmStopOpen(false);
     }
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!schedule) return;
-    setConfirmDeleteOpen(true);
-  }
-
-  async function performDelete() {
-    if (!schedule) return;
+    if (!confirm(`Xoá ca học của lớp "${schedule.className}"? Hành động này không thể hoàn tác.`)) return;
     setDeleting(true);
     try {
       const res = await fetch(`/api/schedules/${schedule.id}`, { method: "DELETE" });
@@ -286,7 +276,6 @@ export default function ScheduleFormModal({
       showToast("Có lỗi xảy ra, vui lòng thử lại.", "error");
     } finally {
       setDeleting(false);
-      setConfirmDeleteOpen(false);
     }
   }
 
@@ -537,28 +526,6 @@ export default function ScheduleFormModal({
           </div>
         </form>
       </div>
-
-      <ConfirmDialog
-        open={confirmDeleteOpen}
-        title="Xoá ca học?"
-        message={`Xoá ca học của lớp "${schedule?.className}"? Hành động này không thể hoàn tác.`}
-        confirmLabel="Xoá ca học"
-        danger
-        loading={deleting}
-        onConfirm={performDelete}
-        onCancel={() => setConfirmDeleteOpen(false)}
-      />
-
-      <ConfirmDialog
-        open={confirmStopOpen}
-        title="Dừng lịch lặp?"
-        message="Các buổi sắp tới (chưa diễn ra) trong chuỗi lặp sẽ bị xoá, buổi đã qua vẫn được giữ lại."
-        confirmLabel="Dừng lịch lặp"
-        danger
-        loading={stoppingRecurring}
-        onConfirm={performStopRecurring}
-        onCancel={() => setConfirmStopOpen(false)}
-      />
     </div>,
     document.body
   );
