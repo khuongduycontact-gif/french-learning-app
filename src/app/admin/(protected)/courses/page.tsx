@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Course } from "@/types";
 import { useToast } from "@/components/Toast";
+import ConfirmModal from "@/components/ConfirmModal";
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
 import Select from "@/components/Select";
@@ -39,6 +40,7 @@ export default function AdminCoursesPage() {
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Course | null>(null);
   const [page, setPage] = useState(1);
   const isFirstLoad = useRef(true);
 
@@ -86,8 +88,13 @@ export default function AdminCoursesPage() {
   const totalPages = Math.max(1, Math.ceil(courses.length / PAGE_SIZE));
   const pageCourses = courses.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  async function handleDelete(id: string, title: string) {
-    if (!confirm(`Xoá khoá học "${title}"? Hành động này không thể hoàn tác.`)) return;
+  function requestDelete(c: Course) {
+    setDeleteTarget(c);
+  }
+
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    const { id } = deleteTarget;
     setDeletingId(id);
     try {
       const res = await fetch(`/api/courses/${id}`, { method: "DELETE" });
@@ -103,6 +110,7 @@ export default function AdminCoursesPage() {
         return next;
       });
       showToast("Đã xoá khoá học thành công!", "success");
+      setDeleteTarget(null);
     } catch {
       showToast("Xoá khoá học thất bại, vui lòng thử lại.", "error");
     } finally {
@@ -209,7 +217,7 @@ export default function AdminCoursesPage() {
                         Sửa
                       </Link>
                       <button
-                        onClick={() => handleDelete(c.id, c.title)}
+                        onClick={() => requestDelete(c)}
                         disabled={deletingId === c.id}
                         className="font-medium text-bordeaux hover:underline disabled:opacity-50"
                       >
@@ -225,6 +233,19 @@ export default function AdminCoursesPage() {
       </div>
 
       <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+
+      <ConfirmModal
+        open={!!deleteTarget}
+        title="Xoá khoá học?"
+        message={
+          <>
+            Xoá khoá học &quot;{deleteTarget?.title}&quot;? Hành động này không thể hoàn tác.
+          </>
+        }
+        confirming={deletingId === deleteTarget?.id}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

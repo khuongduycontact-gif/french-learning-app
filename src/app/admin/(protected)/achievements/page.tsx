@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Achievement } from "@/types";
 import { useToast } from "@/components/Toast";
+import ConfirmModal from "@/components/ConfirmModal";
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
 import Select from "@/components/Select";
@@ -28,6 +29,7 @@ export default function AdminAchievementsPage() {
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Achievement | null>(null);
   const [page, setPage] = useState(1);
   const isFirstLoad = useRef(true);
 
@@ -72,8 +74,13 @@ export default function AdminAchievementsPage() {
   const totalPages = Math.max(1, Math.ceil(achievements.length / PAGE_SIZE));
   const pageAchievements = achievements.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  async function handleDelete(id: string, name: string) {
-    if (!confirm(`Xoá thành tích của "${name}"? Hành động này không thể hoàn tác.`)) return;
+  function requestDelete(a: Achievement) {
+    setDeleteTarget(a);
+  }
+
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    const { id } = deleteTarget;
     setDeletingId(id);
     try {
       const res = await fetch(`/api/achievements/${id}`, { method: "DELETE" });
@@ -89,6 +96,7 @@ export default function AdminAchievementsPage() {
         return next;
       });
       showToast("Đã xoá thành tích thành công!", "success");
+      setDeleteTarget(null);
     } catch {
       showToast("Xoá thành tích thất bại, vui lòng thử lại.", "error");
     } finally {
@@ -184,7 +192,7 @@ export default function AdminAchievementsPage() {
                         Sửa
                       </Link>
                       <button
-                        onClick={() => handleDelete(a.id, a.studentName)}
+                        onClick={() => requestDelete(a)}
                         disabled={deletingId === a.id}
                         className="font-medium text-bordeaux hover:underline disabled:opacity-50"
                       >
@@ -200,6 +208,20 @@ export default function AdminAchievementsPage() {
       </div>
 
       <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+
+      <ConfirmModal
+        open={!!deleteTarget}
+        title="Xoá thành tích?"
+        message={
+          <>
+            Xoá thành tích của &quot;{deleteTarget?.studentName}&quot;? Hành động này không thể
+            hoàn tác.
+          </>
+        }
+        confirming={deletingId === deleteTarget?.id}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

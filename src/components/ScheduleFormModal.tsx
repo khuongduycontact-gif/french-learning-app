@@ -9,6 +9,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { StudentSchedule, StudentScheduleInput, RecurringScheduleInput } from "@/types";
 import DatePicker from "./DatePicker";
+import ConfirmModal from "./ConfirmModal";
 import { useToast } from "./Toast";
 import { formatWeekdayDate, toISODateLocal } from "@/lib/schedule";
 import { handleTimeSegmentKeyDown } from "@/lib/timeFieldKeyNav";
@@ -75,6 +76,8 @@ export default function ScheduleFormModal({
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [confirmStopRecurringOpen, setConfirmStopRecurringOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -234,12 +237,6 @@ export default function ScheduleFormModal({
 
   async function handleStopRecurring() {
     if (!schedule?.recurringId) return;
-    if (
-      !confirm(
-        "Dừng lịch lặp này? Các buổi sắp tới (chưa diễn ra) trong chuỗi lặp sẽ bị xoá, buổi đã qua vẫn được giữ lại."
-      )
-    )
-      return;
     setStoppingRecurring(true);
     try {
       const res = await fetch(`/api/schedules/recurring/${schedule.recurringId}`, {
@@ -251,6 +248,7 @@ export default function ScheduleFormModal({
         return;
       }
       showToast("Đã dừng lịch lặp hàng tuần.", "success");
+      setConfirmStopRecurringOpen(false);
       onDeleted?.(schedule.id);
     } catch {
       showToast("Có lỗi xảy ra, vui lòng thử lại.", "error");
@@ -261,7 +259,6 @@ export default function ScheduleFormModal({
 
   async function handleDelete() {
     if (!schedule) return;
-    if (!confirm(`Xoá ca học của lớp "${schedule.className}"? Hành động này không thể hoàn tác.`)) return;
     setDeleting(true);
     try {
       const res = await fetch(`/api/schedules/${schedule.id}`, { method: "DELETE" });
@@ -271,6 +268,7 @@ export default function ScheduleFormModal({
         return;
       }
       showToast("Đã xoá ca học khỏi thời khoá biểu.", "success");
+      setConfirmDeleteOpen(false);
       onDeleted?.(schedule.id);
     } catch {
       showToast("Có lỗi xảy ra, vui lòng thử lại.", "error");
@@ -482,7 +480,7 @@ export default function ScheduleFormModal({
               </span>
               <button
                 type="button"
-                onClick={handleStopRecurring}
+                onClick={() => setConfirmStopRecurringOpen(true)}
                 disabled={stoppingRecurring}
                 className="shrink-0 rounded-full border border-bordeaux/40 px-3 py-1.5 font-medium text-bordeaux hover:bg-bordeaux/5 disabled:opacity-50"
               >
@@ -497,7 +495,7 @@ export default function ScheduleFormModal({
             {schedule ? (
               <button
                 type="button"
-                onClick={handleDelete}
+                onClick={() => setConfirmDeleteOpen(true)}
                 disabled={deleting || saving}
                 className="text-sm font-medium text-bordeaux hover:underline disabled:opacity-50"
               >
@@ -526,6 +524,29 @@ export default function ScheduleFormModal({
           </div>
         </form>
       </div>
+
+      <ConfirmModal
+        open={confirmDeleteOpen}
+        title="Xoá ca học?"
+        message={
+          <>
+            Xoá ca học của lớp &quot;{schedule?.className}&quot;? Hành động này không thể hoàn tác.
+          </>
+        }
+        confirming={deleting}
+        onCancel={() => setConfirmDeleteOpen(false)}
+        onConfirm={handleDelete}
+      />
+
+      <ConfirmModal
+        open={confirmStopRecurringOpen}
+        title="Dừng lịch lặp?"
+        message="Dừng lịch lặp này? Các buổi sắp tới (chưa diễn ra) trong chuỗi lặp sẽ bị xoá, buổi đã qua vẫn được giữ lại."
+        confirmLabel="Dừng lịch lặp"
+        confirming={stoppingRecurring}
+        onCancel={() => setConfirmStopRecurringOpen(false)}
+        onConfirm={handleStopRecurring}
+      />
     </div>,
     document.body
   );
