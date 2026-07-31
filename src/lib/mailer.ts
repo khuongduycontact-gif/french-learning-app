@@ -113,7 +113,7 @@ export async function sendClassReminderEmail(params: {
         </tr>
       </table>
 
-      <div style="font-family:'Inter',Arial,sans-serif; font-size:22px; font-weight:700; color:#000000; margin:0 0 16px;">Bonjour,</div>
+      <p style="font-family:'Inter',Arial,sans-serif; font-size:15px; font-weight:400; color:#000000; margin:0 0 16px;">Bonjour,</p>
 
       <p style="font-family:'Inter',Arial,sans-serif; font-size:15px; color:#000000; margin:0 0 20px; line-height:1.6;">
         Bạn có 1 buổi học sắp diễn ra sau khoảng 8 tiếng nữa:
