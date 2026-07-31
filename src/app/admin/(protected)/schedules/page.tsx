@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { StudentSchedule } from "@/types";
 import Loader from "@/components/Loader";
 import ScheduleFormModal from "@/components/ScheduleFormModal";
+import MarqueeText from "@/components/MarqueeText";
 import {
   addWeeks,
   formatTime,
@@ -265,9 +266,10 @@ export default function AdminSchedulesPage() {
                                   strokeLinecap="round"
                                 />
                               </svg>
-                              <p className="cell-nowrap-noscrollbar min-w-0 font-semibold text-ink">
-                                {schedule.className}
-                              </p>
+                              <MarqueeText
+                                text={schedule.className}
+                                className="min-w-0 flex-1 font-semibold text-ink"
+                              />
                             </div>
                             <div className="flex min-w-0 items-center gap-1.5">
                               <svg
@@ -285,9 +287,10 @@ export default function AdminSchedulesPage() {
                                   strokeLinejoin="round"
                                 />
                               </svg>
-                              <p className="cell-nowrap-noscrollbar min-w-0 text-ink/50">
-                                {schedule.studentEmails}
-                              </p>
+                              <MarqueeText
+                                text={schedule.studentEmails}
+                                className="min-w-0 flex-1 text-ink/50"
+                              />
                             </div>
                           </div>
                         );

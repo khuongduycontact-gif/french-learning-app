@@ -133,6 +133,48 @@ select:focus-visible {
   height: 0;
 }
 
+/* Dùng bởi component MarqueeText: chữ dài hơn khung chứa sẽ tự động chạy
+   ngang liên tục (marquee), không cần người dùng thao tác. */
+.marquee-viewport {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+  min-width: 0;
+}
+.marquee-measure {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.marquee-static {
+  display: inline-block;
+  white-space: nowrap;
+}
+.marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation-name: marquee-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.marquee-copy {
+  display: inline-block;
+  padding-right: 2.5rem;
+  white-space: nowrap;
+}
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 
 .scroll-x-fancy {
   scrollbar-width: thin;
