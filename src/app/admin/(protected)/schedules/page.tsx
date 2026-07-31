@@ -224,7 +224,7 @@ export default function AdminSchedulesPage() {
                             }}
                             className="cursor-pointer rounded-xl border border-mist bg-white p-2.5 text-xs shadow-sm transition hover:border-bordeaux/40 hover:bg-mist/20"
                           >
-                            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                            <div className="flex items-center justify-between gap-1.5">
                               <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-gold/20 px-2 py-0.5 font-semibold text-ink">
                                 Ca {caNumber}
                                 {schedule.recurringId && (
@@ -244,19 +244,69 @@ export default function AdminSchedulesPage() {
                                   </svg>
                                 )}
                               </span>
-                              <span className="whitespace-nowrap font-semibold text-bordeaux">
+                              <span className="shrink-0 whitespace-nowrap font-semibold text-bordeaux">
                                 {formatTime(start)}–{formatTime(end)}
                               </span>
                             </div>
-                            <p className="mt-1.5 truncate font-semibold text-ink" title={schedule.courseTitle}>
-                              {schedule.courseTitle || "—"}
-                            </p>
-                            <p className="mt-0.5 truncate text-ink/70" title={schedule.studentName}>
-                              {schedule.studentName}
-                            </p>
-                            <p className="truncate text-ink/50" title={schedule.studentEmail}>
-                              {schedule.studentEmail}
-                            </p>
+                            <div className="mt-1.5 flex min-w-0 items-center gap-1.5" title={schedule.courseTitle}>
+                              <svg
+                                className="h-3 w-3 shrink-0 text-ink/40"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  d="M3 5.5C3 4.67 3.67 4 4.5 4H9a2 2 0 0 1 2 2v10a1.5 1.5 0 0 0-1.5-1.5H3V5.5Z"
+                                  stroke="currentColor"
+                                  strokeWidth="1.4"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path
+                                  d="M17 5.5c0-.83-.67-1.5-1.5-1.5H11a2 2 0 0 0-2 2v10a1.5 1.5 0 0 1 1.5-1.5H17V5.5Z"
+                                  stroke="currentColor"
+                                  strokeWidth="1.4"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              <p className="min-w-0 truncate font-semibold text-ink">{schedule.courseTitle || "—"}</p>
+                            </div>
+                            <div className="mt-0.5 flex min-w-0 items-center gap-1.5" title={schedule.studentName}>
+                              <svg
+                                className="h-3 w-3 shrink-0 text-ink/40"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                aria-hidden="true"
+                              >
+                                <circle cx="10" cy="6.5" r="3" stroke="currentColor" strokeWidth="1.4" />
+                                <path
+                                  d="M4 17c0-3.31 2.69-5.5 6-5.5s6 2.19 6 5.5"
+                                  stroke="currentColor"
+                                  strokeWidth="1.4"
+                                  strokeLinecap="round"
+                                />
+                              </svg>
+                              <p className="min-w-0 truncate text-ink/70">{schedule.studentName}</p>
+                            </div>
+                            <div className="flex min-w-0 items-center gap-1.5" title={schedule.studentEmail}>
+                              <svg
+                                className="h-3 w-3 shrink-0 text-ink/40"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                aria-hidden="true"
+                              >
+                                <rect x="2.5" y="4.5" width="15" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
+                                <path
+                                  d="m3 5.5 7 5.5 7-5.5"
+                                  stroke="currentColor"
+                                  strokeWidth="1.4"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              <p className="min-w-0 truncate text-ink/50">{schedule.studentEmail}</p>
+                            </div>
                           </div>
                         );
                       })
