@@ -177,14 +177,12 @@ export default function AdminSchedulesPage() {
               return (
                 <div
                   key={key}
-                  className={`flex min-w-0 flex-col rounded-2xl border bg-white/60 ${
-                    isToday ? "border-bordeaux/50 ring-1 ring-bordeaux/20" : "border-mist"
-                  }`}
+                  className={`flex min-w-0 flex-col rounded-2xl border bg-white/60 ${isToday ? "border-bordeaux/50 ring-1 ring-bordeaux/20" : "border-mist"
+                    }`}
                 >
                   <div
-                    className={`flex items-center justify-between gap-2 rounded-t-2xl border-b px-3 py-2.5 ${
-                      isToday ? "border-bordeaux/30 bg-bordeaux/5" : "border-mist"
-                    }`}
+                    className={`flex items-center justify-between gap-2 rounded-t-2xl border-b px-3 py-2.5 ${isToday ? "border-bordeaux/30 bg-bordeaux/5" : "border-mist"
+                      }`}
                   >
                     <div className="min-w-0">
                       <p className={`truncate text-sm font-semibold ${isToday ? "text-bordeaux" : "text-ink"}`}>
@@ -258,13 +256,14 @@ export default function AdminSchedulesPage() {
                                 fill="none"
                                 aria-hidden="true"
                               >
-                                <circle cx="10" cy="6.5" r="3" stroke="currentColor" strokeWidth="1.4" />
                                 <path
-                                  d="M4 17c0-3.31 2.69-5.5 6-5.5s6 2.19 6 5.5"
+                                  d="M10 5.2C8.6 4.3 6.7 3.9 5 4.2v9.6c1.7-.3 3.6.1 5 1 1.4-.9 3.3-1.3 5-1V4.2c-1.7-.3-3.6.1-5 1Z"
                                   stroke="currentColor"
                                   strokeWidth="1.4"
                                   strokeLinecap="round"
+                                  strokeLinejoin="round"
                                 />
+                                <path d="M10 5.2v9.6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                               </svg>
                               <MarqueeText
                                 text={schedule.className}
