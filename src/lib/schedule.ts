@@ -83,6 +83,41 @@ export function formatTime(date: Date): string {
   return `${h}:${m}`;
 }
 
+// Việt Nam luôn là UTC+7, không có giờ mùa hè, nên có thể quy đổi bằng 1
+// phép cộng giờ cố định thay vì cần thư viện timezone.
+const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
+
+/**
+ * Quy đổi 1 thời điểm tuyệt đối (epoch) về "đồng hồ tường" giờ Việt Nam,
+ * BẤT KỂ code đang chạy ở múi giờ nào. formatTime()/formatWeekdayDate() ở
+ * trên dùng getHours()/getDate() theo múi giờ của máy đang chạy code - khi
+ * chạy trên trình duyệt của người dùng ở Việt Nam thì đúng, nhưng khi chạy
+ * trên server (VD: route cron gửi mail nhắc lịch trên Vercel, mặc định
+ * chạy giờ UTC) thì sẽ lệch 7 tiếng (VD 22:00 giờ VN bị hiển thị thành
+ * 15:00). Dùng toVNWallClock() + các hàm ...VN bên dưới ở bất kỳ chỗ nào
+ * format thời gian ngoài trình duyệt để luôn ra đúng giờ Việt Nam.
+ */
+function toVNWallClock(date: Date): Date {
+  return new Date(date.getTime() + VN_OFFSET_MS);
+}
+
+/** Giống formatWeekdayDate() nhưng luôn ra đúng giờ Việt Nam dù chạy ở server múi giờ khác (dùng cho mail nhắc lịch). */
+export function formatWeekdayDateVN(date: Date): string {
+  const vn = toVNWallClock(date);
+  const weekday = WEEKDAY_LABELS_FULL[(vn.getUTCDay() + 6) % 7];
+  const d = String(vn.getUTCDate()).padStart(2, "0");
+  const m = String(vn.getUTCMonth() + 1).padStart(2, "0");
+  return `${weekday}, ${d}/${m}/${vn.getUTCFullYear()}`;
+}
+
+/** Giống formatTime() nhưng luôn ra đúng giờ Việt Nam dù chạy ở server múi giờ khác (dùng cho mail nhắc lịch). */
+export function formatTimeVN(date: Date): string {
+  const vn = toVNWallClock(date);
+  const h = String(vn.getUTCHours()).padStart(2, "0");
+  const m = String(vn.getUTCMinutes()).padStart(2, "0");
+  return `${h}:${m}`;
+}
+
 export function formatWeekRangeLabel(weekStart: Date): string {
   const end = new Date(weekStart);
   end.setDate(weekStart.getDate() + 6);

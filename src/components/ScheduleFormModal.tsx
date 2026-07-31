@@ -280,11 +280,11 @@ export default function ScheduleFormModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[70] flex items-center justify-center overflow-y-auto bg-ink/50 p-4 backdrop-blur-[2px]"
+      className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-ink/50 p-4 py-8 backdrop-blur-[2px] sm:items-center"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-[28px] bg-white p-6 shadow-2xl ring-1 ring-black/5"
+        className="my-auto w-full max-w-lg rounded-[28px] bg-white p-6 shadow-2xl ring-1 ring-black/5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">

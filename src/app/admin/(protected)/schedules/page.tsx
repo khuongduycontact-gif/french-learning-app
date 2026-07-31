@@ -118,12 +118,12 @@ export default function AdminSchedulesPage() {
         </button>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => setWeekStart((d) => addWeeks(d, -1))}
           aria-label="Tuần trước"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-mist text-ink hover:bg-mist"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-mist text-ink hover:bg-mist"
         >
           <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
             <path d="M12.5 4.5 6 10l6.5 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -132,7 +132,7 @@ export default function AdminSchedulesPage() {
         <button
           type="button"
           onClick={() => setWeekStart(startOfWeek(new Date()))}
-          className="rounded-full border border-mist px-4 py-2 text-sm font-medium text-ink hover:bg-mist"
+          className="shrink-0 whitespace-nowrap rounded-full border border-mist px-4 py-2 text-sm font-medium text-ink hover:bg-mist"
         >
           Tuần này
         </button>
@@ -140,13 +140,15 @@ export default function AdminSchedulesPage() {
           type="button"
           onClick={() => setWeekStart((d) => addWeeks(d, 1))}
           aria-label="Tuần sau"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-mist text-ink hover:bg-mist"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-mist text-ink hover:bg-mist"
         >
           <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
             <path d="M7.5 4.5 14 10l-6.5 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <span className="ml-1 text-sm font-medium text-ink/70">{formatWeekRangeLabel(weekStart)}</span>
+        <span className="ml-1 whitespace-nowrap text-sm font-medium text-ink/70">
+          {formatWeekRangeLabel(weekStart)}
+        </span>
       </div>
 
       {loading && <Loader label="Đang tải thời khoá biểu..." />}
