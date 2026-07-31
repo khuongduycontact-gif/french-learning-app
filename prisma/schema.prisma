@@ -106,8 +106,72 @@ model Course {
   enrollments Enrollment[]
   materials   CourseMaterial[]
   submissions Submission[]
+  schedules   StudentSchedule[]
+  recurringSchedules RecurringSchedule[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+}
+
+// Thời khoá biểu: 1 buổi học (ca học) cụ thể của 1 học viên trong 1 khoá
+// học, tại 1 mốc ngày giờ cụ thể. Học viên không bắt buộc phải có tài
+// khoản (User) trong hệ thống - admin tự nhập tên/gmail để linh hoạt xếp
+// lịch cho cả học viên tiềm năng, nên lưu trực tiếp studentName/studentEmail
+// thay vì bắt buộc liên kết User. Số thứ tự "ca học" trong ngày (1, 2, 3...)
+// được tính động phía server/client theo thứ tự thời gian trong ngày, không
+// lưu cứng trong DB để không bị lệch khi thêm/xoá/sửa các ca khác trong
+// cùng ngày.
+model StudentSchedule {
+  id             String    @id @default(cuid())
+  studentName    String
+  studentEmail   String
+  courseId       String
+  startTime      DateTime // mốc ngày giờ bắt đầu buổi học
+  duration       Float     @default(1.5) // số giờ học của buổi này, cho phép lẻ (VD: 1.5 = 1 giờ 30 phút)
+  note           String?   @db.Text
+  // Buổi học này do 1 "lịch lặp hàng tuần" (RecurringSchedule) tự sinh ra thì
+  // sẽ có recurringId trỏ tới rule đó; buổi tạo thủ công (1 lần) thì để NULL.
+  recurringId    String?
+  // Mốc thời gian đã gửi mail nhắc lịch (8 tiếng trước giờ học) cho buổi này,
+  // NULL nghĩa là chưa gửi. Dùng để cron không gửi trùng 2 lần cho 1 buổi.
+  reminderSentAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  course    Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  recurring RecurringSchedule? @relation(fields: [recurringId], references: [id], onDelete: SetNull)
+
+  @@unique([recurringId, startTime])
+  @@index([courseId])
+  @@index([startTime])
+  @@index([recurringId])
+}
+
+// "Lịch lặp hàng tuần": 1 rule để tự động sinh ra nhiều buổi học
+// (StudentSchedule) lặp lại đúng 1 khung giờ mỗi tuần, không giới hạn số
+// tuần (endDate = NULL). Các buổi cụ thể được sinh dần ra trước một
+// khoảng thời gian (xem src/lib/recurringSchedule.ts), không sinh sẵn vô
+// hạn bản ghi trong DB. Việc sửa/xoá từng buổi cụ thể vẫn thao tác trên
+// StudentSchedule như bình thường; xoá/dừng ở đây chỉ ảnh hưởng tới các
+// buổi *sắp* được sinh thêm trong tương lai.
+model RecurringSchedule {
+  id             String    @id @default(cuid())
+  studentName    String
+  studentEmail   String
+  courseId       String
+  startTime      DateTime // buổi học đầu tiên - thứ trong tuần + giờ/phút của mốc này là khung giờ lặp lại mỗi tuần
+  duration       Float     @default(1.5)
+  note           String?   @db.Text
+  endDate        DateTime? // NULL = lặp lại không giới hạn (vô thời hạn)
+  active         Boolean   @default(true) // false = đã dừng lặp, không sinh thêm buổi mới nữa
+  generatedUntil DateTime // đã sinh buổi cụ thể tới hết mốc này rồi, dùng để sinh tiếp mà không bị trùng
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  course    Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  schedules StudentSchedule[]
+
+  @@index([courseId])
+  @@index([active])
 }
 
 model CourseMaterial {

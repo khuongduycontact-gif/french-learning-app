@@ -176,6 +176,58 @@ export interface SubmissionFile {
   type?: string;
 }
 
+export interface StudentSchedule {
+  id: string;
+  studentName: string;
+  studentEmail: string;
+  courseId: string;
+  startTime: string;
+  duration: number;
+  note: string | null;
+  recurringId: string | null;
+  reminderSentAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  course?: { id: string; title: string };
+}
+
+export interface StudentScheduleInput {
+  studentName: string;
+  studentEmail: string;
+  courseId: string;
+  startTime: string; // ISO string
+  duration: number;
+  note?: string;
+}
+
+// Lịch lặp hàng tuần - dùng khi tạo lịch học lặp lại nhiều tuần liên tiếp,
+// không giới hạn (endDate = null nghĩa là lặp vô thời hạn).
+export interface RecurringSchedule {
+  id: string;
+  studentName: string;
+  studentEmail: string;
+  courseId: string;
+  startTime: string;
+  duration: number;
+  note: string | null;
+  endDate: string | null;
+  active: boolean;
+  generatedUntil: string;
+  createdAt: string;
+  updatedAt: string;
+  course?: { id: string; title: string };
+}
+
+export interface RecurringScheduleInput {
+  studentName: string;
+  studentEmail: string;
+  courseId: string;
+  startTime: string; // ISO string - buổi học đầu tiên
+  duration: number;
+  note?: string;
+  endDate?: string; // ISO string, để trống = không giới hạn
+}
+
 export interface Submission {
   id: string;
   courseId: string;
