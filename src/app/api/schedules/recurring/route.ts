@@ -3,8 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ensureRecurringSchedulesMaterialized } from "@/lib/recurringSchedule";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { isValidEmailList, normalizeEmailList } from "@/lib/emailList";
 
 // GET /api/schedules/recurring (chỉ ADMIN) - danh sách lịch lặp đang hoạt động
 export async function GET() {
@@ -33,16 +32,16 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { studentName, studentEmail, courseTitle, startTime, duration, note, endDate } = body;
+  const { className, studentEmails, startTime, duration, note, endDate } = body;
 
-  if (!studentName || !String(studentName).trim()) {
-    return NextResponse.json({ error: "Vui lòng nhập tên học viên." }, { status: 400 });
+  if (!className || !String(className).trim()) {
+    return NextResponse.json({ error: "Vui lòng nhập tên lớp." }, { status: 400 });
   }
-  if (!studentEmail || !EMAIL_RE.test(String(studentEmail).trim())) {
-    return NextResponse.json({ error: "Vui lòng nhập đúng định dạng gmail học viên." }, { status: 400 });
-  }
-  if (!courseTitle || !String(courseTitle).trim()) {
-    return NextResponse.json({ error: "Vui lòng nhập tên khoá học." }, { status: 400 });
+  if (!studentEmails || !isValidEmailList(String(studentEmails))) {
+    return NextResponse.json(
+      { error: "Vui lòng nhập đúng định dạng gmail học viên (có thể nhập nhiều, cách nhau bởi dấu phẩy)." },
+      { status: 400 }
+    );
   }
   const parsedStart = startTime ? new Date(startTime) : null;
   if (!parsedStart || Number.isNaN(parsedStart.getTime())) {
@@ -68,12 +67,12 @@ export async function POST(req: NextRequest) {
   }
 
   const trimmedNote = note ? String(note).trim() : null;
+  const normalizedEmails = normalizeEmailList(String(studentEmails));
 
   const rule = await prisma.recurringSchedule.create({
     data: {
-      studentName: String(studentName).trim(),
-      studentEmail: String(studentEmail).trim(),
-      courseTitle: String(courseTitle).trim(),
+      className: String(className).trim(),
+      studentEmails: normalizedEmails,
       startTime: parsedStart,
       duration: parsedDuration,
       note: trimmedNote,
@@ -86,9 +85,8 @@ export async function POST(req: NextRequest) {
   // vòng sinh tiếp theo.
   await prisma.studentSchedule.create({
     data: {
-      studentName: rule.studentName,
-      studentEmail: rule.studentEmail,
-      courseTitle: rule.courseTitle,
+      className: rule.className,
+      studentEmails: rule.studentEmails,
       startTime: rule.startTime,
       duration: rule.duration,
       note: rule.note,

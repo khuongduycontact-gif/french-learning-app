@@ -1,13 +1,6 @@
 import nodemailer from "nodemailer";
 import { formatWeekdayDateVN, formatTimeVN } from "./schedule";
-
-// Dùng URL công khai của app (thay vì đính kèm file ảnh vào mail) để mail
-// nhẹ và hiển thị được trên hầu hết các trình đọc mail. Bản logo trong
-// public/email/logo-email.png là bản đã thu nhỏ/nén riêng cho mail (ảnh
-// logo gốc public/logo-app.png nặng ~2.5MB, không phù hợp để tải mỗi lần
-// mở mail).
-const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://francaisavecceline.vercel.app";
-const LOGO_URL = `${SITE_URL}/email/logo-email.png`;
+import { parseEmailList } from "./emailList";
 
 // Gửi mail qua Gmail SMTP bằng App Password (không dùng mật khẩu Gmail
 // thật). Xem hướng dẫn lấy App Password trong README.
@@ -46,9 +39,9 @@ function escapeHtml(str: string): string {
 }
 
 export async function sendClassReminderEmail(params: {
-  studentName: string;
-  studentEmail: string;
-  courseTitle: string;
+  className: string;
+  /** Danh sách gmail của các học viên trong lớp, cách nhau bởi dấu phẩy/chấm phẩy/xuống dòng. */
+  studentEmails: string;
   startTime: Date;
   duration: number;
   note?: string | null;
@@ -59,8 +52,11 @@ export async function sendClassReminderEmail(params: {
     );
   }
 
-  const { studentName, studentEmail, courseTitle, startTime, duration, note } = params;
-  if (!studentEmail || !studentEmail.trim()) {
+  const { className, studentEmails, startTime, duration, note } = params;
+  // 1 lớp có thể có nhiều học viên, mỗi học viên 1 gmail -> gửi cùng 1 mail
+  // nhắc lịch cho toàn bộ danh sách gmail trong lớp, trong đúng 1 lần gửi.
+  const recipients = parseEmailList(studentEmails || "");
+  if (recipients.length === 0) {
     throw new Error("Thiếu địa chỉ email người nhận, không thể gửi mail nhắc lịch.");
   }
 
@@ -70,19 +66,22 @@ export async function sendClassReminderEmail(params: {
   // 31/07/2026"), thay vì thứ/ngày trước giờ sau như trước.
   const dateTimeLabel = `${timeLabel}, ${dateLabel}`;
 
-  const subject = `Nhắc lịch học: ${courseTitle} lúc ${timeLabel} ngày ${dateLabel.split(", ")[1]}`;
+  const subject = `Nhắc lịch học: ${className} lúc ${timeLabel} ngày ${dateLabel.split(", ")[1]}`;
 
-  // 1 hàng trong "thẻ" thông tin: icon (không nền màu) bên trái + nhãn, giá
-  // trị bên phải. Toàn bộ dùng font-body (Inter), đen trắng, không tô màu.
+  // 1 hàng trong "thẻ" thông tin: icon (không nền màu) bên trái + nhãn và
+  // giá trị nằm NGAY CẠNH NHAU (chỉ cách nhau 1 khoảng trắng, không đẩy giá
+  // trị sang lề phải), tự động xuống dòng nếu nội dung dài thay vì tràn ra
+  // ngoài. Toàn bộ dùng font-body (Inter), đen trắng, không tô màu.
   function row(icon: string, label: string, valueHtml: string, isLast: boolean): string {
     return `
         <tr>
           <td style="padding:14px 0; ${isLast ? "" : "border-bottom:1px solid #E5E5E5;"}">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
               <tr>
-                <td style="width:26px; font-size:16px; line-height:1; vertical-align:top;">${icon}</td>
-                <td style="padding-left:8px; font-family:'Inter',Arial,sans-serif; font-weight:600; color:#000000; font-size:14px; vertical-align:top;">${label}</td>
-                <td align="right" style="font-family:'Inter',Arial,sans-serif; color:#000000; font-size:14px;">${valueHtml}</td>
+                <td style="width:26px; font-size:16px; line-height:1.5; vertical-align:top;">${icon}</td>
+                <td style="font-family:'Inter',Arial,sans-serif; font-size:14px; color:#000000; line-height:1.5; word-break:break-word;">
+                  <span style="font-weight:600;">${label}: </span>${valueHtml}
+                </td>
               </tr>
             </table>
           </td>
@@ -90,9 +89,9 @@ export async function sendClassReminderEmail(params: {
   }
 
   const rows = [
-    row("📖", "Khoá học", `<span style="font-weight:700;">${escapeHtml(courseTitle)}</span>`, false),
-    row("📅", "Thời gian", escapeHtml(dateTimeLabel), false),
-    row("🕐", "Thời lượng", `${duration} giờ`, !note),
+    row("📖", "Cours", `<span style="font-weight:700;">${escapeHtml(className)}</span>`, false),
+    row("📅", "Horaire", escapeHtml(dateTimeLabel), false),
+    row("🕐", "Durée", `${duration} giờ`, !note),
   ];
   if (note) {
     rows.push(row("📝", "Ghi chú", escapeHtml(note), true));
@@ -104,20 +103,17 @@ export async function sendClassReminderEmail(params: {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet" />
   </head>
   <body style="margin:0; padding:0; background:#F7F3EC; font-family:'Inter',Arial,sans-serif;">
     <div style="max-width:480px; margin:0 auto; padding:28px 20px 34px;">
       <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 22px;">
         <tr>
-          <td style="width:38px; vertical-align:middle; padding-right:8px;">
-            <img src="${LOGO_URL}" width="32" height="32" alt="Français avec Céline" style="display:block; width:32px; height:32px; border-radius:9999px;" />
-          </td>
-          <td style="vertical-align:middle; font-family:'Inter',Arial,sans-serif; font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#000000;">Français avec Céline</td>
+          <td style="font-family:'Playfair Display',Georgia,serif; font-size:19px; font-weight:600; color:#1B2A4A;">Français<span style="font-style:italic; color:#8C2F35;"> avec Céline</span></td>
         </tr>
       </table>
 
-      <div style="font-family:'Inter',Arial,sans-serif; font-size:22px; font-weight:700; color:#000000; margin:0 0 16px;">Chào ${escapeHtml(studentName)},</div>
+      <div style="font-family:'Inter',Arial,sans-serif; font-size:22px; font-weight:700; color:#000000; margin:0 0 16px;">Bonjour,</div>
 
       <p style="font-family:'Inter',Arial,sans-serif; font-size:15px; color:#000000; margin:0 0 20px; line-height:1.6;">
         Bạn có 1 buổi học sắp diễn ra sau khoảng 8 tiếng nữa:
@@ -134,7 +130,7 @@ export async function sendClassReminderEmail(params: {
       </table>
 
       <p style="font-family:'Inter',Arial,sans-serif; font-size:15px; color:#000000; margin:24px 0 4px;">
-        Hẹn gặp bạn trong buổi học nhé!
+        À toute à l’heure!
       </p>
 
       <p style="font-family:'Inter',Arial,sans-serif; color:#666666; font-size:12px; margin:24px 0 0;">Đây là email tự động, vui lòng không phản hồi lại email này.</p>
@@ -147,22 +143,22 @@ export async function sendClassReminderEmail(params: {
   const text = [
     "Nhắc lịch học",
     "",
-    `Chào ${studentName},`,
+    "Bonjour,",
     "",
     "Bạn có 1 buổi học sắp diễn ra sau khoảng 8 tiếng nữa:",
-    `- Khoá học: ${courseTitle}`,
-    `- Thời gian: ${dateTimeLabel}`,
-    `- Thời lượng: ${duration} giờ`,
+    `- Cours: ${className}`,
+    `- Horaire: ${dateTimeLabel}`,
+    `- Durée: ${duration} giờ`,
     ...(note ? [`- Ghi chú: ${note}`] : []),
     "",
-    "Hẹn gặp bạn trong buổi học nhé!",
+    "À toute à l’heure!",
     "",
     "Đây là email tự động, vui lòng không phản hồi lại email này.",
   ].join("\n");
 
   await transporter.sendMail({
     from: FROM_EMAIL,
-    to: studentEmail,
+    to: recipients.join(", "),
     subject,
     text,
     html,

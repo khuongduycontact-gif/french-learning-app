@@ -250,31 +250,7 @@ export default function AdminSchedulesPage() {
                                 {formatTime(start)}–{formatTime(end)}
                               </span>
                             </div>
-                            <div className="mt-1.5 flex min-w-0 items-center gap-1.5" title={schedule.courseTitle}>
-                              <svg
-                                className="h-3 w-3 shrink-0 text-ink/40"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                aria-hidden="true"
-                              >
-                                <path
-                                  d="M3 5.5C3 4.67 3.67 4 4.5 4H9a2 2 0 0 1 2 2v10a1.5 1.5 0 0 0-1.5-1.5H3V5.5Z"
-                                  stroke="currentColor"
-                                  strokeWidth="1.4"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                                <path
-                                  d="M17 5.5c0-.83-.67-1.5-1.5-1.5H11a2 2 0 0 0-2 2v10a1.5 1.5 0 0 1 1.5-1.5H17V5.5Z"
-                                  stroke="currentColor"
-                                  strokeWidth="1.4"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                              <p className="min-w-0 truncate font-semibold text-ink">{schedule.courseTitle || "—"}</p>
-                            </div>
-                            <div className="mt-0.5 flex min-w-0 items-center gap-1.5" title={schedule.studentName}>
+                            <div className="mt-1.5 flex min-w-0 items-center gap-1.5">
                               <svg
                                 className="h-3 w-3 shrink-0 text-ink/40"
                                 viewBox="0 0 20 20"
@@ -289,9 +265,11 @@ export default function AdminSchedulesPage() {
                                   strokeLinecap="round"
                                 />
                               </svg>
-                              <p className="min-w-0 truncate text-ink/70">{schedule.studentName}</p>
+                              <p className="cell-nowrap min-w-0 font-semibold text-ink">
+                                {schedule.className}
+                              </p>
                             </div>
-                            <div className="flex min-w-0 items-center gap-1.5" title={schedule.studentEmail}>
+                            <div className="flex min-w-0 items-center gap-1.5">
                               <svg
                                 className="h-3 w-3 shrink-0 text-ink/40"
                                 viewBox="0 0 20 20"
@@ -307,7 +285,9 @@ export default function AdminSchedulesPage() {
                                   strokeLinejoin="round"
                                 />
                               </svg>
-                              <p className="min-w-0 truncate text-ink/50">{schedule.studentEmail}</p>
+                              <p className="cell-nowrap min-w-0 text-ink/50">
+                                {schedule.studentEmails}
+                              </p>
                             </div>
                           </div>
                         );

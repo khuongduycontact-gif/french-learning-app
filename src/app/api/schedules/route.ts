@@ -3,8 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ensureRecurringSchedulesMaterialized } from "@/lib/recurringSchedule";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { isValidEmailList, normalizeEmailList } from "@/lib/emailList";
 
 // GET /api/schedules?from=yyyy-mm-dd&to=yyyy-mm-dd (chỉ ADMIN)
 // Lấy toàn bộ ca học có startTime trong khoảng [from, to] (dùng để đổ vào
@@ -54,16 +53,16 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { studentName, studentEmail, courseTitle, startTime, duration, note } = body;
+  const { className, studentEmails, startTime, duration, note } = body;
 
-  if (!studentName || !String(studentName).trim()) {
-    return NextResponse.json({ error: "Vui lòng nhập tên học viên." }, { status: 400 });
+  if (!className || !String(className).trim()) {
+    return NextResponse.json({ error: "Vui lòng nhập tên lớp." }, { status: 400 });
   }
-  if (!studentEmail || !EMAIL_RE.test(String(studentEmail).trim())) {
-    return NextResponse.json({ error: "Vui lòng nhập đúng định dạng gmail học viên." }, { status: 400 });
-  }
-  if (!courseTitle || !String(courseTitle).trim()) {
-    return NextResponse.json({ error: "Vui lòng nhập tên khoá học." }, { status: 400 });
+  if (!studentEmails || !isValidEmailList(String(studentEmails))) {
+    return NextResponse.json(
+      { error: "Vui lòng nhập đúng định dạng gmail học viên (có thể nhập nhiều, cách nhau bởi dấu phẩy)." },
+      { status: 400 }
+    );
   }
   const parsedStart = startTime ? new Date(startTime) : null;
   if (!parsedStart || Number.isNaN(parsedStart.getTime())) {
@@ -76,9 +75,8 @@ export async function POST(req: NextRequest) {
 
   const schedule = await prisma.studentSchedule.create({
     data: {
-      studentName: String(studentName).trim(),
-      studentEmail: String(studentEmail).trim(),
-      courseTitle: String(courseTitle).trim(),
+      className: String(className).trim(),
+      studentEmails: normalizeEmailList(String(studentEmails)),
       startTime: parsedStart,
       duration: parsedDuration,
       note: note ? String(note).trim() : null,

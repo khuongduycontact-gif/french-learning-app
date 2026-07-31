@@ -45,9 +45,8 @@ export async function ensureRecurringSchedulesMaterialized(until?: Date): Promis
 
     await prisma.studentSchedule.createMany({
       data: toGenerate.map((startTime) => ({
-        studentName: rule.studentName,
-        studentEmail: rule.studentEmail,
-        courseTitle: rule.courseTitle,
+        className: rule.className,
+        studentEmails: rule.studentEmails,
         startTime,
         duration: rule.duration,
         note: rule.note,

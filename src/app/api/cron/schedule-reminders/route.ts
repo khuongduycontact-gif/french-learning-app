@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ensureRecurringSchedulesMaterialized } from "@/lib/recurringSchedule";
 import { sendClassReminderEmail } from "@/lib/mailer";
+import { isValidEmailList } from "@/lib/emailList";
 
 // Số tiếng trước giờ học sẽ gửi mail nhắc (mặc định 8, có thể chỉnh qua env
 // SCHEDULE_REMINDER_HOURS nếu cần).
@@ -13,8 +14,6 @@ const REMINDER_HOURS = Number(process.env.SCHEDULE_REMINDER_HOURS) || 8;
 // lần này vẫn còn reminderSentAt = NULL nên sẽ tự được xử lý ở lần chạy kế
 // tiếp (15-30 phút sau), miễn buổi học đó chưa diễn ra.
 const MAX_EMAILS_PER_RUN = 50;
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Endpoint này KHÔNG dùng session đăng nhập (vì được gọi tự động bởi
 // cron/scheduler bên ngoài, không phải người dùng) - xác thực bằng
@@ -90,13 +89,13 @@ export async function GET(req: NextRequest) {
   let skippedInvalidEmail = 0;
 
   for (const schedule of dueSchedules) {
-    // Bỏ qua sớm nếu địa chỉ mail không đúng định dạng, tránh gọi Nodemailer
-    // với input chắc chắn lỗi (nếu admin nhập sai email lúc tạo lịch, dữ
-    // liệu vẫn giữ nguyên reminderSentAt = null để có thể sửa email rồi
-    // được gửi lại ở lần chạy sau, thay vì bị đánh dấu "đã gửi" nhầm).
-    if (!EMAIL_REGEX.test(schedule.studentEmail)) {
+    // Bỏ qua sớm nếu danh sách gmail không có gmail nào đúng định dạng, tránh
+    // gọi Nodemailer với input chắc chắn lỗi (nếu admin nhập sai gmail lúc
+    // tạo lịch, dữ liệu vẫn giữ nguyên reminderSentAt = null để có thể sửa
+    // lại rồi được gửi lại ở lần chạy sau, thay vì bị đánh dấu "đã gửi" nhầm).
+    if (!isValidEmailList(schedule.studentEmails)) {
       console.error(
-        `[schedule-reminders] Bỏ qua buổi ${schedule.id}: email không hợp lệ ("${schedule.studentEmail}")`
+        `[schedule-reminders] Bỏ qua buổi ${schedule.id}: danh sách gmail không hợp lệ ("${schedule.studentEmails}")`
       );
       skippedInvalidEmail++;
       continue;
@@ -112,9 +111,8 @@ export async function GET(req: NextRequest) {
 
     try {
       await sendClassReminderEmail({
-        studentName: schedule.studentName,
-        studentEmail: schedule.studentEmail,
-        courseTitle: schedule.courseTitle,
+        className: schedule.className,
+        studentEmails: schedule.studentEmails,
         startTime: schedule.startTime,
         duration: schedule.duration,
         note: schedule.note,

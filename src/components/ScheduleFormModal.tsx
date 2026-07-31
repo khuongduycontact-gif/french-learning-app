@@ -5,12 +5,14 @@
 // này. Ngày giờ chọn ở đây luôn hiển thị kèm thứ trong tuần để admin không
 // bị nhầm lịch.
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { StudentSchedule, StudentScheduleInput, RecurringScheduleInput } from "@/types";
 import DatePicker from "./DatePicker";
 import { useToast } from "./Toast";
 import { formatWeekdayDate, toISODateLocal } from "@/lib/schedule";
+import { handleTimeSegmentKeyDown } from "@/lib/timeFieldKeyNav";
+import { isValidEmailList } from "@/lib/emailList";
 
 function toDateAndTimeParts(iso: string): { date: string; hour: string; minute: string } {
   const d = new Date(iso);
@@ -48,14 +50,20 @@ export default function ScheduleFormModal({
   const { showToast } = useToast();
   const [mounted, setMounted] = useState(false);
 
-  const [studentName, setStudentName] = useState("");
-  const [studentEmail, setStudentEmail] = useState("");
-  const [courseTitle, setCourseTitle] = useState("");
+  const [className, setClassName] = useState("");
+  const [studentEmails, setStudentEmails] = useState("");
   const [date, setDate] = useState("");
   const [hour, setHour] = useState("09");
   const [minute, setMinute] = useState("00");
   const [durationParts, setDurationParts] = useState({ hours: "01", minutes: "30" });
   const [note, setNote] = useState("");
+
+  // Refs cho các ô giờ/phút - dùng để bàn phím ArrowLeft/ArrowRight nhảy
+  // qua lại giữa ô giờ và ô phút (xem handleTimeSegmentKeyDown).
+  const hourRef = useRef<HTMLInputElement>(null);
+  const minuteRef = useRef<HTMLInputElement>(null);
+  const durHourRef = useRef<HTMLInputElement>(null);
+  const durMinuteRef = useRef<HTMLInputElement>(null);
 
   // Lặp lại hàng tuần: chỉ áp dụng khi THÊM MỚI (không dùng khi sửa 1 buổi
   // đã có sẵn - sửa 1 buổi cụ thể trong lịch lặp không nên đổi cả chuỗi).
@@ -88,9 +96,8 @@ export default function ScheduleFormModal({
     setFieldErrors({});
     if (schedule) {
       const { date: d, hour: h, minute: m } = toDateAndTimeParts(schedule.startTime);
-      setStudentName(schedule.studentName);
-      setStudentEmail(schedule.studentEmail);
-      setCourseTitle(schedule.courseTitle);
+      setClassName(schedule.className);
+      setStudentEmails(schedule.studentEmails);
       setDate(d);
       setHour(h);
       setMinute(m);
@@ -99,9 +106,8 @@ export default function ScheduleFormModal({
       setRepeatWeekly(false);
       setRepeatEndDate("");
     } else {
-      setStudentName("");
-      setStudentEmail("");
-      setCourseTitle("");
+      setClassName("");
+      setStudentEmails("");
       setDate(defaultDate || toISODateLocal(new Date()));
       setHour("09");
       setMinute("00");
@@ -133,10 +139,9 @@ export default function ScheduleFormModal({
 
   function validate(): Record<string, string> {
     const errs: Record<string, string> = {};
-    if (!studentName.trim()) errs.studentName = "Vui lòng nhập tên học viên.";
-    if (!studentEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(studentEmail.trim()))
-      errs.studentEmail = "Vui lòng nhập đúng định dạng gmail.";
-    if (!courseTitle.trim()) errs.courseTitle = "Vui lòng nhập tên khoá học.";
+    if (!className.trim()) errs.className = "Vui lòng nhập tên lớp.";
+    if (!studentEmails.trim() || !isValidEmailList(studentEmails))
+      errs.studentEmails = "Vui lòng nhập đúng định dạng gmail (có thể nhập nhiều, cách nhau bởi dấu phẩy).";
     if (!date) errs.date = "Vui lòng chọn ngày học.";
     const durH = parseInt(durationParts.hours, 10) || 0;
     const durM = parseInt(durationParts.minutes, 10) || 0;
@@ -160,9 +165,8 @@ export default function ScheduleFormModal({
     // nhiều buổi cùng lúc), khác với thêm 1 buổi đơn lẻ như bình thường.
     if (!schedule && repeatWeekly) {
       const recurringPayload: RecurringScheduleInput = {
-        studentName: studentName.trim(),
-        studentEmail: studentEmail.trim(),
-        courseTitle: courseTitle.trim(),
+        className: className.trim(),
+        studentEmails: studentEmails.trim(),
         startTime: startTime.toISOString(),
         duration,
         note: note.trim() || undefined,
@@ -199,9 +203,8 @@ export default function ScheduleFormModal({
     }
 
     const payload: StudentScheduleInput = {
-      studentName: studentName.trim(),
-      studentEmail: studentEmail.trim(),
-      courseTitle: courseTitle.trim(),
+      className: className.trim(),
+      studentEmails: studentEmails.trim(),
       startTime: startTime.toISOString(),
       duration,
       note: note.trim() || undefined,
@@ -258,7 +261,7 @@ export default function ScheduleFormModal({
 
   async function handleDelete() {
     if (!schedule) return;
-    if (!confirm(`Xoá ca học của "${schedule.studentName}"? Hành động này không thể hoàn tác.`)) return;
+    if (!confirm(`Xoá ca học của lớp "${schedule.className}"? Hành động này không thể hoàn tác.`)) return;
     setDeleting(true);
     try {
       const res = await fetch(`/api/schedules/${schedule.id}`, { method: "DELETE" });
@@ -309,43 +312,34 @@ export default function ScheduleFormModal({
         </div>
 
         <form onSubmit={handleSubmit} noValidate className="mt-5 flex flex-col gap-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-ink">Tên học viên</label>
-              <input
-                value={studentName}
-                onChange={(e) => setStudentName(e.target.value)}
-                placeholder="Ví dụ: Nguyễn Văn A"
-                className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
-              />
-              {fieldErrors.studentName && (
-                <p className="mt-1 text-xs text-bordeaux">{fieldErrors.studentName}</p>
-              )}
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-ink">Gmail học viên</label>
-              <input
-                value={studentEmail}
-                onChange={(e) => setStudentEmail(e.target.value)}
-                placeholder="hocvien@gmail.com"
-                className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
-              />
-              {fieldErrors.studentEmail && (
-                <p className="mt-1 text-xs text-bordeaux">{fieldErrors.studentEmail}</p>
-              )}
-            </div>
-          </div>
-
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink">Khoá học</label>
+            <label className="mb-1 block text-sm font-medium text-ink">Tên lớp</label>
             <input
-              value={courseTitle}
-              onChange={(e) => setCourseTitle(e.target.value)}
+              value={className}
+              onChange={(e) => setClassName(e.target.value)}
               placeholder="Ví dụ: Pháp Ngữ Trung Cấp B1"
               className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
             />
-            {fieldErrors.courseTitle && (
-              <p className="mt-1 text-xs text-bordeaux">{fieldErrors.courseTitle}</p>
+            {fieldErrors.className && (
+              <p className="mt-1 text-xs text-bordeaux">{fieldErrors.className}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-ink">Gmail học viên</label>
+            <textarea
+              value={studentEmails}
+              onChange={(e) => setStudentEmails(e.target.value)}
+              rows={2}
+              placeholder="hocvien1@gmail.com, hocvien2@gmail.com..."
+              className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
+            />
+            <p className="mt-1 text-xs text-ink/50">
+              1 lớp có thể có nhiều học viên - nhập nhiều gmail cách nhau bởi dấu phẩy, mail nhắc lịch sẽ
+              được gửi tới toàn bộ danh sách này.
+            </p>
+            {fieldErrors.studentEmails && (
+              <p className="mt-1 text-xs text-bordeaux">{fieldErrors.studentEmails}</p>
             )}
           </div>
 
@@ -355,23 +349,27 @@ export default function ScheduleFormModal({
               <DatePicker value={date} onChange={setDate} ariaLabel="Chọn ngày học" className="w-[9.5rem]" />
               <div className="flex items-center gap-1.5 rounded-lg border border-mist bg-white px-2 py-1">
                 <input
+                  ref={hourRef}
                   type="text"
                   inputMode="numeric"
                   value={hour}
                   onChange={(e) => updateNumberPart(setHour, e.target.value)}
                   onBlur={() => commitNumberPart(hour, 23, setHour)}
                   onFocus={(e) => e.target.select()}
+                  onKeyDown={(e) => handleTimeSegmentKeyDown(e, { value: hour, nextRef: minuteRef })}
                   aria-label="Giờ"
                   className="w-9 rounded-md px-1 py-1.5 text-center text-sm"
                 />
                 <span className="text-sm text-ink/50">:</span>
                 <input
+                  ref={minuteRef}
                   type="text"
                   inputMode="numeric"
                   value={minute}
                   onChange={(e) => updateNumberPart(setMinute, e.target.value)}
                   onBlur={() => commitNumberPart(minute, 59, setMinute)}
                   onFocus={(e) => e.target.select()}
+                  onKeyDown={(e) => handleTimeSegmentKeyDown(e, { value: minute, prevRef: hourRef })}
                   aria-label="Phút"
                   className="w-9 rounded-md px-1 py-1.5 text-center text-sm"
                 />
@@ -388,6 +386,7 @@ export default function ScheduleFormModal({
             <div className="flex items-center gap-1.5">
               <div className="flex items-center gap-1 rounded-lg border border-mist bg-white px-2 py-1">
                 <input
+                  ref={durHourRef}
                   type="text"
                   inputMode="numeric"
                   value={durationParts.hours}
@@ -398,6 +397,9 @@ export default function ScheduleFormModal({
                     commitNumberPart(durationParts.hours, 23, (v) => setDurationParts((p) => ({ ...p, hours: v })))
                   }
                   onFocus={(e) => e.target.select()}
+                  onKeyDown={(e) =>
+                    handleTimeSegmentKeyDown(e, { value: durationParts.hours, nextRef: durMinuteRef })
+                  }
                   aria-label="Số giờ"
                   className="w-9 rounded-md px-1 py-1.5 text-center text-sm"
                 />
@@ -405,6 +407,7 @@ export default function ScheduleFormModal({
               </div>
               <div className="flex items-center gap-1 rounded-lg border border-mist bg-white px-2 py-1">
                 <input
+                  ref={durMinuteRef}
                   type="text"
                   inputMode="numeric"
                   value={durationParts.minutes}
@@ -415,6 +418,9 @@ export default function ScheduleFormModal({
                     commitNumberPart(durationParts.minutes, 59, (v) => setDurationParts((p) => ({ ...p, minutes: v })))
                   }
                   onFocus={(e) => e.target.select()}
+                  onKeyDown={(e) =>
+                    handleTimeSegmentKeyDown(e, { value: durationParts.minutes, prevRef: durHourRef })
+                  }
                   aria-label="Số phút"
                   className="w-9 rounded-md px-1 py-1.5 text-center text-sm"
                 />

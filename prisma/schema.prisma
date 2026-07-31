@@ -110,21 +110,23 @@ model Course {
   updatedAt   DateTime     @updatedAt
 }
 
-// Thời khoá biểu: 1 buổi học (ca học) cụ thể của 1 học viên trong 1 khoá
-// học, tại 1 mốc ngày giờ cụ thể. Học viên không bắt buộc phải có tài
-// khoản (User) trong hệ thống - admin tự nhập tên/gmail để linh hoạt xếp
-// lịch cho cả học viên tiềm năng, nên lưu trực tiếp studentName/studentEmail
-// thay vì bắt buộc liên kết User. Số thứ tự "ca học" trong ngày (1, 2, 3...)
-// được tính động phía server/client theo thứ tự thời gian trong ngày, không
-// lưu cứng trong DB để không bị lệch khi thêm/xoá/sửa các ca khác trong
-// cùng ngày.
+// Thời khoá biểu: 1 buổi học (ca học) cụ thể của 1 lớp học, tại 1 mốc
+// ngày giờ cụ thể. Học viên không bắt buộc phải có tài khoản (User) trong
+// hệ thống - admin tự nhập tên lớp/gmail để linh hoạt xếp lịch cho cả học
+// viên tiềm năng, nên lưu trực tiếp className/studentEmails thay vì bắt
+// buộc liên kết User. 1 lớp có thể có nhiều học viên, mỗi học viên 1 gmail
+// -> studentEmails lưu danh sách gmail cách nhau bởi dấu phẩy (","), gửi
+// mail nhắc lịch cho toàn bộ danh sách này trong cùng 1 lần gửi. Số thứ tự
+// "ca học" trong ngày (1, 2, 3...) được tính động phía server/client theo
+// thứ tự thời gian trong ngày, không lưu cứng trong DB để không bị lệch
+// khi thêm/xoá/sửa các ca khác trong cùng ngày.
 model StudentSchedule {
   id             String    @id @default(cuid())
-  studentName    String
-  studentEmail   String
-  // Khoá học offline nhập tay tự do (không liên kết Course trên web) - VD
-  // "Pháp Ngữ Trung Cấp B1". Admin gõ trực tiếp, không chọn từ danh sách.
-  courseTitle    String
+  // Tên lớp (VD: "Pháp Ngữ Trung Cấp B1"). Admin gõ trực tiếp, không chọn
+  // từ danh sách khoá học trên web.
+  className      String
+  // Danh sách gmail của các học viên trong lớp, cách nhau bởi dấu phẩy.
+  studentEmails  String    @db.Text
   startTime      DateTime // mốc ngày giờ bắt đầu buổi học
   duration       Float     @default(1.5) // số giờ học của buổi này, cho phép lẻ (VD: 1.5 = 1 giờ 30 phút)
   note           String?   @db.Text
@@ -153,10 +155,11 @@ model StudentSchedule {
 // buổi *sắp* được sinh thêm trong tương lai.
 model RecurringSchedule {
   id             String    @id @default(cuid())
-  studentName    String
-  studentEmail   String
-  // Khoá học offline nhập tay tự do, xem giải thích ở StudentSchedule.courseTitle.
-  courseTitle    String
+  // Tên lớp, xem giải thích ở StudentSchedule.className.
+  className      String
+  // Danh sách gmail của các học viên trong lớp, xem giải thích ở
+  // StudentSchedule.studentEmails.
+  studentEmails  String    @db.Text
   startTime      DateTime // buổi học đầu tiên - thứ trong tuần + giờ/phút của mốc này là khung giờ lặp lại mỗi tuần
   duration       Float     @default(1.5)
   note           String?   @db.Text

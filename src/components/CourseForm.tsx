@@ -8,6 +8,7 @@ import CourseMaterialsEditor, { type MaterialDraft } from "./CourseMaterialsEdit
 import RichTextEditor from "./RichTextEditor";
 import Select from "./Select";
 import { useToast } from "./Toast";
+import { handleTimeSegmentKeyDown } from "@/lib/timeFieldKeyNav";
 
 function ClockIcon({ className }: { className?: string }) {
   return (
@@ -83,6 +84,8 @@ export default function CourseForm({
   });
   const [durationPickerOpen, setDurationPickerOpen] = useState(false);
   const durationPickerRef = useRef<HTMLDivElement>(null);
+  const durHourRef = useRef<HTMLInputElement>(null);
+  const durMinuteRef = useRef<HTMLInputElement>(null);
 
   // Bấm ra ngoài popover giờ/phút thì tự đóng lại
   useEffect(() => {
@@ -338,12 +341,16 @@ export default function CourseForm({
                 <div className="flex flex-col items-center gap-1">
                   <label className="text-[10px] text-ink/50">Giờ</label>
                   <input
+                    ref={durHourRef}
                     type="text"
                     inputMode="numeric"
                     value={durationParts.hours}
                     onChange={(e) => updateDurationPart("hours", e.target.value)}
                     onBlur={() => commitDurationPart("hours")}
                     onFocus={(e) => e.target.select()}
+                    onKeyDown={(e) =>
+                      handleTimeSegmentKeyDown(e, { value: durationParts.hours, nextRef: durMinuteRef })
+                    }
                     className="w-12 rounded-md border border-mist px-2 py-1.5 text-center text-sm"
                   />
                 </div>
@@ -351,12 +358,16 @@ export default function CourseForm({
                 <div className="flex flex-col items-center gap-1">
                   <label className="text-[10px] text-ink/50">Phút</label>
                   <input
+                    ref={durMinuteRef}
                     type="text"
                     inputMode="numeric"
                     value={durationParts.minutes}
                     onChange={(e) => updateDurationPart("minutes", e.target.value)}
                     onBlur={() => commitDurationPart("minutes")}
                     onFocus={(e) => e.target.select()}
+                    onKeyDown={(e) =>
+                      handleTimeSegmentKeyDown(e, { value: durationParts.minutes, prevRef: durHourRef })
+                    }
                     className="w-12 rounded-md border border-mist px-2 py-1.5 text-center text-sm"
                   />
                 </div>

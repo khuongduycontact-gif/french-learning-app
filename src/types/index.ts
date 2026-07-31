@@ -178,9 +178,10 @@ export interface SubmissionFile {
 
 export interface StudentSchedule {
   id: string;
-  studentName: string;
-  studentEmail: string;
-  courseTitle: string;
+  /** Tên lớp (VD: "Pháp Ngữ Trung Cấp B1"). */
+  className: string;
+  /** Danh sách gmail của các học viên trong lớp, cách nhau bởi dấu phẩy. */
+  studentEmails: string;
   startTime: string;
   duration: number;
   note: string | null;
@@ -191,9 +192,8 @@ export interface StudentSchedule {
 }
 
 export interface StudentScheduleInput {
-  studentName: string;
-  studentEmail: string;
-  courseTitle: string;
+  className: string;
+  studentEmails: string;
   startTime: string; // ISO string
   duration: number;
   note?: string;
@@ -203,9 +203,8 @@ export interface StudentScheduleInput {
 // không giới hạn (endDate = null nghĩa là lặp vô thời hạn).
 export interface RecurringSchedule {
   id: string;
-  studentName: string;
-  studentEmail: string;
-  courseTitle: string;
+  className: string;
+  studentEmails: string;
   startTime: string;
   duration: number;
   note: string | null;
@@ -217,9 +216,8 @@ export interface RecurringSchedule {
 }
 
 export interface RecurringScheduleInput {
-  studentName: string;
-  studentEmail: string;
-  courseTitle: string;
+  className: string;
+  studentEmails: string;
   startTime: string; // ISO string - buổi học đầu tiên
   duration: number;
   note?: string;

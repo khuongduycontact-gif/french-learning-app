@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { isValidEmailList, normalizeEmailList } from "@/lib/emailList";
 
 export async function PUT(
   req: NextRequest,
@@ -15,16 +14,16 @@ export async function PUT(
   }
 
   const body = await req.json();
-  const { studentName, studentEmail, courseTitle, startTime, duration, note } = body;
+  const { className, studentEmails, startTime, duration, note } = body;
 
-  if (studentName !== undefined && !String(studentName).trim()) {
-    return NextResponse.json({ error: "Vui lòng nhập tên học viên." }, { status: 400 });
+  if (className !== undefined && !String(className).trim()) {
+    return NextResponse.json({ error: "Vui lòng nhập tên lớp." }, { status: 400 });
   }
-  if (studentEmail !== undefined && !EMAIL_RE.test(String(studentEmail).trim())) {
-    return NextResponse.json({ error: "Vui lòng nhập đúng định dạng gmail học viên." }, { status: 400 });
-  }
-  if (courseTitle !== undefined && !String(courseTitle).trim()) {
-    return NextResponse.json({ error: "Vui lòng nhập tên khoá học." }, { status: 400 });
+  if (studentEmails !== undefined && !isValidEmailList(String(studentEmails))) {
+    return NextResponse.json(
+      { error: "Vui lòng nhập đúng định dạng gmail học viên (có thể nhập nhiều, cách nhau bởi dấu phẩy)." },
+      { status: 400 }
+    );
   }
   let parsedStart: Date | undefined;
   if (startTime !== undefined) {
@@ -55,9 +54,8 @@ export async function PUT(
   const schedule = await prisma.studentSchedule.update({
     where: { id: params.id },
     data: {
-      ...(studentName !== undefined ? { studentName: String(studentName).trim() } : {}),
-      ...(studentEmail !== undefined ? { studentEmail: String(studentEmail).trim() } : {}),
-      ...(courseTitle !== undefined ? { courseTitle: String(courseTitle).trim() } : {}),
+      ...(className !== undefined ? { className: String(className).trim() } : {}),
+      ...(studentEmails !== undefined ? { studentEmails: normalizeEmailList(String(studentEmails)) } : {}),
       ...(parsedStart !== undefined ? { startTime: parsedStart } : {}),
       ...(duration !== undefined ? { duration: Number(duration) } : {}),
       ...(note !== undefined ? { note: note ? String(note).trim() : null } : {}),
