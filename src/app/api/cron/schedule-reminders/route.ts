@@ -81,7 +81,6 @@ export async function GET(req: NextRequest) {
       reminderSentAt: null,
       startTime: { gt: now, lte: windowEnd },
     },
-    include: { course: { select: { id: true, title: true } } },
     orderBy: { startTime: "asc" },
     take: MAX_EMAILS_PER_RUN,
   });
@@ -115,7 +114,7 @@ export async function GET(req: NextRequest) {
       await sendClassReminderEmail({
         studentName: schedule.studentName,
         studentEmail: schedule.studentEmail,
-        courseTitle: schedule.course?.title || "khoá học",
+        courseTitle: schedule.courseTitle,
         startTime: schedule.startTime,
         duration: schedule.duration,
         note: schedule.note,

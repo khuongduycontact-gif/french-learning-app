@@ -19,7 +19,6 @@ import {
 export default function AdminSchedulesPage() {
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
   const [schedules, setSchedules] = useState<StudentSchedule[]>([]);
-  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
@@ -69,21 +68,9 @@ export default function AdminSchedulesPage() {
     return () => controller.abort();
   }, [weekStart, reloadKey]);
 
-  const filteredSchedules = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return schedules;
-    return schedules.filter((s) => {
-      return (
-        s.studentName.toLowerCase().includes(q) ||
-        s.studentEmail.toLowerCase().includes(q) ||
-        (s.course?.title || "").toLowerCase().includes(q)
-      );
-    });
-  }, [schedules, search]);
-
   const groupedByDay = useMemo(
-    () => groupSchedulesByDay(filteredSchedules, weekDays),
-    [filteredSchedules, weekDays]
+    () => groupSchedulesByDay(schedules, weekDays),
+    [schedules, weekDays]
   );
 
   function openCreateModal(defaultDate?: string) {
@@ -131,67 +118,35 @@ export default function AdminSchedulesPage() {
         </button>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setWeekStart((d) => addWeeks(d, -1))}
-            aria-label="Tuần trước"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-mist text-ink hover:bg-mist"
-          >
-            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
-              <path d="M12.5 4.5 6 10l6.5 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() => setWeekStart(startOfWeek(new Date()))}
-            className="rounded-full border border-mist px-4 py-2 text-sm font-medium text-ink hover:bg-mist"
-          >
-            Tuần này
-          </button>
-          <button
-            type="button"
-            onClick={() => setWeekStart((d) => addWeeks(d, 1))}
-            aria-label="Tuần sau"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-mist text-ink hover:bg-mist"
-          >
-            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
-              <path d="M7.5 4.5 14 10l-6.5 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <span className="ml-1 text-sm font-medium text-ink/70">{formatWeekRangeLabel(weekStart)}</span>
-        </div>
-
-        <div className="relative w-full sm:w-[24rem]">
-          <svg
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40"
-            viewBox="0 0 20 20"
-            fill="none"
-          >
-            <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.6" />
-            <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setWeekStart((d) => addWeeks(d, -1))}
+          aria-label="Tuần trước"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-mist text-ink hover:bg-mist"
+        >
+          <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
+            <path d="M12.5 4.5 6 10l6.5 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Tìm theo tên học viên, gmail, khoá học..."
-            className="w-full rounded-full border border-mist bg-white py-2 pl-9 pr-8 text-sm text-ink placeholder:text-ink/40 focus:border-bordeaux/40 focus:outline-none"
-          />
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              aria-label="Xoá tìm kiếm"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink/40 hover:text-ink"
-            >
-              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
-                <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-              </svg>
-            </button>
-          )}
-        </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => setWeekStart(startOfWeek(new Date()))}
+          className="rounded-full border border-mist px-4 py-2 text-sm font-medium text-ink hover:bg-mist"
+        >
+          Tuần này
+        </button>
+        <button
+          type="button"
+          onClick={() => setWeekStart((d) => addWeeks(d, 1))}
+          aria-label="Tuần sau"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-mist text-ink hover:bg-mist"
+        >
+          <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
+            <path d="M7.5 4.5 14 10l-6.5 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <span className="ml-1 text-sm font-medium text-ink/70">{formatWeekRangeLabel(weekStart)}</span>
       </div>
 
       {loading && <Loader label="Đang tải thời khoá biểu..." />}
@@ -258,10 +213,19 @@ export default function AdminSchedulesPage() {
                         return (
                           <div
                             key={schedule.id}
-                            className="rounded-xl border border-mist bg-white p-2.5 text-xs shadow-sm"
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => openEditModal(schedule)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                openEditModal(schedule);
+                              }
+                            }}
+                            className="cursor-pointer rounded-xl border border-mist bg-white p-2.5 text-xs shadow-sm transition hover:border-bordeaux/40 hover:bg-mist/20"
                           >
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="inline-flex items-center gap-1 rounded-full bg-gold/20 px-2 py-0.5 font-semibold text-ink">
+                            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                              <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-gold/20 px-2 py-0.5 font-semibold text-ink">
                                 Ca {caNumber}
                                 {schedule.recurringId && (
                                   <svg
@@ -280,12 +244,12 @@ export default function AdminSchedulesPage() {
                                   </svg>
                                 )}
                               </span>
-                              <span className="font-medium text-ink/70">
+                              <span className="whitespace-nowrap font-semibold text-bordeaux">
                                 {formatTime(start)}–{formatTime(end)}
                               </span>
                             </div>
-                            <p className="mt-1.5 truncate font-semibold text-ink" title={schedule.course?.title}>
-                              {schedule.course?.title || "—"}
+                            <p className="mt-1.5 truncate font-semibold text-ink" title={schedule.courseTitle}>
+                              {schedule.courseTitle || "—"}
                             </p>
                             <p className="mt-0.5 truncate text-ink/70" title={schedule.studentName}>
                               {schedule.studentName}
@@ -293,13 +257,6 @@ export default function AdminSchedulesPage() {
                             <p className="truncate text-ink/50" title={schedule.studentEmail}>
                               {schedule.studentEmail}
                             </p>
-                            <button
-                              type="button"
-                              onClick={() => openEditModal(schedule)}
-                              className="mt-2 w-full rounded-full border border-mist py-1 text-center font-medium text-bordeaux transition hover:bg-mist/50"
-                            >
-                              Sửa
-                            </button>
                           </div>
                         );
                       })

@@ -180,7 +180,7 @@ export interface StudentSchedule {
   id: string;
   studentName: string;
   studentEmail: string;
-  courseId: string;
+  courseTitle: string;
   startTime: string;
   duration: number;
   note: string | null;
@@ -188,13 +188,12 @@ export interface StudentSchedule {
   reminderSentAt: string | null;
   createdAt: string;
   updatedAt: string;
-  course?: { id: string; title: string };
 }
 
 export interface StudentScheduleInput {
   studentName: string;
   studentEmail: string;
-  courseId: string;
+  courseTitle: string;
   startTime: string; // ISO string
   duration: number;
   note?: string;
@@ -206,7 +205,7 @@ export interface RecurringSchedule {
   id: string;
   studentName: string;
   studentEmail: string;
-  courseId: string;
+  courseTitle: string;
   startTime: string;
   duration: number;
   note: string | null;
@@ -215,13 +214,12 @@ export interface RecurringSchedule {
   generatedUntil: string;
   createdAt: string;
   updatedAt: string;
-  course?: { id: string; title: string };
 }
 
 export interface RecurringScheduleInput {
   studentName: string;
   studentEmail: string;
-  courseId: string;
+  courseTitle: string;
   startTime: string; // ISO string - buổi học đầu tiên
   duration: number;
   note?: string;

@@ -106,8 +106,6 @@ model Course {
   enrollments Enrollment[]
   materials   CourseMaterial[]
   submissions Submission[]
-  schedules   StudentSchedule[]
-  recurringSchedules RecurringSchedule[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
@@ -124,7 +122,9 @@ model StudentSchedule {
   id             String    @id @default(cuid())
   studentName    String
   studentEmail   String
-  courseId       String
+  // Khoá học offline nhập tay tự do (không liên kết Course trên web) - VD
+  // "Pháp Ngữ Trung Cấp B1". Admin gõ trực tiếp, không chọn từ danh sách.
+  courseTitle    String
   startTime      DateTime // mốc ngày giờ bắt đầu buổi học
   duration       Float     @default(1.5) // số giờ học của buổi này, cho phép lẻ (VD: 1.5 = 1 giờ 30 phút)
   note           String?   @db.Text
@@ -137,11 +137,9 @@ model StudentSchedule {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  course    Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
   recurring RecurringSchedule? @relation(fields: [recurringId], references: [id], onDelete: SetNull)
 
   @@unique([recurringId, startTime])
-  @@index([courseId])
   @@index([startTime])
   @@index([recurringId])
 }
@@ -157,7 +155,8 @@ model RecurringSchedule {
   id             String    @id @default(cuid())
   studentName    String
   studentEmail   String
-  courseId       String
+  // Khoá học offline nhập tay tự do, xem giải thích ở StudentSchedule.courseTitle.
+  courseTitle    String
   startTime      DateTime // buổi học đầu tiên - thứ trong tuần + giờ/phút của mốc này là khung giờ lặp lại mỗi tuần
   duration       Float     @default(1.5)
   note           String?   @db.Text
@@ -167,10 +166,8 @@ model RecurringSchedule {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  course    Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
   schedules StudentSchedule[]
 
-  @@index([courseId])
   @@index([active])
 }
 

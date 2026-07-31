@@ -15,13 +15,16 @@ export async function PUT(
   }
 
   const body = await req.json();
-  const { studentName, studentEmail, courseId, startTime, duration, note } = body;
+  const { studentName, studentEmail, courseTitle, startTime, duration, note } = body;
 
   if (studentName !== undefined && !String(studentName).trim()) {
     return NextResponse.json({ error: "Vui lòng nhập tên học viên." }, { status: 400 });
   }
   if (studentEmail !== undefined && !EMAIL_RE.test(String(studentEmail).trim())) {
     return NextResponse.json({ error: "Vui lòng nhập đúng định dạng gmail học viên." }, { status: 400 });
+  }
+  if (courseTitle !== undefined && !String(courseTitle).trim()) {
+    return NextResponse.json({ error: "Vui lòng nhập tên khoá học." }, { status: 400 });
   }
   let parsedStart: Date | undefined;
   if (startTime !== undefined) {
@@ -33,24 +36,17 @@ export async function PUT(
   if (duration !== undefined && (!Number(duration) || Number(duration) <= 0)) {
     return NextResponse.json({ error: "Vui lòng nhập thời lượng buổi học lớn hơn 0." }, { status: 400 });
   }
-  if (courseId !== undefined) {
-    const course = await prisma.course.findUnique({ where: { id: courseId } });
-    if (!course) {
-      return NextResponse.json({ error: "Khoá học không tồn tại." }, { status: 400 });
-    }
-  }
 
   const schedule = await prisma.studentSchedule.update({
     where: { id: params.id },
     data: {
       ...(studentName !== undefined ? { studentName: String(studentName).trim() } : {}),
       ...(studentEmail !== undefined ? { studentEmail: String(studentEmail).trim() } : {}),
-      ...(courseId !== undefined ? { courseId } : {}),
+      ...(courseTitle !== undefined ? { courseTitle: String(courseTitle).trim() } : {}),
       ...(parsedStart !== undefined ? { startTime: parsedStart } : {}),
       ...(duration !== undefined ? { duration: Number(duration) } : {}),
       ...(note !== undefined ? { note: note ? String(note).trim() : null } : {}),
     },
-    include: { course: { select: { id: true, title: true } } },
   });
 
   return NextResponse.json(schedule);

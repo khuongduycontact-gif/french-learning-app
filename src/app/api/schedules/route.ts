@@ -41,7 +41,6 @@ export async function GET(req: NextRequest) {
         : {}),
     },
     orderBy: { startTime: "asc" },
-    include: { course: { select: { id: true, title: true } } },
   });
 
   return NextResponse.json(schedules);
@@ -55,7 +54,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { studentName, studentEmail, courseId, startTime, duration, note } = body;
+  const { studentName, studentEmail, courseTitle, startTime, duration, note } = body;
 
   if (!studentName || !String(studentName).trim()) {
     return NextResponse.json({ error: "Vui lòng nhập tên học viên." }, { status: 400 });
@@ -63,8 +62,8 @@ export async function POST(req: NextRequest) {
   if (!studentEmail || !EMAIL_RE.test(String(studentEmail).trim())) {
     return NextResponse.json({ error: "Vui lòng nhập đúng định dạng gmail học viên." }, { status: 400 });
   }
-  if (!courseId) {
-    return NextResponse.json({ error: "Vui lòng chọn khoá học." }, { status: 400 });
+  if (!courseTitle || !String(courseTitle).trim()) {
+    return NextResponse.json({ error: "Vui lòng nhập tên khoá học." }, { status: 400 });
   }
   const parsedStart = startTime ? new Date(startTime) : null;
   if (!parsedStart || Number.isNaN(parsedStart.getTime())) {
@@ -75,21 +74,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Vui lòng nhập thời lượng buổi học lớn hơn 0." }, { status: 400 });
   }
 
-  const course = await prisma.course.findUnique({ where: { id: courseId } });
-  if (!course) {
-    return NextResponse.json({ error: "Khoá học không tồn tại." }, { status: 400 });
-  }
-
   const schedule = await prisma.studentSchedule.create({
     data: {
       studentName: String(studentName).trim(),
       studentEmail: String(studentEmail).trim(),
-      courseId,
+      courseTitle: String(courseTitle).trim(),
       startTime: parsedStart,
       duration: parsedDuration,
       note: note ? String(note).trim() : null,
     },
-    include: { course: { select: { id: true, title: true } } },
   });
 
   return NextResponse.json(schedule, { status: 201 });

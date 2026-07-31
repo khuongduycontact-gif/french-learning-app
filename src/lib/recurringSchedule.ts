@@ -47,7 +47,7 @@ export async function ensureRecurringSchedulesMaterialized(until?: Date): Promis
       data: toGenerate.map((startTime) => ({
         studentName: rule.studentName,
         studentEmail: rule.studentEmail,
-        courseId: rule.courseId,
+        courseTitle: rule.courseTitle,
         startTime,
         duration: rule.duration,
         note: rule.note,

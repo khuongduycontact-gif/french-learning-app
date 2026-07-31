@@ -7,9 +7,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import type { Course, StudentSchedule, StudentScheduleInput, RecurringScheduleInput } from "@/types";
+import type { StudentSchedule, StudentScheduleInput, RecurringScheduleInput } from "@/types";
 import DatePicker from "./DatePicker";
-import Select from "./Select";
 import { useToast } from "./Toast";
 import { formatWeekdayDate, toISODateLocal } from "@/lib/schedule";
 
@@ -48,12 +47,10 @@ export default function ScheduleFormModal({
 }) {
   const { showToast } = useToast();
   const [mounted, setMounted] = useState(false);
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [coursesLoading, setCoursesLoading] = useState(true);
 
   const [studentName, setStudentName] = useState("");
   const [studentEmail, setStudentEmail] = useState("");
-  const [courseId, setCourseId] = useState("");
+  const [courseTitle, setCourseTitle] = useState("");
   const [date, setDate] = useState("");
   const [hour, setHour] = useState("09");
   const [minute, setMinute] = useState("00");
@@ -84,24 +81,6 @@ export default function ScheduleFormModal({
     };
   }, [open]);
 
-  // Nạp danh sách khoá học 1 lần khi mở modal lần đầu
-  useEffect(() => {
-    if (!open) return;
-    let cancelled = false;
-    setCoursesLoading(true);
-    fetch("/api/courses?sort=newest")
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: Course[]) => {
-        if (!cancelled) setCourses(data);
-      })
-      .finally(() => {
-        if (!cancelled) setCoursesLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [open]);
-
   // Đổ lại dữ liệu form mỗi khi mở modal (thêm mới hoặc sửa ca học khác nhau)
   useEffect(() => {
     if (!open) return;
@@ -111,7 +90,7 @@ export default function ScheduleFormModal({
       const { date: d, hour: h, minute: m } = toDateAndTimeParts(schedule.startTime);
       setStudentName(schedule.studentName);
       setStudentEmail(schedule.studentEmail);
-      setCourseId(schedule.courseId);
+      setCourseTitle(schedule.courseTitle);
       setDate(d);
       setHour(h);
       setMinute(m);
@@ -122,7 +101,7 @@ export default function ScheduleFormModal({
     } else {
       setStudentName("");
       setStudentEmail("");
-      setCourseId("");
+      setCourseTitle("");
       setDate(defaultDate || toISODateLocal(new Date()));
       setHour("09");
       setMinute("00");
@@ -132,11 +111,6 @@ export default function ScheduleFormModal({
       setRepeatEndDate("");
     }
   }, [open, schedule, defaultDate]);
-
-  const courseOptions = useMemo(
-    () => courses.map((c) => ({ value: c.id, label: c.title })),
-    [courses]
-  );
 
   const weekdayPreview = useMemo(() => {
     if (!date) return "";
@@ -162,7 +136,7 @@ export default function ScheduleFormModal({
     if (!studentName.trim()) errs.studentName = "Vui lòng nhập tên học viên.";
     if (!studentEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(studentEmail.trim()))
       errs.studentEmail = "Vui lòng nhập đúng định dạng gmail.";
-    if (!courseId) errs.courseId = "Vui lòng chọn khoá học.";
+    if (!courseTitle.trim()) errs.courseTitle = "Vui lòng nhập tên khoá học.";
     if (!date) errs.date = "Vui lòng chọn ngày học.";
     const durH = parseInt(durationParts.hours, 10) || 0;
     const durM = parseInt(durationParts.minutes, 10) || 0;
@@ -188,7 +162,7 @@ export default function ScheduleFormModal({
       const recurringPayload: RecurringScheduleInput = {
         studentName: studentName.trim(),
         studentEmail: studentEmail.trim(),
-        courseId,
+        courseTitle: courseTitle.trim(),
         startTime: startTime.toISOString(),
         duration,
         note: note.trim() || undefined,
@@ -227,7 +201,7 @@ export default function ScheduleFormModal({
     const payload: StudentScheduleInput = {
       studentName: studentName.trim(),
       studentEmail: studentEmail.trim(),
-      courseId,
+      courseTitle: courseTitle.trim(),
       startTime: startTime.toISOString(),
       duration,
       note: note.trim() || undefined,
@@ -364,20 +338,14 @@ export default function ScheduleFormModal({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-ink">Khoá học</label>
-            <Select
-              value={courseId}
-              onChange={setCourseId}
-              options={
-                coursesLoading
-                  ? [{ value: "", label: "Đang tải danh sách khoá học..." }]
-                  : courseOptions.length > 0
-                    ? courseOptions
-                    : [{ value: "", label: "Chưa có khoá học nào" }]
-              }
-              variant="field"
+            <input
+              value={courseTitle}
+              onChange={(e) => setCourseTitle(e.target.value)}
+              placeholder="Ví dụ: Pháp Ngữ Trung Cấp B1"
+              className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
             />
-            {fieldErrors.courseId && (
-              <p className="mt-1 text-xs text-bordeaux">{fieldErrors.courseId}</p>
+            {fieldErrors.courseTitle && (
+              <p className="mt-1 text-xs text-bordeaux">{fieldErrors.courseTitle}</p>
             )}
           </div>
 

@@ -16,7 +16,6 @@ export async function GET() {
   const rules = await prisma.recurringSchedule.findMany({
     where: { active: true },
     orderBy: { startTime: "asc" },
-    include: { course: { select: { id: true, title: true } } },
   });
 
   return NextResponse.json(rules);
@@ -34,7 +33,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { studentName, studentEmail, courseId, startTime, duration, note, endDate } = body;
+  const { studentName, studentEmail, courseTitle, startTime, duration, note, endDate } = body;
 
   if (!studentName || !String(studentName).trim()) {
     return NextResponse.json({ error: "Vui lòng nhập tên học viên." }, { status: 400 });
@@ -42,8 +41,8 @@ export async function POST(req: NextRequest) {
   if (!studentEmail || !EMAIL_RE.test(String(studentEmail).trim())) {
     return NextResponse.json({ error: "Vui lòng nhập đúng định dạng gmail học viên." }, { status: 400 });
   }
-  if (!courseId) {
-    return NextResponse.json({ error: "Vui lòng chọn khoá học." }, { status: 400 });
+  if (!courseTitle || !String(courseTitle).trim()) {
+    return NextResponse.json({ error: "Vui lòng nhập tên khoá học." }, { status: 400 });
   }
   const parsedStart = startTime ? new Date(startTime) : null;
   if (!parsedStart || Number.isNaN(parsedStart.getTime())) {
@@ -68,18 +67,13 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const course = await prisma.course.findUnique({ where: { id: courseId } });
-  if (!course) {
-    return NextResponse.json({ error: "Khoá học không tồn tại." }, { status: 400 });
-  }
-
   const trimmedNote = note ? String(note).trim() : null;
 
   const rule = await prisma.recurringSchedule.create({
     data: {
       studentName: String(studentName).trim(),
       studentEmail: String(studentEmail).trim(),
-      courseId,
+      courseTitle: String(courseTitle).trim(),
       startTime: parsedStart,
       duration: parsedDuration,
       note: trimmedNote,
@@ -94,7 +88,7 @@ export async function POST(req: NextRequest) {
     data: {
       studentName: rule.studentName,
       studentEmail: rule.studentEmail,
-      courseId: rule.courseId,
+      courseTitle: rule.courseTitle,
       startTime: rule.startTime,
       duration: rule.duration,
       note: rule.note,
@@ -107,7 +101,6 @@ export async function POST(req: NextRequest) {
   const schedules = await prisma.studentSchedule.findMany({
     where: { recurringId: rule.id },
     orderBy: { startTime: "asc" },
-    include: { course: { select: { id: true, title: true } } },
   });
 
   return NextResponse.json({ rule, schedules }, { status: 201 });
