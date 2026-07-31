@@ -37,6 +37,21 @@ export async function PUT(
     return NextResponse.json({ error: "Vui lòng nhập thời lượng buổi học lớn hơn 0." }, { status: 400 });
   }
 
+  // Nếu đổi sang giờ học khác, phải reset reminderSentAt về NULL - nếu
+  // không, buổi học đã từng gửi mail nhắc (hoặc đã trôi qua cửa sổ 8 tiếng
+  // cũ) sẽ bị cron bỏ qua vĩnh viễn cho giờ học mới, coi như "đã gửi" dù
+  // thực ra chưa hề gửi cho giờ mới này.
+  let resetReminder = false;
+  if (parsedStart !== undefined) {
+    const existing = await prisma.studentSchedule.findUnique({
+      where: { id: params.id },
+      select: { startTime: true },
+    });
+    if (existing && existing.startTime.getTime() !== parsedStart.getTime()) {
+      resetReminder = true;
+    }
+  }
+
   const schedule = await prisma.studentSchedule.update({
     where: { id: params.id },
     data: {
@@ -46,6 +61,7 @@ export async function PUT(
       ...(parsedStart !== undefined ? { startTime: parsedStart } : {}),
       ...(duration !== undefined ? { duration: Number(duration) } : {}),
       ...(note !== undefined ? { note: note ? String(note).trim() : null } : {}),
+      ...(resetReminder ? { reminderSentAt: null } : {}),
     },
   });
 
