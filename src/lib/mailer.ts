@@ -20,9 +20,16 @@ if (process.env.SENDGRID_API_KEY) {
 
 const isConfigured = Boolean(process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL);
 
-const FROM_EMAIL = process.env.GMAIL_FROM_NAME
-  ? `"${process.env.GMAIL_FROM_NAME}" <${process.env.SENDGRID_FROM_EMAIL}>`
-  : process.env.SENDGRID_FROM_EMAIL;
+// Dùng dạng object { email, name } thay vì tự ghép chuỗi
+// `"Tên" <email>` - khi ghép chuỗi thủ công như vậy, SendGrid không tự
+// encode phần tên theo chuẩn MIME (RFC 2047) cho ký tự có dấu (VD:
+// "Français avec Céline"), khiến một số mail client (Gmail ở danh sách
+// thư) hiển thị nhầm luôn cả dấu ngoặc kép bao quanh tên ra ngoài. Truyền
+// object để @sendgrid/mail tự encode đúng chuẩn.
+const FROM_EMAIL: string | { email: string; name: string } =
+  process.env.GMAIL_FROM_NAME && process.env.SENDGRID_FROM_EMAIL
+    ? { email: process.env.SENDGRID_FROM_EMAIL, name: process.env.GMAIL_FROM_NAME }
+    : (process.env.SENDGRID_FROM_EMAIL as string);
 
 function escapeHtml(str: string): string {
   return str
@@ -156,7 +163,7 @@ export async function sendClassReminderEmail(params: {
   // tự gửi 1 mail cho tất cả người nhận trong cùng 1 lần gọi.
   try {
     await sgMail.send({
-      from: FROM_EMAIL as string,
+      from: FROM_EMAIL,
       to: recipients,
       subject,
       text,
