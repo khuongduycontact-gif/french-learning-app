@@ -35,7 +35,11 @@ export default async function AdminDashboard({
         confirmedAt: true,
       },
     }),
-    prisma.user.findMany({ select: { id: true, createdAt: true } }),
+    // Chỉ đếm tài khoản học viên (role USER), không tính tài khoản admin
+    prisma.user.findMany({
+      where: { role: "USER" },
+      select: { id: true, createdAt: true },
+    }),
     prisma.enrollment.count({ where: { status: "AWAITING_CONFIRMATION" } }),
   ]);
 
@@ -52,7 +56,7 @@ export default async function AdminDashboard({
   const stats = [
     { label: "Khoá học", value: filteredCourses.length },
     { label: "Lượt đăng ký", value: filteredEnrollments.length },
-    { label: "Người dùng", value: filteredUsers.length },
+    { label: "Học viên", value: filteredUsers.length },
   ];
 
   return (
