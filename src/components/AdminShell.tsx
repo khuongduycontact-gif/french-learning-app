@@ -1,8 +1,9 @@
 import AdminSidebar from "./AdminSidebar";
 
-// Bố cục dùng chung 1 kiểu cho mọi kích thước màn hình: menu luôn nằm bên
-// trái nội dung (không xếp chồng lên nhau trên mobile), tự co giãn theo
-// trạng thái thu gọn/mở rộng của AdminSidebar.
+// Bố cục dùng chung: từ "lg" trở lên, menu là sidebar cố định nằm bên trái
+// nội dung (có thể thu gọn/mở rộng). Dưới "lg" (tablet dọc/mobile), menu
+// chuyển thành drawer trượt (ẩn mặc định) nên không chiếm chỗ - nội dung
+// được dùng toàn bộ chiều ngang còn lại.
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-start gap-4 px-3 py-6 sm:gap-6 sm:px-6 sm:py-10 md:gap-8 md:px-10">

@@ -5,65 +5,108 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { adminNavLinks, isAdminNavActive } from "@/lib/adminNav";
 import AdminNavIcon from "./AdminNavIcons";
+import { useAdminDrawer } from "./AdminDrawerContext";
 
 const STORAGE_KEY = "admin-sidebar-collapsed";
-// Dùng chung điểm ngắt "md" của Tailwind (768px) để phân biệt mobile/tablet dọc
-// với desktop/tablet ngang.
-const MOBILE_QUERY = "(max-width: 767px)";
 
-// Menu quản trị dùng chung 1 kiểu cho mọi kích thước màn hình (pc, tablet, mobile):
-// - Desktop/tablet: mặc định mở rộng (hoặc theo lựa chọn đã lưu của người dùng).
-// - Mobile: mặc định thu gọn về dạng icon, bấm nút mới mở rộng ra đầy đủ, và
-//   tự thu gọn lại sau khi chuyển trang để không chiếm chỗ nội dung.
-export default function AdminSidebar() {
+function NavList({
+  collapsed,
+  onNavigate,
+}: {
+  collapsed: boolean;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
-  const [isMobile, setIsMobile] = useState(false);
-  const [collapsed, setCollapsed] = useState(true);
+
+  return (
+    <nav className="flex flex-col gap-1 text-sm">
+      {adminNavLinks.map((link) => {
+        const active = isAdminNavActive(pathname, link.href, link.exact);
+        return (
+          <Link
+            key={link.href}
+            href={link.href}
+            aria-current={active ? "page" : undefined}
+            title={collapsed ? link.label : undefined}
+            onClick={onNavigate}
+            className={`group relative flex min-w-0 items-center rounded-xl px-3 py-2.5 font-medium transition-colors ${
+              collapsed ? "justify-center gap-0" : "justify-start gap-3"
+            } ${
+              active
+                ? "bg-gradient-to-r from-ink/10 via-white/80 to-bordeaux/10 text-ink ring-1 ring-inset ring-mist/70 shadow-sm"
+                : "text-ink/80 hover:bg-mist/70 hover:text-ink"
+            }`}
+          >
+            <AdminNavIcon
+              name={link.icon}
+              className={`h-5 w-5 shrink-0 transition-colors ${
+                active ? "text-bordeaux" : "text-ink/50 group-hover:text-ink"
+              }`}
+            />
+            {!collapsed && (
+              <span className="min-w-0 truncate">{link.label}</span>
+            )}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+function MenuIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M3.5 6h13M3.5 10h13M3.5 14h13" />
+    </svg>
+  );
+}
+
+function CloseIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M5 5l10 10M15 5L5 15" />
+    </svg>
+  );
+}
+
+// Sidebar cố định cho desktop/tablet ngang (>= lg, 1024px): có thể thu
+// gọn về dạng icon hoặc mở rộng đầy đủ, lựa chọn được ghi nhớ lại.
+function DesktopSidebar() {
+  const [collapsed, setCollapsed] = useState(false);
   const [ready, setReady] = useState(false);
 
-  // Xác định loại thiết bị + trạng thái thu gọn ban đầu, và theo dõi khi
-  // người dùng xoay màn hình / thay đổi kích thước cửa sổ qua lại giữa
-  // mobile và desktop.
   useEffect(() => {
-    const mql = window.matchMedia(MOBILE_QUERY);
-
-    const applyState = (mobile: boolean) => {
-      setIsMobile(mobile);
-      if (mobile) {
-        // Trên mobile/tablet nhỏ: luôn mặc định hiển thị dạng icon thu gọn.
-        setCollapsed(true);
-      } else {
-        // Trên desktop: khôi phục lựa chọn đã lưu trước đó của người dùng.
-        try {
-          setCollapsed(window.localStorage.getItem(STORAGE_KEY) === "1");
-        } catch {
-          setCollapsed(false);
-        }
-      }
-    };
-
-    applyState(mql.matches);
+    try {
+      setCollapsed(window.localStorage.getItem(STORAGE_KEY) === "1");
+    } catch {
+      setCollapsed(false);
+    }
     setReady(true);
-
-    const handleChange = (e: MediaQueryListEvent) => applyState(e.matches);
-    mql.addEventListener("change", handleChange);
-    return () => mql.removeEventListener("change", handleChange);
   }, []);
-
-  // Trên mobile: tự thu gọn lại mỗi khi chuyển trang.
-  useEffect(() => {
-    if (isMobile) setCollapsed(true);
-  }, [pathname, isMobile]);
 
   const toggle = () => {
     setCollapsed((prev) => {
       const next = !prev;
-      if (!isMobile) {
-        try {
-          window.localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
-        } catch {
-          // localStorage có thể bị chặn (chế độ ẩn danh nghiêm ngặt...) - bỏ qua.
-        }
+      try {
+        window.localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
+      } catch {
+        // localStorage có thể bị chặn (chế độ ẩn danh nghiêm ngặt...) - bỏ qua.
       }
       return next;
     });
@@ -93,54 +136,61 @@ export default function AdminSidebar() {
           title={collapsed ? "Mở rộng menu" : "Thu gọn menu"}
           className="flex h-8 w-8 shrink-0 items-center justify-center text-ink/40 transition hover:text-ink"
         >
-          <svg
-            viewBox="0 0 20 20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.75}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-5 w-5"
-          >
-            <path d="M3.5 6h13M3.5 10h13M3.5 14h13" />
-          </svg>
+          <MenuIcon className="h-5 w-5" />
         </button>
       </div>
 
-      <nav className="flex flex-col gap-1 text-sm">
-        {adminNavLinks.map((link) => {
-          const active = isAdminNavActive(pathname, link.href, link.exact);
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              aria-current={active ? "page" : undefined}
-              title={collapsed ? link.label : undefined}
-              className={`group relative flex min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 font-medium transition-colors ${
-                collapsed ? "justify-center" : "justify-start"
-              } ${
-                active
-                  ? "bg-gradient-to-r from-ink/10 via-white/80 to-bordeaux/10 text-ink ring-1 ring-inset ring-mist/70 shadow-sm"
-                  : "text-ink/80 hover:bg-mist/70 hover:text-ink"
-              }`}
-            >
-              <AdminNavIcon
-                name={link.icon}
-                className={`h-5 w-5 shrink-0 transition-colors ${
-                  active ? "text-bordeaux" : "text-ink/50 group-hover:text-ink"
-                }`}
-              />
-              <span
-                className={`min-w-0 truncate transition-[opacity,max-width] duration-200 ${
-                  collapsed ? "max-w-0 opacity-0" : "max-w-[180px] opacity-100"
-                }`}
-              >
-                {link.label}
-              </span>
-            </Link>
-          );
-        })}
-      </nav>
+      <NavList collapsed={collapsed} />
     </aside>
   );
+}
+
+// Drawer trượt cho tablet dọc/mobile (< lg, 1024px): ẩn mặc định, mở bằng
+// nút menu trên AdminHeader, không chiếm chỗ của phần nội dung.
+function DrawerSidebar() {
+  const { drawerOpen, closeDrawer } = useAdminDrawer();
+
+  return (
+    <>
+      <div
+        aria-hidden="true"
+        onClick={closeDrawer}
+        className={`fixed inset-0 z-40 bg-ink/40 backdrop-blur-[1px] transition-opacity duration-300 ${
+          drawerOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+      <aside
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu quản trị"
+        className={`fixed inset-y-0 left-0 z-50 flex h-full w-72 max-w-[82vw] flex-col overflow-y-auto border-r border-mist bg-parchment p-4 shadow-xl transition-transform duration-300 ease-out ${
+          drawerOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="mb-3 flex items-center justify-between px-1 pb-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+            Quản trị
+          </p>
+          <button
+            type="button"
+            onClick={closeDrawer}
+            aria-label="Đóng menu quản trị"
+            className="flex h-8 w-8 shrink-0 items-center justify-center text-ink/40 transition hover:text-ink"
+          >
+            <CloseIcon className="h-5 w-5" />
+          </button>
+        </div>
+
+        <NavList collapsed={false} onNavigate={closeDrawer} />
+      </aside>
+    </>
+  );
+}
+
+export default function AdminSidebar() {
+  const { isDrawerMode, ready } = useAdminDrawer();
+
+  if (!ready) return <div className="hidden w-64 shrink-0 lg:block" />;
+
+  return isDrawerMode ? <DrawerSidebar /> : <DesktopSidebar />;
 }

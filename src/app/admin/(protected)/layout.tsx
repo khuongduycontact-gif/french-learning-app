@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import AdminHeader from "@/components/AdminHeader";
 import AdminShell from "@/components/AdminShell";
+import { AdminDrawerProvider } from "@/components/AdminDrawerContext";
 
 export default async function AdminLayout({
   children,
@@ -15,9 +16,11 @@ export default async function AdminLayout({
   if (session.user.role !== "ADMIN") redirect("/");
 
   return (
-    <div className="min-h-screen">
-      <AdminHeader />
-      <AdminShell>{children}</AdminShell>
-    </div>
+    <AdminDrawerProvider>
+      <div className="min-h-screen">
+        <AdminHeader />
+        <AdminShell>{children}</AdminShell>
+      </div>
+    </AdminDrawerProvider>
   );
 }
