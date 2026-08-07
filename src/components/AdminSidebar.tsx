@@ -97,12 +97,12 @@ export default function AdminSidebar() {
             viewBox="0 0 20 20"
             fill="none"
             stroke="currentColor"
-            strokeWidth={2}
+            strokeWidth={1.75}
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={`h-4 w-4 transition-transform duration-300 ${collapsed ? "" : "rotate-180"}`}
+            className="h-4 w-4"
           >
-            <path d="M7.5 4.5 13 10l-5.5 5.5" />
+            <path d="M3.5 6h13M3.5 10h13M3.5 14h13" />
           </svg>
         </button>
       </div>

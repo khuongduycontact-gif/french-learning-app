@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const CONTACT_EMAIL = "celinenguyen2207@gmail.com";
+const CONTACT_EMAIL = "francaisavecceline.tcfdelf@gmail.com";
 
 type IconProps = { className?: string };
 
