@@ -91,7 +91,7 @@ export default function AdminSidebar() {
           aria-label={collapsed ? "Mở rộng menu quản trị" : "Thu gọn menu quản trị"}
           aria-pressed={collapsed}
           title={collapsed ? "Mở rộng menu" : "Thu gọn menu"}
-          className="flex h-6 w-6 shrink-0 items-center justify-center text-ink/40 transition hover:text-ink"
+          className="flex h-8 w-8 shrink-0 items-center justify-center text-ink/40 transition hover:text-ink"
         >
           <svg
             viewBox="0 0 20 20"
@@ -100,7 +100,7 @@ export default function AdminSidebar() {
             strokeWidth={1.75}
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="h-4 w-4"
+            className="h-5 w-5"
           >
             <path d="M3.5 6h13M3.5 10h13M3.5 14h13" />
           </svg>
@@ -120,7 +120,7 @@ export default function AdminSidebar() {
                 collapsed ? "justify-center" : "justify-start"
               } ${
                 active
-                  ? "bg-bordeaux/10 text-bordeaux"
+                  ? "bg-gradient-to-r from-ink/10 via-white/80 to-bordeaux/10 text-ink ring-1 ring-inset ring-mist/70 shadow-sm"
                   : "text-ink/80 hover:bg-mist/70 hover:text-ink"
               }`}
             >
@@ -137,12 +137,6 @@ export default function AdminSidebar() {
               >
                 {link.label}
               </span>
-              {active && (
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-l-full bg-bordeaux"
-                />
-              )}
             </Link>
           );
         })}
