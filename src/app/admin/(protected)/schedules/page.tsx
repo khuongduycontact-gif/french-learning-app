@@ -225,7 +225,7 @@ export default function AdminSchedulesPage() {
                             }}
                             className="cursor-pointer rounded-xl border border-mist bg-white p-2.5 text-xs shadow-sm transition hover:border-bordeaux/40 hover:bg-mist/20"
                           >
-                            <div className="flex items-center justify-between gap-1.5">
+                            <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-1">
                               <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-gold/20 px-2 py-0.5 font-semibold text-ink">
                                 Ca {caNumber}
                                 {schedule.recurringId && (

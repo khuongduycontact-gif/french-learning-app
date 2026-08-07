@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import AdminHeader from "@/components/AdminHeader";
-import AdminSidebar from "@/components/AdminSidebar";
+import AdminShell from "@/components/AdminShell";
 
 export default async function AdminLayout({
   children,
@@ -17,11 +17,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen">
       <AdminHeader />
-
-      <div className="grid gap-8 px-6 py-10 md:grid-cols-[minmax(220px,auto)_1fr] md:px-10">
-        <AdminSidebar />
-        <div className="min-w-0">{children}</div>
-      </div>
+      <AdminShell>{children}</AdminShell>
     </div>
   );
 }
