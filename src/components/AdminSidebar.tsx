@@ -75,32 +75,34 @@ export default function AdminSidebar() {
         collapsed ? "w-[76px]" : "w-64"
       } ${ready ? "" : "invisible"}`}
     >
-      <div className="mb-2 flex items-center justify-between gap-2 px-1 pb-1">
-        <p
-          className={`min-w-0 truncate text-xs font-semibold uppercase tracking-wide text-ink/50 transition-opacity duration-200 ${
-            collapsed ? "pointer-events-none w-0 opacity-0" : "opacity-100"
-          }`}
-        >
-          Quản trị
-        </p>
+      <div
+        className={`mb-2 flex items-center gap-2 px-1 pb-1 ${
+          collapsed ? "justify-center" : "justify-between"
+        }`}
+      >
+        {!collapsed && (
+          <p className="min-w-0 truncate text-xs font-semibold uppercase tracking-wide text-ink/50">
+            Quản trị
+          </p>
+        )}
         <button
           type="button"
           onClick={toggle}
           aria-label={collapsed ? "Mở rộng menu quản trị" : "Thu gọn menu quản trị"}
           aria-pressed={collapsed}
           title={collapsed ? "Mở rộng menu" : "Thu gọn menu"}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-ink/50 transition hover:bg-mist hover:text-ink"
+          className="flex h-6 w-6 shrink-0 items-center justify-center text-ink/40 transition hover:text-ink"
         >
           <svg
             viewBox="0 0 20 20"
             fill="none"
             stroke="currentColor"
-            strokeWidth={1.75}
+            strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={`h-4 w-4 transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`}
+            className={`h-4 w-4 transition-transform duration-300 ${collapsed ? "" : "rotate-180"}`}
           >
-            <path d="M12.5 4.5 7 10l5.5 5.5" />
+            <path d="M7.5 4.5 13 10l-5.5 5.5" />
           </svg>
         </button>
       </div>
