@@ -6,11 +6,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import DictionaryLookup from "@/components/DictionaryLookup";
 import BackToTop from "@/components/BackToTop";
 import ContactButton from "@/components/ContactButton";
-
-// TODO: khi mua domain riêng (vd: francaisavecceline.com), đổi giá trị này —
-// toàn bộ metadata, sitemap.xml, robots.txt sẽ tự dùng domain mới.
-export const SITE_URL = "https://francaisavecceline.vercel.app";
-const SITE_NAME = "Français avec Céline";
+import { SITE_URL, SITE_NAME } from "@/lib/site";
 
 const display = Playfair_Display({
   subsets: ["latin", "vietnamese"],

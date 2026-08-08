@@ -40,18 +40,18 @@ export const adminNavLinks: AdminNavEntry[] = [
   { type: "link", href: "/admin", label: "Tổng quan", exact: true, icon: "dashboard" },
   {
     type: "group",
-    label: "Khoá học",
+    label: "Quản lý khoá học",
     icon: "course",
     children: [
       { href: "/admin/courses", label: "Khoá học", exact: false },
       { href: "/admin/enrollments", label: "Đăng ký & thanh toán", exact: false },
       { href: "/admin/submissions", label: "Bài nộp", exact: false },
-      { href: "/admin/schedules", label: "Thời khoá biểu", exact: false },
     ],
   },
+  { type: "link", href: "/admin/schedules", label: "Thời khoá biểu", exact: false, icon: "schedule" },
   {
     type: "group",
-    label: "Sách",
+    label: "Quản lý sách",
     icon: "book",
     children: [
       { href: "/admin/books", label: "Sách", exact: false },

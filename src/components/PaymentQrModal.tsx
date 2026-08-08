@@ -112,6 +112,20 @@ export default function PaymentQrModal({
             </p>
           )}
 
+          {/* Chỉ hiện trên điện thoại: mở thẳng app ngân hàng, điền sẵn STK/số tiền/nội dung */}
+          {payment.deeplinkUrl && (
+            <a
+              href={payment.deeplinkUrl}
+              className="mb-4 flex items-center justify-center gap-2 rounded-2xl bg-ink px-5 py-3.5 text-sm font-semibold text-parchment shadow-sm transition hover:bg-ink/90 sm:hidden"
+            >
+              <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="none">
+                <rect x="5" y="2" width="10" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M9 15h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              Mở app ngân hàng để thanh toán
+            </a>
+          )}
+
           <div className="mb-5 flex flex-col gap-2 rounded-2xl bg-mist/40 p-4 text-sm">
             {payment.bankName && (
               <div className="flex items-center justify-between gap-3">

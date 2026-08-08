@@ -56,7 +56,12 @@ export default function AdminSubmissionsPage() {
   useEffect(() => {
     if (highlightId) {
       setExpandedId(highlightId);
-      highlightRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [highlightId]);
+
+  useEffect(() => {
+    if (highlightId && highlightRef.current) {
+      highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [highlightId, submissions]);
 
@@ -152,6 +157,12 @@ export default function AdminSubmissionsPage() {
   useEffect(() => {
     setPage(1);
   }, [statusFilter, courseFilter, materialFilter, fromDate, toDate, search]);
+
+  useEffect(() => {
+    if (!highlightId) return;
+    const idx = filtered.findIndex((s) => s.id === highlightId);
+    if (idx >= 0) setPage(Math.floor(idx / PAGE_SIZE) + 1);
+  }, [highlightId, filtered]);
 
   function handleGraded(updated: Submission) {
     setSubmissions((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));

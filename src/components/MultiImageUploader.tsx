@@ -89,7 +89,7 @@ export default function MultiImageUploader({ label, values, onChange, error: ext
                 type="button"
                 onClick={() => handleRemove(i)}
                 aria-label="Xoá ảnh"
-                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/70 text-xs text-parchment opacity-0 transition-opacity group-hover:opacity-100"
+                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/70 text-xs text-parchment transition-colors hover:bg-ink/90"
               >
                 ✕
               </button>

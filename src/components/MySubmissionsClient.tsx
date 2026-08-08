@@ -124,6 +124,12 @@ export default function MySubmissionsClient() {
   }, [statusFilter, courseFilter, materialFilter, fromDate, toDate, search]);
 
   useEffect(() => {
+    if (!highlightId) return;
+    const idx = filtered.findIndex((s) => s.id === highlightId);
+    if (idx >= 0) setPage(Math.floor(idx / PAGE_SIZE) + 1);
+  }, [highlightId, filtered]);
+
+  useEffect(() => {
     if (highlightId) {
       document.getElementById(highlightId)?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
