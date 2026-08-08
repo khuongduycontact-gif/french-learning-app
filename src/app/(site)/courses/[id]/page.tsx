@@ -354,14 +354,24 @@ export default async function CourseDetailPage({
               {levelLabel[course.level] ?? course.level}
             </span>
 
-            <h1 className="mt-3 break-words font-display text-lg font-bold text-ink">
-              {course.title}
-            </h1>
+            <div className="mt-3 flex flex-col gap-0.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-ink">
+                Tên khoá học
+              </span>
+              <h1 className="break-words font-display text-lg font-bold text-ink">
+                {course.title}
+              </h1>
+            </div>
 
-            <RichText
-              content={course.description}
-              className="mt-3 break-words text-lg text-ink/60"
-            />
+            <div className="mt-3 flex flex-col gap-0.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-indigo-500">
+                Mô tả
+              </span>
+              <RichText
+                content={course.description}
+                className="break-words text-lg text-ink/60"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -411,6 +421,18 @@ export default async function CourseDetailPage({
               autoStart={searchParams?.enroll === "1"}
             />
           </div>
+
+          {/* Bài học miễn phí xem thử không cần đăng nhập/đăng ký - nhắc rõ
+              để tránh hiểu lầm rằng nút "Đăng nhập để đăng ký" ở trên là bắt
+              buộc mới xem được nội dung, trong khi phần "Tài liệu học" bên
+              dưới đã cho xem trước các bài học miễn phí ngay không cần đăng
+              nhập. */}
+          {!isConfirmed && freeLessonCount > 0 && (
+            <p className="mt-3 text-center text-xs text-ink/50">
+              {freeLessonCount} bài học đầu miễn phí - xem thử ngay bên dưới,
+              không cần đăng nhập.
+            </p>
+          )}
         </aside>
 
         {visibleMaterials.length > 0 && (
@@ -438,9 +460,9 @@ export default async function CourseDetailPage({
             />
             {!isConfirmed && lockedLessonCount > 0 && (
               <p className="mt-4 shrink-0 border-t border-mist pt-4 text-sm text-ink/60">
-                Bạn đã xem hết {freeLessonCount} bài học miễn phí. Còn{" "}
-                {lockedLessonCount} bài học nữa - hãy đăng ký khoá học để học
-                tiếp.
+                Khoá học có tất cả {course.materials.length} bài, bạn sẽ
+                được xem miễn phí {freeLessonCount} bài, nếu muốn tiếp tục
+                hãy đăng ký khoá học.
               </p>
             )}
           </div>
@@ -455,8 +477,7 @@ export default async function CourseDetailPage({
               </h2>
               <div className="ribbon-rule my-3 shrink-0" />
               <p className="text-sm text-ink/60">
-                Đăng ký khoá học để xem toàn bộ {course.materials.length} bài
-                học.
+                Đăng ký khoá học để xem toàn bộ các bài học.
               </p>
             </div>
           )}

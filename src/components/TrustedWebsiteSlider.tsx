@@ -39,13 +39,16 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
       rel="noopener noreferrer"
       draggable={false}
       title={plainDescription || website.name}
-      className="group block w-[168px] shrink-0 select-none rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
+      className="group block w-[168px] shrink-0 select-none transform-gpu rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
     >
       {/* Khối bo góc + cắt nội dung (overflow-hidden) tách riêng khỏi thẻ
           <a> ở ngoài - thẻ ngoài chỉ giữ shadow/rounded-2xl/hover. Nếu
           overflow-hidden nằm chung khối với shadow, khi track slider được
           transform liên tục (tự chạy) trình duyệt có thể vẽ sai khiến bóng
-          hover to ra và mất bo góc, không ôm sát thẻ như thẻ khoá học tĩnh. */}
+          hover to ra và mất bo góc, không ôm sát thẻ như thẻ khoá học tĩnh.
+          transform-gpu: ép thẻ có layer GPU riêng, tách khỏi transform liên
+          tục của track cha, để bóng đổ luôn mỏng/ôm sát và giữ bo góc giống
+          hệt CourseCard thay vì bị vẽ to/vuông khi track đang tự chạy. */}
       <div className="overflow-hidden rounded-2xl border border-mist bg-white">
         <div className="relative aspect-[16/10] w-full overflow-hidden bg-white">
           <div className="h-full w-full p-2">
@@ -78,7 +81,7 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
             <span className="text-[9px] font-semibold uppercase tracking-wide text-ink">
               Tên website
             </span>
-            <p className="line-clamp-1 min-w-0 font-body text-sm font-bold text-ink">
+            <p className="line-clamp-1 min-w-0 font-body text-xs font-bold text-ink">
               {website.name}
             </p>
           </div>

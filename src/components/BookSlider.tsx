@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Book } from "@/types";
 import { formatVnd } from "@/lib/format";
+import { stripRichText } from "@/lib/richtext";
 
 // Tốc độ tự chạy: pixel/giây
 const AUTO_SPEED = 45;
@@ -32,17 +33,21 @@ function TagIcon({ className }: { className?: string }) {
 
 function BookTile({ book }: { book: Book }) {
   const initial = book.title.trim().slice(0, 1).toUpperCase();
+  const plainDescription = stripRichText(book.description);
   return (
     <Link
       href={`/books/${book.id}`}
       draggable={false}
-      className="group block w-[168px] shrink-0 select-none rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
+      className="group block w-[168px] shrink-0 select-none transform-gpu rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
     >
       {/* Khối bo góc + cắt nội dung (overflow-hidden) tách riêng khỏi thẻ
           <Link> ở ngoài - thẻ ngoài chỉ giữ shadow/rounded-2xl/hover. Nếu
           overflow-hidden nằm chung khối với shadow, khi track slider được
           transform liên tục (tự chạy) trình duyệt có thể vẽ sai khiến bóng
-          hover to ra và mất bo góc, không ôm sát thẻ như thẻ khoá học tĩnh. */}
+          hover to ra và mất bo góc, không ôm sát thẻ như thẻ khoá học tĩnh.
+          transform-gpu: ép thẻ có layer GPU riêng, tách khỏi transform liên
+          tục của track cha, để bóng đổ luôn mỏng/ôm sát và giữ bo góc giống
+          hệt CourseCard thay vì bị vẽ to/vuông khi track đang tự chạy. */}
       <div className="overflow-hidden rounded-2xl border border-mist bg-white">
         <div className="relative aspect-[3/4] w-full overflow-hidden bg-white">
           <div className="h-full w-full p-2">
@@ -71,10 +76,20 @@ function BookTile({ book }: { book: Book }) {
             <span className="text-[9px] font-semibold uppercase tracking-wide text-ink">
               Tên sách
             </span>
-            <p className="line-clamp-1 min-w-0 font-body text-sm font-bold text-ink">
+            <p className="line-clamp-1 min-w-0 font-body text-xs font-bold text-ink">
               {book.title}
             </p>
           </div>
+          {plainDescription && (
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[9px] font-semibold uppercase tracking-wide text-ink/40">
+                Nội dung
+              </span>
+              <p className="line-clamp-1 min-w-0 text-xs text-ink/60">
+                {plainDescription}
+              </p>
+            </div>
+          )}
           <div className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-2 py-1.5">
             <TagIcon className="h-3.5 w-3.5 shrink-0 text-amber-500" />
             <p className="truncate text-xs font-bold text-ink">
