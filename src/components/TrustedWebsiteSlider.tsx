@@ -29,33 +29,6 @@ function LinkIcon({ className }: { className?: string }) {
   );
 }
 
-// Icon nhỏ đặt trước tên và mô tả website, đồng bộ với CourseCard/BookCard.
-function BookmarkIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4-7 4V4.5a1 1 0 0 1 1-1Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function AlignLeftIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        d="M4 6h16M4 12h10M4 18h13"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
 function WebsiteTile({ website }: { website: TrustedWebsite }) {
   const initial = website.name.trim().slice(0, 1).toUpperCase();
   const plainDescription = stripRichText(website.description);
@@ -66,49 +39,60 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
       rel="noopener noreferrer"
       draggable={false}
       title={plainDescription || website.name}
-      className="group block w-[168px] shrink-0 select-none overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
+      className="group block w-[168px] shrink-0 select-none rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
     >
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-white">
-        <div className="h-full w-full p-2">
-          <div className="relative h-full w-full overflow-hidden rounded-xl">
-            {website.coverImage ? (
-              <Image
-                src={website.coverImage}
-                alt={website.name}
-                fill
-                draggable={false}
-                sizes="188px"
-                className="object-cover transition duration-300 group-hover:scale-105 pointer-events-none"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
-                <span className="select-none font-body text-4xl font-bold text-indigo-400">
-                  {initial}
-                </span>
-              </div>
-            )}
+      {/* Khối bo góc + cắt nội dung (overflow-hidden) tách riêng khỏi thẻ
+          <a> ở ngoài - thẻ ngoài chỉ giữ shadow/rounded-2xl/hover. Nếu
+          overflow-hidden nằm chung khối với shadow, khi track slider được
+          transform liên tục (tự chạy) trình duyệt có thể vẽ sai khiến bóng
+          hover to ra và mất bo góc, không ôm sát thẻ như thẻ khoá học tĩnh. */}
+      <div className="overflow-hidden rounded-2xl border border-mist bg-white">
+        <div className="relative aspect-[16/10] w-full overflow-hidden bg-white">
+          <div className="h-full w-full p-2">
+            <div className="relative h-full w-full overflow-hidden rounded-xl">
+              {website.coverImage ? (
+                <Image
+                  src={website.coverImage}
+                  alt={website.name}
+                  fill
+                  draggable={false}
+                  sizes="188px"
+                  className="object-cover pointer-events-none"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
+                  <span className="select-none font-body text-4xl font-bold text-indigo-400">
+                    {initial}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col gap-1.5 p-3">
-        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-bordeaux/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-bordeaux">
-          <LinkIcon className="h-2.5 w-2.5" />
-          Tham khảo
-        </span>
-        <div className="flex items-center gap-1.5">
-          <BookmarkIcon className="h-3 w-3 shrink-0 text-ink/35" />
-          <p className="line-clamp-1 min-w-0 font-body text-sm font-bold text-ink">
-            {website.name}
-          </p>
-        </div>
-        {plainDescription && (
-          <div className="flex items-start gap-1.5">
-            <AlignLeftIcon className="mt-0.5 h-3 w-3 shrink-0 text-ink/30" />
-            <p className="line-clamp-1 min-w-0 text-xs text-ink/60">
-              {plainDescription}
+        <div className="flex flex-col gap-1.5 p-3">
+          <span className="inline-flex w-fit items-center gap-1 rounded-full bg-bordeaux/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-bordeaux">
+            <LinkIcon className="h-2.5 w-2.5" />
+            Tham khảo
+          </span>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[9px] font-semibold uppercase tracking-wide text-ink">
+              Tên website
+            </span>
+            <p className="line-clamp-1 min-w-0 font-body text-sm font-bold text-ink">
+              {website.name}
             </p>
           </div>
-        )}
+          {plainDescription && (
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[9px] font-semibold uppercase tracking-wide text-ink/40">
+                Nội dung
+              </span>
+              <p className="line-clamp-1 min-w-0 text-xs text-ink/60">
+                {plainDescription}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </a>
   );

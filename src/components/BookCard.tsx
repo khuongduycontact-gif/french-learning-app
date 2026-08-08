@@ -32,34 +32,6 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
-// Icon nhỏ đặt trước tên sách và mô tả sách, giúp phân biệt rõ 2 loại
-// thông tin thay vì chỉ hiển thị chữ trơn - đồng bộ với CourseCard.
-function BookmarkIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4-7 4V4.5a1 1 0 0 1 1-1Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function AlignLeftIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        d="M4 6h16M4 12h10M4 18h13"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
 function HourglassIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
@@ -157,92 +129,103 @@ export default function BookCard({
   const initial = book.title.trim().slice(0, 1).toUpperCase();
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <Link href={`/books/${book.id}`} className="contents">
-        <div className="relative h-48 w-full overflow-hidden bg-white">
-          <div className="h-full w-full p-2">
-            <div className="relative h-full w-full overflow-hidden rounded-xl">
-              {book.coverImage ? (
-                <Image
-                  src={book.coverImage}
-                  alt={book.title}
-                  fill
-                  className="object-cover transition duration-300 group-hover:scale-105"
-                />
-              ) : (
-                <BookPlaceholder initial={initial} />
-              )}
+    // Bọc ngoài (relative, KHÔNG overflow-hidden) chỉ giữ shadow/rounded-2xl/
+    // hover - tách riêng khỏi khối overflow-hidden bên trong. Nếu overflow-
+    // hidden nằm chung khối với shadow, bóng đổ khi hover sẽ bị cắt/bó hẹp
+    // sát viền dưới thẻ thay vì ôm đều quanh thẻ (đồng bộ với BookSlider và
+    // TrustedWebsiteSlider - 2 nơi đã tách đúng theo cách này).
+    <div className="group relative rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <div className="flex flex-col overflow-hidden rounded-2xl border border-mist bg-white">
+        <Link href={`/books/${book.id}`} className="contents">
+          <div className="relative h-48 w-full overflow-hidden bg-white">
+            <div className="h-full w-full p-2">
+              <div className="relative h-full w-full overflow-hidden rounded-xl">
+                {book.coverImage ? (
+                  <Image
+                    src={book.coverImage}
+                    alt={book.title}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <BookPlaceholder initial={initial} />
+                )}
+              </div>
             </div>
-          </div>
-          {!book.published && (
-            <span className="absolute left-2.5 top-2.5 rounded-full bg-ink/85 px-2 py-0.5 text-[10px] font-medium text-parchment shadow-sm">
-              Bản nháp
-            </span>
-          )}
-        </div>
-
-        <div className="flex flex-1 flex-col gap-2 p-4">
-          <div className="flex items-center gap-1.5">
-            <BookmarkIcon className="h-3.5 w-3.5 shrink-0 text-ink/35" />
-            <h3 className="line-clamp-1 min-w-0 font-body text-lg font-bold leading-snug text-ink">
-              {book.title}
-            </h3>
+            {!book.published && (
+              <span className="absolute left-2.5 top-2.5 rounded-full bg-ink/85 px-2 py-0.5 text-[10px] font-medium text-parchment shadow-sm">
+                Bản nháp
+              </span>
+            )}
           </div>
 
-          <div className="flex items-start gap-1.5">
-            <AlignLeftIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink/30" />
-            <p className="line-clamp-2 min-w-0 text-sm text-ink/60">
-              {stripRichText(book.description)}
-            </p>
-          </div>
+          <div className="flex flex-1 flex-col gap-2 p-4">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-ink">
+                Tên sách
+              </span>
+              <h3 className="line-clamp-1 min-w-0 font-body text-lg font-bold leading-snug text-ink">
+                {book.title}
+              </h3>
+            </div>
 
-          <div className="mt-auto flex items-center gap-2 border-t border-mist pt-3">
-            <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl bg-amber-50 px-2.5 py-2">
-              <TagIcon className="h-4 w-4 shrink-0 text-amber-500" />
-              <div className="min-w-0">
-                <p className="truncate text-xs font-bold text-ink">
-                  {book.price > 0 ? formatVnd(book.price) : "Miễn phí"}
-                </p>
-                <p className="truncate text-[10px] text-ink/50">Giá sách</p>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-ink/40">
+                Nội dung
+              </span>
+              <p className="line-clamp-2 min-w-0 text-sm text-ink/60">
+                {stripRichText(book.description)}
+              </p>
+            </div>
+
+            <div className="mt-auto flex items-center gap-2 border-t border-mist pt-3">
+              <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl bg-amber-50 px-2.5 py-2">
+                <TagIcon className="h-4 w-4 shrink-0 text-amber-500" />
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-bold text-ink">
+                    {book.price > 0 ? formatVnd(book.price) : "Miễn phí"}
+                  </p>
+                  <p className="truncate text-[10px] text-ink/50">Giá sách</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </Link>
+        </Link>
 
-      <div className="px-4 pb-4">
-        {!statusBadge ? (
-          <Link
-            href={`/books/${book.id}?buy=1`}
-            className="block w-full rounded-full bg-bordeaux px-4 py-2.5 text-center text-sm font-semibold text-parchment transition hover:bg-bordeaux/90"
-          >
-            {book.price > 0 ? "Mua sách ngay" : "Đọc sách miễn phí"}
-          </Link>
-        ) : statusBadge.tone === "pending" ? (
-          <Link
-            href={`/books/${book.id}?buy=1`}
-            className="flex w-full items-center justify-center gap-1.5 rounded-full bg-gold/20 px-4 py-2.5 text-center text-sm font-semibold text-ink transition hover:bg-gold/30"
-          >
-            <WalletIcon className="h-4 w-4" />
-            Tiến hành thanh toán
-          </Link>
-        ) : statusBadge.tone === "waiting" ? (
-          <Link
-            href={`/books/${book.id}`}
-            className="flex w-full items-center justify-center gap-1.5 rounded-full bg-gold/10 px-4 py-2.5 text-center text-sm font-medium text-ink transition hover:bg-gold/20"
-          >
-            <HourglassIcon className="h-4 w-4 shrink-0 text-ink/60" />
-            Đang chờ xác nhận thanh toán
-          </Link>
-        ) : (
-          <Link
-            href={`/books/${book.id}`}
-            className="flex w-full items-center justify-center gap-1.5 rounded-full bg-emerald-50 px-4 py-2.5 text-center text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100"
-          >
-            <CheckIcon className="h-4 w-4" />
-            Bạn đã mua sách này
-          </Link>
-        )}
+        <div className="px-4 pb-4">
+          {!statusBadge ? (
+            <Link
+              href={`/books/${book.id}?buy=1`}
+              className="block w-full rounded-full bg-bordeaux px-4 py-2.5 text-center text-sm font-semibold text-parchment transition hover:bg-bordeaux/90"
+            >
+              {book.price > 0 ? "Mua sách ngay" : "Đọc sách miễn phí"}
+            </Link>
+          ) : statusBadge.tone === "pending" ? (
+            <Link
+              href={`/books/${book.id}?buy=1`}
+              className="flex w-full items-center justify-center gap-1.5 rounded-full bg-gold/20 px-4 py-2.5 text-center text-sm font-semibold text-ink transition hover:bg-gold/30"
+            >
+              <WalletIcon className="h-4 w-4" />
+              Tiến hành thanh toán
+            </Link>
+          ) : statusBadge.tone === "waiting" ? (
+            <Link
+              href={`/books/${book.id}`}
+              className="flex w-full items-center justify-center gap-1.5 rounded-full bg-gold/10 px-4 py-2.5 text-center text-sm font-medium text-ink transition hover:bg-gold/20"
+            >
+              <HourglassIcon className="h-4 w-4 shrink-0 text-ink/60" />
+              Đang chờ xác nhận thanh toán
+            </Link>
+          ) : (
+            <Link
+              href={`/books/${book.id}`}
+              className="flex w-full items-center justify-center gap-1.5 rounded-full bg-emerald-50 px-4 py-2.5 text-center text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100"
+            >
+              <CheckIcon className="h-4 w-4" />
+              Bạn đã mua sách này
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );

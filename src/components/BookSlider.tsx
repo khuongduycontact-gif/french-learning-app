@@ -30,62 +30,57 @@ function TagIcon({ className }: { className?: string }) {
   );
 }
 
-// Icon nhỏ đặt trước tên sách, đồng bộ với CourseCard/BookCard.
-function BookmarkIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4-7 4V4.5a1 1 0 0 1 1-1Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function BookTile({ book }: { book: Book }) {
   const initial = book.title.trim().slice(0, 1).toUpperCase();
   return (
     <Link
       href={`/books/${book.id}`}
       draggable={false}
-      className="group block w-[168px] shrink-0 select-none overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
+      className="group block w-[168px] shrink-0 select-none rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
     >
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-white">
-        <div className="h-full w-full p-2">
-          <div className="relative h-full w-full overflow-hidden rounded-xl">
-            {book.coverImage ? (
-              <Image
-                src={book.coverImage}
-                alt={book.title}
-                fill
-                draggable={false}
-                sizes="188px"
-                className="object-cover transition duration-300 group-hover:scale-105 pointer-events-none"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
-                <span className="select-none font-body text-5xl font-bold text-indigo-400">
-                  {initial}
-                </span>
-              </div>
-            )}
+      {/* Khối bo góc + cắt nội dung (overflow-hidden) tách riêng khỏi thẻ
+          <Link> ở ngoài - thẻ ngoài chỉ giữ shadow/rounded-2xl/hover. Nếu
+          overflow-hidden nằm chung khối với shadow, khi track slider được
+          transform liên tục (tự chạy) trình duyệt có thể vẽ sai khiến bóng
+          hover to ra và mất bo góc, không ôm sát thẻ như thẻ khoá học tĩnh. */}
+      <div className="overflow-hidden rounded-2xl border border-mist bg-white">
+        <div className="relative aspect-[3/4] w-full overflow-hidden bg-white">
+          <div className="h-full w-full p-2">
+            <div className="relative h-full w-full overflow-hidden rounded-xl">
+              {book.coverImage ? (
+                <Image
+                  src={book.coverImage}
+                  alt={book.title}
+                  fill
+                  draggable={false}
+                  sizes="188px"
+                  className="object-cover pointer-events-none"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
+                  <span className="select-none font-body text-5xl font-bold text-indigo-400">
+                    {initial}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col gap-2 p-3">
-        <div className="flex items-center gap-1.5">
-          <BookmarkIcon className="h-3 w-3 shrink-0 text-ink/35" />
-          <p className="line-clamp-1 min-w-0 font-body text-sm font-bold text-ink">
-            {book.title}
-          </p>
-        </div>
-        <div className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-2 py-1.5">
-          <TagIcon className="h-3.5 w-3.5 shrink-0 text-amber-500" />
-          <p className="truncate text-xs font-bold text-ink">
-            {book.price > 0 ? formatVnd(book.price) : "Miễn phí"}
-          </p>
+        <div className="flex flex-col gap-2 p-3">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[9px] font-semibold uppercase tracking-wide text-ink">
+              Tên sách
+            </span>
+            <p className="line-clamp-1 min-w-0 font-body text-sm font-bold text-ink">
+              {book.title}
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-2 py-1.5">
+            <TagIcon className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+            <p className="truncate text-xs font-bold text-ink">
+              {book.price > 0 ? formatVnd(book.price) : "Miễn phí"}
+            </p>
+          </div>
         </div>
       </div>
     </Link>
