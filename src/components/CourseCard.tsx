@@ -134,7 +134,7 @@ export default function CourseCard({
           đặt padding ngay trên chính div "relative" chứa <Image fill>, ảnh
           fill (position:absolute, inset:0) sẽ lấy theo padding-box của cha
           nên vẫn tràn hết ra mép - đây là lỗi hay gặp cần tránh. */}
-        <div className="relative h-40 w-full overflow-hidden bg-mist">
+        <div className="relative h-40 w-full overflow-hidden bg-indigo-100">
           <div className="h-full w-full p-2">
             <div className="relative h-full w-full overflow-hidden rounded-xl">
               {course.videoUrl && isVideoUrl(course.videoUrl) ? (

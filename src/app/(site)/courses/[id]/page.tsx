@@ -175,7 +175,7 @@ export default async function CourseDetailPage({
           min-w-0 cho phép cột co lại đúng theo chiều rộng khả dụng. */}
       <div className="min-w-0 md:col-span-2">
         <div className="transform-gpu overflow-hidden rounded-2xl border border-mist bg-white shadow-sm">
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-mist sm:aspect-[21/9]">
+          <div className="relative aspect-[16/9] w-full overflow-hidden bg-indigo-100 sm:aspect-[21/9]">
             <div className="h-full w-full p-2 sm:p-3">
               <div className="relative h-full w-full overflow-hidden rounded-xl">
                 {course.videoUrl && isVideoUrl(course.videoUrl) ? (
