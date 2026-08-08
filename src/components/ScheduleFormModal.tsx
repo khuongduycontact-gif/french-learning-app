@@ -431,12 +431,14 @@ export default function ScheduleFormModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink">Ghi chú (không bắt buộc)</label>
+            <label className="mb-1 block text-sm font-medium text-ink">
+              Lời nhắn cho học viên (không bắt buộc)
+            </label>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={2}
-              placeholder="Ví dụ: học bù, đổi phòng..."
+              placeholder="Ví dụ: học bù, đổi phòng... — sẽ gửi kèm trong mail nhắc lịch nếu có"
               className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
             />
           </div>

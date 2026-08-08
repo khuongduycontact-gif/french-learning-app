@@ -96,7 +96,7 @@ export async function sendClassReminderEmail(params: {
     row("🕐", "Durée", `${duration} giờ`, !note),
   ];
   if (note) {
-    rows.push(row("📝", "Ghi chú", escapeHtml(note), true));
+    rows.push(row("📝", "Lời nhắn", escapeHtml(note), true));
   }
 
   const html = `<!DOCTYPE html>
@@ -151,7 +151,7 @@ export async function sendClassReminderEmail(params: {
     `- Cours: ${className}`,
     `- Horaire: ${dateTimeLabel}`,
     `- Durée: ${duration} giờ`,
-    ...(note ? [`- Ghi chú: ${note}`] : []),
+    ...(note ? [`- Lời nhắn: ${note}`] : []),
     "",
     "À toute à l’heure!",
     "",
