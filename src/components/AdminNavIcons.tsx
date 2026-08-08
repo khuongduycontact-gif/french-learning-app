@@ -62,10 +62,9 @@ const ICONS: Record<AdminNavIconName, React.ReactNode> = {
   ),
   bookPurchase: (
     <>
-      <path d="M4 4.3c1.6-.7 3.6-.7 5.2 0 .3.14.5.44.5.77v6.8" />
-      <path d="M16 4.3c-1.6-.7-3.6-.7-5.2 0-.3.14-.5.44-.5.77v3.4" />
-      <circle cx="14.5" cy="14.5" r="3.2" />
-      <path d="M13.2 14.5l.9.9 1.7-1.8" />
+      <rect x="2.5" y="4.5" width="15" height="11" rx="1.6" />
+      <path d="M2.5 8h15" />
+      <path d="M5.5 11.7h3" />
     </>
   ),
   trustedWebsite: (

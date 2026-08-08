@@ -99,7 +99,7 @@ export default function AdminTrustedWebsitesPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-semibold text-ink">
-            Website học tiếng Pháp uy tín
+            Website học tiếng Pháp tham khảo
           </h1>
           <div className="ribbon-rule mt-3" />
         </div>
