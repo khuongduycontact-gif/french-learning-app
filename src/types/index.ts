@@ -55,7 +55,7 @@ export interface CourseInput {
   price: number;
   duration: number;
   lessons: number;
-  freeLessons?: number;
+  freeLessons: number;
   videoUrl?: string;
   published?: boolean;
   materials?: CourseMaterialInput[];
