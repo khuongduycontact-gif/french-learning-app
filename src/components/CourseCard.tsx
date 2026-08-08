@@ -336,14 +336,10 @@ export default function CourseCard({
               <span className="font-bold">{course.title}</span>
             </h3>
 
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-indigo-500">
-                Nội dung
-              </span>
-              <p className="line-clamp-2 min-w-0 text-sm text-ink/60">
-                {stripRichText(course.description)}
-              </p>
-            </div>
+            <p className="min-w-0 text-sm text-ink/60">
+              <span className="font-semibold text-ink">Mô tả: </span>
+              {stripRichText(course.description)}
+            </p>
 
             <div className="mt-auto flex items-center gap-2 border-t border-mist pt-3">
               <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl bg-amber-50 px-2.5 py-2">
@@ -379,20 +375,26 @@ export default function CourseCard({
             thái chờ riêng, không phải "đã đăng ký" - khớp với EnrollButton
             ở trang chi tiết
           - CONFIRMED (đã được admin xác nhận): "Bạn đã đăng ký khoá học này" */}
-        {/* Khoá học miễn phí: không hiện nút đăng ký nữa (học viên xem trực
-          tiếp các bài học miễn phí ở trang chi tiết, không cần đăng ký).
-          Chỉ ẩn khi CHƯA có trạng thái đăng ký nào - nếu học viên đã có
-          lượt đăng ký (VD: từng đăng ký trước khi khoá học đổi thành miễn
-          phí) thì vẫn hiện đúng trạng thái hiện tại của họ. */}
-        {!statusBadge && course.price <= 0 ? null : (
+        {/* Khoá học miễn phí: không hiện nút "Đăng ký" nữa, thay bằng nút
+          "Xem ngay" dẫn thẳng vào trang chi tiết (học viên xem trực tiếp
+          các bài học miễn phí ở đó, không cần đăng ký). */}
         <div className="px-4 pb-4">
           {!statusBadge ? (
-            <Link
-              href={`/courses/${course.id}?enroll=1`}
-              className="block w-full rounded-full bg-bordeaux px-4 py-2.5 text-center text-sm font-semibold text-parchment transition hover:bg-bordeaux/90"
-            >
-              Đăng ký khoá học ngay
-            </Link>
+            course.price > 0 ? (
+              <Link
+                href={`/courses/${course.id}?enroll=1`}
+                className="block w-full rounded-full bg-bordeaux px-4 py-2.5 text-center text-sm font-semibold text-parchment transition hover:bg-bordeaux/90"
+              >
+                Đăng ký khoá học ngay
+              </Link>
+            ) : (
+              <Link
+                href={`/courses/${course.id}`}
+                className="block w-full rounded-full bg-bordeaux px-4 py-2.5 text-center text-sm font-semibold text-parchment transition hover:bg-bordeaux/90"
+              >
+                Xem ngay
+              </Link>
+            )
           ) : statusBadge.tone === "pending" ? (
             <Link
               href={`/courses/${course.id}?enroll=1`}
@@ -419,7 +421,6 @@ export default function CourseCard({
             </Link>
           )}
         </div>
-        )}
       </div>
     </div>
   );

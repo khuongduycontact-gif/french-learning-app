@@ -82,14 +82,10 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
             <span className="font-bold">{website.name}</span>
           </p>
           {plainDescription && (
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[9px] font-semibold uppercase tracking-wide text-ink/40">
-                Nội dung
-              </span>
-              <p className="line-clamp-1 min-w-0 text-xs text-ink/60">
-                {plainDescription}
-              </p>
-            </div>
+            <p className="min-w-0 text-xs text-ink/60">
+              <span className="font-semibold text-ink">Mô tả: </span>
+              {plainDescription}
+            </p>
           )}
         </div>
       </div>

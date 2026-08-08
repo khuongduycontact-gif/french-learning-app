@@ -165,14 +165,10 @@ export default function BookCard({
               <span className="font-bold">{book.title}</span>
             </h3>
 
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-ink/40">
-                Nội dung
-              </span>
-              <p className="line-clamp-2 min-w-0 text-sm text-ink/60">
-                {stripRichText(book.description)}
-              </p>
-            </div>
+            <p className="min-w-0 text-sm text-ink/60">
+              <span className="font-semibold text-ink">Mô tả: </span>
+              {stripRichText(book.description)}
+            </p>
 
             <div className="mt-auto flex items-center gap-2 border-t border-mist pt-3">
               <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl bg-amber-50 px-2.5 py-2">
@@ -188,18 +184,26 @@ export default function BookCard({
           </div>
         </Link>
 
-        {/* Sách miễn phí: không hiện nút đăng ký/mua nữa, đồng bộ với trang
-          chi tiết sách (nơi sách miễn phí được coi như đã sở hữu và cho
-          tải luôn, không cần bấm nút mua). */}
-        {!statusBadge && book.price <= 0 ? null : (
+        {/* Sách miễn phí: không hiện nút "Mua/Đăng ký" nữa, thay bằng nút
+          "Xem ngay" dẫn thẳng vào trang chi tiết (trang chi tiết coi sách
+          miễn phí như đã sở hữu và cho tải luôn, không cần bấm mua). */}
         <div className="px-4 pb-4">
           {!statusBadge ? (
-            <Link
-              href={`/books/${book.id}?buy=1`}
-              className="block w-full rounded-full bg-bordeaux px-4 py-2.5 text-center text-sm font-semibold text-parchment transition hover:bg-bordeaux/90"
-            >
-              {book.price > 0 ? "Mua sách ngay" : "Đọc sách miễn phí"}
-            </Link>
+            book.price > 0 ? (
+              <Link
+                href={`/books/${book.id}?buy=1`}
+                className="block w-full rounded-full bg-bordeaux px-4 py-2.5 text-center text-sm font-semibold text-parchment transition hover:bg-bordeaux/90"
+              >
+                Mua sách ngay
+              </Link>
+            ) : (
+              <Link
+                href={`/books/${book.id}`}
+                className="block w-full rounded-full bg-bordeaux px-4 py-2.5 text-center text-sm font-semibold text-parchment transition hover:bg-bordeaux/90"
+              >
+                Xem ngay
+              </Link>
+            )
           ) : statusBadge.tone === "pending" ? (
             <Link
               href={`/books/${book.id}?buy=1`}
@@ -226,7 +230,6 @@ export default function BookCard({
             </Link>
           )}
         </div>
-        )}
       </div>
     </div>
   );

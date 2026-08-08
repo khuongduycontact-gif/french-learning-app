@@ -77,14 +77,10 @@ function BookTile({ book }: { book: Book }) {
             <span className="font-bold">{book.title}</span>
           </p>
           {plainDescription && (
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[9px] font-semibold uppercase tracking-wide text-ink/40">
-                Nội dung
-              </span>
-              <p className="line-clamp-1 min-w-0 text-xs text-ink/60">
-                {plainDescription}
-              </p>
-            </div>
+            <p className="min-w-0 text-xs text-ink/60">
+              <span className="font-semibold text-ink">Mô tả: </span>
+              {plainDescription}
+            </p>
           )}
           <div className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-2 py-1.5">
             <TagIcon className="h-3.5 w-3.5 shrink-0 text-amber-500" />
