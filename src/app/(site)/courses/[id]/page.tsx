@@ -10,7 +10,7 @@ import { RichText } from "@/lib/richtext";
 import { isVideoUrl } from "@/lib/media";
 import { formatVnd, formatDuration } from "@/lib/format";
 
-type MaterialFile = { url: string; name?: string; type?: string };
+type MaterialFile = { url: string; name?: string; type?: string; category?: string | null };
 
 function getMaterialFiles(files: unknown): MaterialFile[] {
   return Array.isArray(files) ? (files as MaterialFile[]) : [];
@@ -124,6 +124,25 @@ export default async function CourseDetailPage({
       );
     }
   }
+
+  const isConfirmed = enrollment?.status === "CONFIRMED";
+
+  // Số bài học được xem miễn phí (không cần đăng ký), luôn giới hạn trong
+  // đúng số bài học thực tế đang có, phòng trường hợp admin đặt số lớn hơn.
+  const freeLessonCount = Math.min(course.freeLessons, course.materials.length);
+  const lockedLessonCount = course.materials.length - freeLessonCount;
+
+  // Học viên đã được xác nhận (CONFIRMED) xem được toàn bộ bài học. Ngược
+  // lại (chưa đăng ký / đang chờ thanh toán / khách chưa đăng nhập) chỉ
+  // được xem trước đúng số bài học miễn phí admin đã đặt, và chỉ xem tài
+  // liệu bài giảng - tài liệu bài tập (nộp bài, chấm điểm) vẫn cần đăng ký
+  // khoá học mới dùng được nên không hiển thị ở bản xem trước.
+  const visibleMaterials = isConfirmed
+    ? course.materials
+    : course.materials.slice(0, freeLessonCount).map((m) => ({
+        ...m,
+        files: getMaterialFiles(m.files).filter((f) => f?.category !== "exercise"),
+      }));
 
   const payment =
     enrollment && enrollment.status === "PENDING_PAYMENT"
@@ -308,14 +327,21 @@ export default async function CourseDetailPage({
           </div>
         </aside>
 
-        {enrollment?.status === "CONFIRMED" && course.materials.length > 0 && (
+        {visibleMaterials.length > 0 && (
           <div className="flex flex-col rounded-2xl border border-mist bg-white/60 p-6">
-            <h2 className="shrink-0 font-display text-xl font-semibold text-ink">
-              Tài liệu học
-            </h2>
+            <div className="flex shrink-0 items-center justify-between gap-2">
+              <h2 className="font-display text-xl font-semibold text-ink">
+                Tài liệu học
+              </h2>
+              {!isConfirmed && freeLessonCount > 0 && (
+                <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                  Xem thử miễn phí
+                </span>
+              )}
+            </div>
             <div className="ribbon-rule my-3 shrink-0" />
             <MaterialsPager
-              materials={course.materials.map((m) => ({
+              materials={visibleMaterials.map((m) => ({
                 id: m.id,
                 name: m.name,
                 description: m.description,
@@ -324,6 +350,26 @@ export default async function CourseDetailPage({
               submissionsByMaterial={submissionsByMaterial}
               deadlinesByMaterial={deadlinesByMaterial}
             />
+            {!isConfirmed && lockedLessonCount > 0 && (
+              <p className="mt-4 shrink-0 border-t border-mist pt-4 text-sm text-ink/60">
+                Bạn đã xem hết {freeLessonCount} bài học miễn phí. Còn{" "}
+                {lockedLessonCount} bài học nữa - hãy đăng ký khoá học để học
+                tiếp.
+              </p>
+            )}
+          </div>
+        )}
+
+        {!isConfirmed && freeLessonCount === 0 && course.materials.length > 0 && (
+          <div className="flex flex-col rounded-2xl border border-mist bg-white/60 p-6">
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Tài liệu học
+            </h2>
+            <div className="ribbon-rule my-3 shrink-0" />
+            <p className="text-sm text-ink/60">
+              Đăng ký khoá học để xem toàn bộ {course.materials.length} bài
+              học.
+            </p>
           </div>
         )}
       </div>

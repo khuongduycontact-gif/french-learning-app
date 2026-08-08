@@ -101,6 +101,13 @@ model Course {
   duration    Float        @default(0) // số giờ học/buổi học, cho phép lẻ (VD: 1.5 = 1 giờ 30 phút)
   sessions    Int          @default(0) // số buổi học (không còn nhập ở form quản trị, giữ lại cho dữ liệu cũ)
   lessons     Int          @default(0) // số bài giảng
+  // Số bài học (CourseMaterial) đầu tiên (theo `order`) được xem miễn phí,
+  // không cần đăng ký khoá học. Admin tự đặt tuỳ ý (0 = không có bài nào
+  // miễn phí, giữ nguyên hành vi cũ). Học viên xem hết số bài miễn phí này
+  // rồi thì phải đăng ký (enrollment CONFIRMED) mới xem tiếp được các bài
+  // sau. Giá trị luôn được so khớp (min) với số bài học thực tế khi hiển thị,
+  // để lỡ admin đặt số lớn hơn số bài học hiện có cũng không gây lỗi.
+  freeLessons Int          @default(0)
   videoUrl    String?      @db.Text // ảnh hoặc video giới thiệu, lưu trên Cloudinary
   published   Boolean      @default(true)
   enrollments Enrollment[]

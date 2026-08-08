@@ -17,6 +17,35 @@ export async function GET(
   if (!course) {
     return NextResponse.json({ error: "Không tìm thấy khoá học" }, { status: 404 });
   }
+
+  const session = await getServerSession(authOptions);
+  const isAdmin = session?.user?.role === "ADMIN";
+  let isConfirmed = false;
+  if (session?.user && !isAdmin) {
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: session.user.id, courseId: course.id } },
+      select: { status: true },
+    });
+    isConfirmed = enrollment?.status === "CONFIRMED";
+  }
+
+  // Chưa đăng ký (hoặc chưa đăng nhập) thì API cũng chỉ trả về đúng số bài
+  // học miễn phí (và chỉ tài liệu bài giảng, không có tài liệu bài tập) -
+  // khớp với giới hạn hiển thị ở trang chi tiết khoá học, tránh việc gọi
+  // thẳng API để lấy được toàn bộ tài liệu trả phí.
+  if (!isAdmin && !isConfirmed) {
+    const freeLessonCount = Math.min(course.freeLessons, course.materials.length);
+    return NextResponse.json({
+      ...course,
+      materials: course.materials.slice(0, freeLessonCount).map((m) => ({
+        ...m,
+        files: Array.isArray(m.files)
+          ? (m.files as any[]).filter((f) => f?.category !== "exercise")
+          : m.files,
+      })),
+    });
+  }
+
   return NextResponse.json(course);
 }
 
@@ -37,6 +66,7 @@ export async function PUT(
     price,
     duration,
     lessons,
+    freeLessons,
     videoUrl,
     published,
     materials,
@@ -81,6 +111,9 @@ export async function PUT(
       ...(price !== undefined ? { price: Number(price) } : {}),
       ...(duration !== undefined ? { duration: Number(duration) } : {}),
       ...(lessons !== undefined ? { lessons: Number(lessons) } : {}),
+      ...(freeLessons !== undefined
+        ? { freeLessons: Math.max(0, Number(freeLessons) || 0) }
+        : {}),
       ...(videoUrl !== undefined ? { videoUrl } : {}),
       ...(published !== undefined ? { published } : {}),
     },

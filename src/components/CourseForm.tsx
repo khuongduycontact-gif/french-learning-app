@@ -28,7 +28,7 @@ function ClockIcon({ className }: { className?: string }) {
 const levels = ["A1", "A2", "B1", "B2", "C1"];
 const levelOptions = levels.map((l) => ({ value: l, label: l }));
 
-type NumberFieldKey = "price" | "lessons";
+type NumberFieldKey = "price" | "lessons" | "freeLessons";
 
 // Chuyển số giờ dạng thập phân (VD: 1.5) sang chuỗi "HH:MM" để đổ vào
 // input type="time" (trình duyệt tự hiện đồng hồ chọn, gõ số trực tiếp
@@ -64,6 +64,7 @@ export default function CourseForm({
     price: initial?.price ?? 0,
     duration: initial?.duration ?? 0,
     lessons: initial?.lessons ?? 0,
+    freeLessons: initial?.freeLessons ?? 0,
     videoUrl: initial?.videoUrl || "",
     published: initial?.published ?? true,
   });
@@ -72,6 +73,7 @@ export default function CourseForm({
   const [numText, setNumText] = useState<Record<NumberFieldKey, string>>({
     price: String(initial?.price ?? 0),
     lessons: String(initial?.lessons ?? 0),
+    freeLessons: String(initial?.freeLessons ?? 0),
   });
   // Thời lượng giờ học/buổi học: bấm vào icon đồng hồ mới hiện 2 ô nhập
   // "giờ" và "phút" riêng biệt; lưu tạm dạng "HH:MM" rồi quy đổi sang thập phân.
@@ -223,7 +225,15 @@ export default function CourseForm({
     e.preventDefault();
 
     const nextErrors = validateForm();
-    const materialsMsg = validateMaterials();
+    let materialsMsg = validateMaterials();
+    // Số bài học miễn phí không được vượt quá số bài học thực tế đã thêm,
+    // để tránh admin đặt nhầm số lớn hơn số bài học hiện có.
+    const validMaterialsCount = materials.filter(
+      (m) => m.name.trim() && m.files.some((f) => f.url)
+    ).length;
+    if (!materialsMsg && form.freeLessons > validMaterialsCount) {
+      materialsMsg = `Số bài học miễn phí (${form.freeLessons}) không được lớn hơn số bài học đã thêm (${validMaterialsCount}).`;
+    }
     if (Object.keys(nextErrors).length > 0 || materialsMsg) {
       setFieldErrors(nextErrors);
       setMaterialsError(materialsMsg);
@@ -237,6 +247,7 @@ export default function CourseForm({
     try {
       const payload: CourseInput = {
         ...form,
+        freeLessons: Math.min(form.freeLessons, validMaterialsCount),
         materials: materials
           .filter((m) => m.name.trim() && m.files.some((f) => f.url))
           .map((m) => ({
@@ -404,6 +415,29 @@ export default function CourseForm({
               className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
             />
           </div>
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-ink">
+            Số bài học xem miễn phí (không cần đăng ký)
+          </label>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={numText.freeLessons}
+            onChange={(e) => updateNumber("freeLessons", e.target.value)}
+            onBlur={() => handleNumberBlur("freeLessons")}
+            onFocus={(e) => e.target.select()}
+            className="w-full max-w-[160px] rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
+          />
+          <p className="mt-1 text-xs text-ink/50">
+            Học viên xem được miễn phí bấy nhiêu bài học đầu tiên (theo thứ tự
+            trong danh sách tài liệu học bên phải) mà không cần đăng ký. Đặt 0
+            nếu không có bài nào miễn phí.
+          </p>
+          {fieldErrors.freeLessons && (
+            <p className="mt-1 text-xs text-bordeaux">{fieldErrors.freeLessons}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-3">

@@ -78,6 +78,7 @@ export async function POST(req: NextRequest) {
     price,
     duration,
     lessons,
+    freeLessons,
     videoUrl,
     published,
     materials,
@@ -140,6 +141,7 @@ export async function POST(req: NextRequest) {
       price: Number(price) || 0,
       duration: Number(duration) || 0,
       lessons: Number(lessons) || 0,
+      freeLessons: Math.max(0, Number(freeLessons) || 0),
       videoUrl: videoUrl || null,
       published: published ?? true,
       ...(validMaterials.length > 0
