@@ -114,6 +114,60 @@ export interface AchievementInput {
   thankYouUrls?: string[];
 }
 
+export interface Book {
+  id: string;
+  title: string;
+  slug: string;
+  coverImage: string | null;
+  contentUrl: string;
+  description: string;
+  price: number;
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
+  _count?: { purchases: number };
+  myPurchaseStatus?: EnrollmentStatus | null;
+}
+
+export interface BookInput {
+  title: string;
+  description: string;
+  price: number;
+  coverImage?: string;
+  contentUrl?: string;
+  published?: boolean;
+}
+
+export interface TrustedWebsite {
+  id: string;
+  name: string;
+  coverImage: string | null;
+  link: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TrustedWebsiteInput {
+  name: string;
+  link: string;
+  description: string;
+  coverImage?: string;
+}
+
+export interface BookPurchase {
+  id: string;
+  userId: string;
+  bookId: string;
+  status: EnrollmentStatus;
+  paidAmount: number;
+  paymentNote: string | null;
+  confirmedAt: string | null;
+  createdAt: string;
+  book?: Book;
+  user?: { id: string; name: string | null; email: string | null; image: string | null };
+}
+
 export interface Enrollment {
   id: string;
   userId: string;
@@ -148,7 +202,10 @@ export type NotificationType =
   | "ENROLLMENT_CONFIRMED"
   | "PAYMENT_REJECTED"
   | "SUBMISSION_RECEIVED"
-  | "SUBMISSION_GRADED";
+  | "SUBMISSION_GRADED"
+  | "BOOK_PAYMENT_SUBMITTED"
+  | "BOOK_PURCHASE_CONFIRMED"
+  | "BOOK_PAYMENT_REJECTED";
 
 export interface Notification {
   id: string;

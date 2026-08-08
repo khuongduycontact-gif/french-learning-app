@@ -56,6 +56,16 @@ export default function Navbar() {
                 Khoá học
               </Link>
             )}
+            {session?.user?.role !== "ADMIN" && (
+              <Link
+                href="/books"
+                className={`transition hover:text-ink ${
+                  isActive("/books") ? "font-semibold text-bordeaux" : ""
+                }`}
+              >
+                Sách
+              </Link>
+            )}
             {session?.user && session.user.role !== "ADMIN" && (
               <Link
                 href="/account"

@@ -8,7 +8,7 @@ export async function notifyAdmins({
   message,
   link,
 }: {
-  type?: "PAYMENT_SUBMITTED" | "SUBMISSION_RECEIVED";
+  type?: "PAYMENT_SUBMITTED" | "SUBMISSION_RECEIVED" | "BOOK_PAYMENT_SUBMITTED";
   title: string;
   message: string;
   link?: string;
@@ -40,7 +40,12 @@ export async function notifyUser({
   link,
 }: {
   userId: string;
-  type: "ENROLLMENT_CONFIRMED" | "PAYMENT_REJECTED" | "SUBMISSION_GRADED";
+  type:
+    | "ENROLLMENT_CONFIRMED"
+    | "PAYMENT_REJECTED"
+    | "SUBMISSION_GRADED"
+    | "BOOK_PURCHASE_CONFIRMED"
+    | "BOOK_PAYMENT_REJECTED";
   title: string;
   message: string;
   link?: string;

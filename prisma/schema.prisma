@@ -32,6 +32,9 @@ enum NotificationType {
   PAYMENT_REJECTED     // gửi cho học viên: admin từ chối xác nhận thanh toán
   SUBMISSION_RECEIVED  // gửi cho admin: học viên vừa nộp bài tập
   SUBMISSION_GRADED    // gửi cho học viên: admin đã chữa xong bài tập
+  BOOK_PAYMENT_SUBMITTED  // gửi cho admin: người dùng báo đã thanh toán mua sách
+  BOOK_PURCHASE_CONFIRMED // gửi cho người dùng: admin đã xác nhận mua sách thành công
+  BOOK_PAYMENT_REJECTED   // gửi cho người dùng: admin từ chối xác nhận thanh toán mua sách
 }
 
 enum SubmissionStatus {
@@ -53,6 +56,7 @@ model User {
   submissions   Submission[]     @relation("SubmissionsByStudent")
   gradedSubmissions Submission[] @relation("SubmissionsGradedByAdmin")
   submissionDeadlines SubmissionDeadline[]
+  bookPurchases BookPurchase[]
   createdAt     DateTime       @default(now())
 }
 
@@ -211,6 +215,56 @@ model Enrollment {
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
+}
+
+// Sách/truyện: nội dung là 1 tệp PDF duy nhất (contentUrl). Giống Course,
+// giá = 0 nghĩa là miễn phí (đọc được ngay), giá > 0 thì phải mua (qua
+// BookPurchase, tái dùng đúng luồng thanh toán VietQR + admin xác nhận
+// giống Enrollment của khoá học).
+model Book {
+  id          String         @id @default(cuid())
+  title       String
+  slug        String         @unique
+  coverImage  String?        @db.Text // ảnh bìa sách, lưu trên Cloudinary
+  contentUrl  String         @db.Text // tệp PDF nội dung sách, lưu trên Cloudinary
+  description String         @db.Text
+  price       Int            @default(0)
+  published   Boolean        @default(true)
+  purchases   BookPurchase[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+// Website học tiếng Pháp uy tín - admin thêm/sửa/xoá, hiển thị dạng slider
+// tự động ở trang chủ (giống cách hiển thị Sách), bấm vào ảnh sẽ mở link
+// sang tab mới.
+model TrustedWebsite {
+  id          String   @id @default(cuid())
+  name        String
+  coverImage  String?  @db.Text // ảnh bìa website, lưu trên Cloudinary
+  link        String   @db.Text // đường dẫn tới website
+  description String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Lượt mua sách - tái dùng đúng enum EnrollmentStatus (PENDING_PAYMENT ->
+// AWAITING_CONFIRMATION -> CONFIRMED) vì luồng thanh toán/xác nhận giống
+// hệt lượt đăng ký khoá học.
+model BookPurchase {
+  id          String           @id @default(cuid())
+  userId      String
+  bookId      String
+  status      EnrollmentStatus @default(PENDING_PAYMENT)
+  paidAmount  Int              @default(0)
+  paymentNote String?          // nội dung chuyển khoản để đối chiếu (VietQR addInfo)
+  confirmedAt DateTime?        // thời điểm admin xác nhận đã nhận thanh toán
+  createdAt   DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
 }
 
 // Bài tập học viên nộp cho một tài liệu bài tập (CourseMaterial) cụ thể,

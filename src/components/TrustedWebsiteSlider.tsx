@@ -1,0 +1,217 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import Image from "next/image";
+import type { TrustedWebsite } from "@/types";
+import { stripRichText } from "@/lib/richtext";
+
+// Tốc độ tự chạy: pixel/giây
+const AUTO_SPEED = 45;
+// Sau bao lâu (ms) không có thao tác vuốt thì mới tự chạy lại
+const RESUME_DELAY = 2000;
+
+function WebsiteTile({ website }: { website: TrustedWebsite }) {
+  const initial = website.name.trim().slice(0, 1).toUpperCase();
+  const plainDescription = stripRichText(website.description);
+  return (
+    <a
+      href={website.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      draggable={false}
+      title={plainDescription || website.name}
+      className="group block w-[168px] shrink-0 select-none overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
+    >
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-mist">
+        {website.coverImage ? (
+          <Image
+            src={website.coverImage}
+            alt={website.name}
+            fill
+            draggable={false}
+            sizes="188px"
+            className="object-cover transition duration-300 group-hover:scale-105 pointer-events-none"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
+            <span className="select-none font-body text-4xl font-bold text-indigo-400">
+              {initial}
+            </span>
+          </div>
+        )}
+      </div>
+      <div className="p-3">
+        <p className="line-clamp-1 font-display text-sm font-bold text-ink">{website.name}</p>
+        {plainDescription && (
+          <p className="mt-0.5 line-clamp-1 text-xs text-ink/60">{plainDescription}</p>
+        )}
+      </div>
+    </a>
+  );
+}
+
+export default function TrustedWebsiteSlider({ websites }: { websites: TrustedWebsite[] }) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  // Vị trí cuộn hiện tại (px, luôn <= 0), lưu trong ref để cập nhật mỗi
+  // khung hình mà không phải render lại React.
+  const positionRef = useRef(0);
+  // Chiều rộng của đúng 1 bộ danh sách website (chưa nhân đôi) - dùng để
+  // lặp vòng liền mạch (khi cuộn hết 1 bộ thì cộng lại đúng bằng chiều rộng đó).
+  const setWidthRef = useRef(0);
+
+  const draggingRef = useRef(false);
+  const hoveringRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartPosRef = useRef(0);
+  const dragDistanceRef = useRef(0);
+  const suppressClickRef = useRef(false);
+  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pausedByIdleRef = useRef(false);
+
+  function applyTransform() {
+    if (trackRef.current) {
+      trackRef.current.style.transform = `translate3d(${positionRef.current}px, 0, 0)`;
+    }
+  }
+
+  // Đưa vị trí về đúng khoảng (-setWidth, 0] để cuộn vòng liền mạch (danh
+  // sách đã được nhân đôi trong JSX bên dưới).
+  function wrapPosition() {
+    const setWidth = setWidthRef.current;
+    if (setWidth <= 0) return;
+    while (positionRef.current <= -setWidth) positionRef.current += setWidth;
+    while (positionRef.current > 0) positionRef.current -= setWidth;
+  }
+
+  function measure() {
+    if (trackRef.current) {
+      // Track chứa 2 bộ danh sách liền nhau -> 1 bộ = 1 nửa tổng chiều rộng
+      setWidthRef.current = trackRef.current.scrollWidth / 2;
+    }
+  }
+
+  useEffect(() => {
+    measure();
+    const onResize = () => measure();
+    window.addEventListener("resize", onResize);
+
+    let raf = 0;
+    let lastTime: number | null = null;
+
+    function tick(time: number) {
+      if (lastTime === null) lastTime = time;
+      const dt = (time - lastTime) / 1000;
+      lastTime = time;
+
+      const shouldAutoPlay =
+        !draggingRef.current && !hoveringRef.current && !pausedByIdleRef.current;
+
+      if (shouldAutoPlay && setWidthRef.current > 0) {
+        positionRef.current -= AUTO_SPEED * dt;
+        wrapPosition();
+        applyTransform();
+      }
+
+      raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [websites.length]);
+
+  function scheduleResume() {
+    pausedByIdleRef.current = true;
+    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
+    resumeTimeoutRef.current = setTimeout(() => {
+      pausedByIdleRef.current = false;
+    }, RESUME_DELAY);
+  }
+
+  function handlePointerDown(e: React.PointerEvent) {
+    // Chỉ theo dõi 1 điểm chạm/con trỏ tại 1 thời điểm
+    draggingRef.current = true;
+    dragStartXRef.current = e.clientX;
+    dragStartPosRef.current = positionRef.current;
+    dragDistanceRef.current = 0;
+    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
+    pausedByIdleRef.current = false;
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  }
+
+  function handlePointerMove(e: React.PointerEvent) {
+    if (!draggingRef.current) return;
+    const delta = e.clientX - dragStartXRef.current;
+    dragDistanceRef.current = Math.abs(delta);
+    positionRef.current = dragStartPosRef.current + delta;
+    wrapPosition();
+    applyTransform();
+  }
+
+  function endDrag() {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    // Vuốt (kéo) đủ xa thì coi là thao tác vuốt slider, không phải bấm vào
+    // website -> chặn sự kiện click mở link ngay sau đó.
+    if (dragDistanceRef.current > 6) {
+      suppressClickRef.current = true;
+    }
+    // Vuốt thủ công xong -> sau 2 giây không thao tác gì thêm thì mới tự chạy lại
+    scheduleResume();
+  }
+
+  function handleClickCapture(e: React.MouseEvent) {
+    if (suppressClickRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      suppressClickRef.current = false;
+    }
+  }
+
+  function handlePointerEnter(e: React.PointerEvent) {
+    // "Khi chuột hover vào website nào thì dừng lại ở website đấy" - chỉ áp
+    // dụng cho chuột (mouse), không áp dụng cho chạm (touch) vì trên di
+    // động không có khái niệm "hover".
+    if (e.pointerType !== "mouse") return;
+    hoveringRef.current = true;
+  }
+
+  function handlePointerLeave() {
+    hoveringRef.current = false;
+  }
+
+  if (websites.length === 0) return null;
+
+  // Nhân đôi danh sách để tạo hiệu ứng cuộn vòng liền mạch (marquee).
+  const loopedWebsites = [...websites, ...websites];
+
+  return (
+    <div
+      ref={viewportRef}
+      className="relative w-full overflow-hidden"
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+    >
+      <div
+        ref={trackRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onClickCapture={handleClickCapture}
+        className="flex w-max cursor-grab gap-4 touch-pan-y select-none active:cursor-grabbing"
+        style={{ willChange: "transform" }}
+      >
+        {loopedWebsites.map((w, i) => (
+          <WebsiteTile key={`${w.id}-${i}`} website={w} />
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -6,13 +6,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import CourseCard from "@/components/CourseCard";
+import BookSlider from "@/components/BookSlider";
+import TrustedWebsiteSlider from "@/components/TrustedWebsiteSlider";
 import { enrollmentStatusMap } from "@/lib/enrollmentStatus";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
   if (session?.user?.role === "ADMIN") redirect("/admin");
 
-  const [newestCourses, confirmedGroups] = await Promise.all([
+  const [newestCourses, confirmedGroups, books, trustedWebsites] = await Promise.all([
     prisma.course.findMany({
       where: { published: true },
       orderBy: { createdAt: "desc" },
@@ -28,6 +30,15 @@ export default async function HomePage() {
       _count: { courseId: true },
       orderBy: { _count: { courseId: "desc" } },
       take: 4,
+    }),
+    prisma.book.findMany({
+      where: { published: true },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+    }),
+    prisma.trustedWebsite.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 12,
     }),
   ]);
 
@@ -141,6 +152,35 @@ export default async function HomePage() {
           </div>
         )}
       </section>
+
+      {books.length > 0 && (
+        <section>
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <h2 className="font-display text-2xl font-semibold text-ink">Sách</h2>
+              <div className="ribbon-rule mt-3" />
+            </div>
+            <Link href="/books" className="text-sm font-medium text-bordeaux hover:underline">
+              Xem tất cả →
+            </Link>
+          </div>
+          <BookSlider books={books as any} />
+        </section>
+      )}
+
+      {trustedWebsites.length > 0 && (
+        <section>
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <h2 className="font-display text-2xl font-semibold text-ink">
+                Website học tiếng Pháp uy tín
+              </h2>
+              <div className="ribbon-rule mt-3" />
+            </div>
+          </div>
+          <TrustedWebsiteSlider websites={trustedWebsites as any} />
+        </section>
+      )}
     </div>
   );
 }

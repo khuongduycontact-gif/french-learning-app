@@ -11,6 +11,7 @@ export default function PaymentQrModal({
   open,
   onClose,
   courseTitle,
+  eyebrow = "Thanh toán khoá học",
   payment,
   confirming,
   onConfirmPaid,
@@ -18,6 +19,8 @@ export default function PaymentQrModal({
   open: boolean;
   onClose: () => void;
   courseTitle: string;
+  /** Nhãn nhỏ phía trên tiêu đề (VD: "Thanh toán mua sách") - mặc định dùng cho khoá học. */
+  eyebrow?: string;
   payment: PaymentInfo;
   confirming: boolean;
   onConfirmPaid: () => void;
@@ -79,7 +82,7 @@ export default function PaymentQrModal({
             </svg>
           </button>
           <p className="text-xs font-semibold uppercase tracking-wide text-bordeaux">
-            Thanh toán khoá học
+            {eyebrow}
           </p>
           <h2 className="mt-1 font-display text-xl font-semibold text-ink line-clamp-2 px-6">
             {courseTitle}

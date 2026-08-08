@@ -45,6 +45,7 @@ export default function SiteMobileDrawer({
 
   const links = [
     !isAdmin && { href: "/courses", label: "Khoá học" },
+    !isAdmin && { href: "/books", label: "Sách" },
     !isAdmin && session?.user && { href: "/account", label: "Khoá học của tôi" },
     !isAdmin && session?.user && { href: "/submissions", label: "Bài tập của tôi" },
     !isAdmin && { href: "/achievements", label: "Thành tích" },

@@ -5,7 +5,10 @@ export type AdminNavIconName =
   | "submission"
   | "achievement"
   | "schedule"
-  | "about";
+  | "about"
+  | "book"
+  | "bookPurchase"
+  | "trustedWebsite";
 
 export const adminNavLinks: {
   href: string;
@@ -21,6 +24,19 @@ export const adminNavLinks: {
     icon: "enrollment",
   },
   { href: "/admin/courses", label: "Khoá học", exact: false, icon: "course" },
+  { href: "/admin/books", label: "Sách", exact: false, icon: "book" },
+  {
+    href: "/admin/book-purchases",
+    label: "Mua sách & thanh toán",
+    exact: false,
+    icon: "bookPurchase",
+  },
+  {
+    href: "/admin/trusted-websites",
+    label: "Website uy tín",
+    exact: false,
+    icon: "trustedWebsite",
+  },
   { href: "/admin/submissions", label: "Bài nộp", exact: false, icon: "submission" },
   { href: "/admin/achievements", label: "Thành tích", exact: false, icon: "achievement" },
   { href: "/admin/schedules", label: "Thời khoá biểu", exact: false, icon: "schedule" },
