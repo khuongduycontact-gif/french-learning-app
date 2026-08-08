@@ -154,7 +154,7 @@ export default function BookCard({
         </div>
 
         <div className="flex flex-1 flex-col gap-2 p-4">
-          <h3 className="line-clamp-1 font-display text-lg font-bold leading-snug text-ink">
+          <h3 className="line-clamp-1 font-body text-lg font-bold leading-snug text-ink">
             {book.title}
           </h3>
           <p className="line-clamp-2 text-sm text-ink/60">

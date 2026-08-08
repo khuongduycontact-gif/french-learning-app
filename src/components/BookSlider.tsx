@@ -45,7 +45,7 @@ function BookTile({ book }: { book: Book }) {
         </div>
       </div>
       <div className="p-3">
-        <p className="line-clamp-1 font-display text-sm font-bold text-ink">
+        <p className="line-clamp-1 font-body text-sm font-bold text-ink">
           {book.title}
         </p>
         <p className="mt-0.5 text-xs font-medium text-bordeaux">

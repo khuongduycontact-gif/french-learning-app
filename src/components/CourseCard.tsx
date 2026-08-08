@@ -303,7 +303,7 @@ export default function CourseCard({
             {levelLabel[course.level] ?? course.level}
           </span>
 
-          <h3 className="line-clamp-1 font-display text-lg font-bold leading-snug text-ink">
+          <h3 className="line-clamp-1 font-body text-lg font-bold leading-snug text-ink">
             {course.title}
           </h3>
 

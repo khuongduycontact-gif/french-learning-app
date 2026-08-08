@@ -293,7 +293,7 @@ export default function ScheduleFormModal({
             <p className="text-xs font-semibold uppercase tracking-wide text-bordeaux">
               Thời khoá biểu
             </p>
-            <h2 className="mt-1 font-display text-xl font-semibold text-ink">
+            <h2 className="mt-1 font-body text-xl font-semibold text-ink">
               {schedule ? "Sửa lịch học" : "Thêm lịch học"}
             </h2>
           </div>

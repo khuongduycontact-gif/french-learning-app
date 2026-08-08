@@ -48,7 +48,7 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
         </div>
       </div>
       <div className="p-3">
-        <p className="line-clamp-1 font-display text-sm font-bold text-ink">
+        <p className="line-clamp-1 font-body text-sm font-bold text-ink">
           {website.name}
         </p>
         {plainDescription && (

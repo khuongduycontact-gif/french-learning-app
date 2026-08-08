@@ -114,7 +114,7 @@ export default function ConfirmModal({
         >
           {danger ? "⚠" : "?"}
         </div>
-        <h2 id="confirm-modal-title" className="mt-3.5 font-display text-lg font-semibold text-ink">
+        <h2 id="confirm-modal-title" className="mt-3.5 font-body text-lg font-semibold text-ink">
           {title}
         </h2>
         <p id="confirm-modal-message" className="mt-2 text-sm leading-relaxed text-ink/70">

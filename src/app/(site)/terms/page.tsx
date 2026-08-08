@@ -14,7 +14,7 @@ export default function TermsOfServicePage() {
       <h1 className="font-display text-3xl font-bold text-ink">Điều khoản sử dụng</h1>
       <p className="mt-2 text-sm text-ink/60">Cập nhật lần cuối: {UPDATED_AT}</p>
 
-      <div className="mt-8 max-w-none text-ink/90 [&_h2]:mt-8 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-ink [&_p]:mt-3 [&_p]:leading-relaxed [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mt-1.5">
+      <div className="mt-8 max-w-none text-ink/90 [&_h2]:mt-8 [&_h2]:font-body [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-ink [&_p]:mt-3 [&_p]:leading-relaxed [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mt-1.5">
         <p>
           Khi truy cập và sử dụng nền tảng Français avec Céline tại
           francaisavecceline.vercel.app, bạn đồng ý tuân thủ các điều khoản sử dụng dưới đây.

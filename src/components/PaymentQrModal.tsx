@@ -84,7 +84,7 @@ export default function PaymentQrModal({
           <p className="text-xs font-semibold uppercase tracking-wide text-bordeaux">
             {eyebrow}
           </p>
-          <h2 className="mt-1 font-display text-xl font-semibold text-ink line-clamp-2 px-6">
+          <h2 className="mt-1 font-body text-xl font-semibold text-ink line-clamp-2 px-6">
             {courseTitle}
           </h2>
         </div>
