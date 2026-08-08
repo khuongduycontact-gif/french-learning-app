@@ -13,6 +13,49 @@ const RESUME_DELAY = 2000;
 // bật/tắt liên tục ở ngưỡng biên (do làm tròn số).
 const OVERFLOW_TOLERANCE = 2;
 
+// Icon nhỏ dùng cho nhãn "Tham khảo" - cùng vị trí/kiểu với nhãn trình độ
+// (VD: "A1 · Mới bắt đầu") trên CourseCard để đồng bộ bố cục khi hover.
+function LinkIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M9.5 14.5 14.5 9.5M11 7l.7-.7a3.5 3.5 0 0 1 5 5l-.7.7M13 17l-.7.7a3.5 3.5 0 0 1-5-5l.7-.7"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+// Icon nhỏ đặt trước tên và mô tả website, đồng bộ với CourseCard/BookCard.
+function BookmarkIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4-7 4V4.5a1 1 0 0 1 1-1Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function AlignLeftIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M4 6h16M4 12h10M4 18h13"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function WebsiteTile({ website }: { website: TrustedWebsite }) {
   const initial = website.name.trim().slice(0, 1).toUpperCase();
   const plainDescription = stripRichText(website.description);
@@ -47,14 +90,24 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
           </div>
         </div>
       </div>
-      <div className="p-3">
-        <p className="line-clamp-1 font-body text-sm font-bold text-ink">
-          {website.name}
-        </p>
-        {plainDescription && (
-          <p className="mt-0.5 line-clamp-1 text-xs text-ink/60">
-            {plainDescription}
+      <div className="flex flex-col gap-1.5 p-3">
+        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-bordeaux/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-bordeaux">
+          <LinkIcon className="h-2.5 w-2.5" />
+          Tham khảo
+        </span>
+        <div className="flex items-center gap-1.5">
+          <BookmarkIcon className="h-3 w-3 shrink-0 text-ink/35" />
+          <p className="line-clamp-1 min-w-0 font-body text-sm font-bold text-ink">
+            {website.name}
           </p>
+        </div>
+        {plainDescription && (
+          <div className="flex items-start gap-1.5">
+            <AlignLeftIcon className="mt-0.5 h-3 w-3 shrink-0 text-ink/30" />
+            <p className="line-clamp-1 min-w-0 text-xs text-ink/60">
+              {plainDescription}
+            </p>
+          </div>
         )}
       </div>
     </a>
@@ -269,7 +322,7 @@ export default function TrustedWebsiteSlider({
   return (
     <div
       ref={viewportRef}
-      className="relative w-full overflow-hidden"
+      className="relative -my-3 w-full overflow-hidden py-3"
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
     >

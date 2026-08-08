@@ -32,6 +32,34 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
+// Icon nhỏ đặt trước tên sách và mô tả sách, giúp phân biệt rõ 2 loại
+// thông tin thay vì chỉ hiển thị chữ trơn - đồng bộ với CourseCard.
+function BookmarkIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4-7 4V4.5a1 1 0 0 1 1-1Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function AlignLeftIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M4 6h16M4 12h10M4 18h13"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function HourglassIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
@@ -154,12 +182,19 @@ export default function BookCard({
         </div>
 
         <div className="flex flex-1 flex-col gap-2 p-4">
-          <h3 className="line-clamp-1 font-body text-lg font-bold leading-snug text-ink">
-            {book.title}
-          </h3>
-          <p className="line-clamp-2 text-sm text-ink/60">
-            {stripRichText(book.description)}
-          </p>
+          <div className="flex items-center gap-1.5">
+            <BookmarkIcon className="h-3.5 w-3.5 shrink-0 text-ink/35" />
+            <h3 className="line-clamp-1 min-w-0 font-body text-lg font-bold leading-snug text-ink">
+              {book.title}
+            </h3>
+          </div>
+
+          <div className="flex items-start gap-1.5">
+            <AlignLeftIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink/30" />
+            <p className="line-clamp-2 min-w-0 text-sm text-ink/60">
+              {stripRichText(book.description)}
+            </p>
+          </div>
 
           <div className="mt-auto flex items-center gap-2 border-t border-mist pt-3">
             <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl bg-amber-50 px-2.5 py-2">

@@ -14,6 +14,36 @@ const RESUME_DELAY = 2000;
 // bật/tắt liên tục ở ngưỡng biên (do làm tròn số).
 const OVERFLOW_TOLERANCE = 2;
 
+// Icon nhỏ dùng cho ô giá sách - cùng kiểu với ô "Học phí" trên CourseCard
+// và ô "Giá sách" trên BookCard để đồng bộ bố cục khi hover.
+function TagIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M20.59 13.41 12 22 2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+// Icon nhỏ đặt trước tên sách, đồng bộ với CourseCard/BookCard.
+function BookmarkIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4-7 4V4.5a1 1 0 0 1 1-1Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function BookTile({ book }: { book: Book }) {
   const initial = book.title.trim().slice(0, 1).toUpperCase();
   return (
@@ -44,13 +74,19 @@ function BookTile({ book }: { book: Book }) {
           </div>
         </div>
       </div>
-      <div className="p-3">
-        <p className="line-clamp-1 font-body text-sm font-bold text-ink">
-          {book.title}
-        </p>
-        <p className="mt-0.5 text-xs font-medium text-bordeaux">
-          {book.price > 0 ? formatVnd(book.price) : "Miễn phí"}
-        </p>
+      <div className="flex flex-col gap-2 p-3">
+        <div className="flex items-center gap-1.5">
+          <BookmarkIcon className="h-3 w-3 shrink-0 text-ink/35" />
+          <p className="line-clamp-1 min-w-0 font-body text-sm font-bold text-ink">
+            {book.title}
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-2 py-1.5">
+          <TagIcon className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+          <p className="truncate text-xs font-bold text-ink">
+            {book.price > 0 ? formatVnd(book.price) : "Miễn phí"}
+          </p>
+        </div>
       </div>
     </Link>
   );
@@ -260,7 +296,7 @@ export default function BookSlider({ books }: { books: Book[] }) {
   return (
     <div
       ref={viewportRef}
-      className="relative w-full overflow-hidden"
+      className="relative -my-3 w-full overflow-hidden py-3"
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
     >
