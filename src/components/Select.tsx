@@ -100,7 +100,7 @@ export default function Select({
         onKeyDown={handleKeyDown}
         className={`${base} flex w-full items-center justify-between gap-2 text-left`}
       >
-        <span className="truncate">{selected?.label ?? ""}</span>
+        <span className="min-w-0 truncate">{selected?.label ?? ""}</span>
         <svg
           viewBox="0 0 20 20"
           fill="none"

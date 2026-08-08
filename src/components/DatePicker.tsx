@@ -179,7 +179,7 @@ export default function DatePicker({
         }`}
       >
         <CalendarGlyph className="h-4 w-4 shrink-0 text-bordeaux/70" />
-        <span className="truncate">{value ? formatDisplay(value) : placeholder}</span>
+        <span className="min-w-0 truncate">{value ? formatDisplay(value) : placeholder}</span>
       </button>
 
       {open && (

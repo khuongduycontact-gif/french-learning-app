@@ -77,7 +77,7 @@ function CustomSelect({
             : "border-mist hover:border-ink/30"
         }`}
       >
-        <span className="truncate">{current?.label}</span>
+        <span className="min-w-0 truncate">{current?.label}</span>
         <svg
           className={`h-4 w-4 shrink-0 text-ink/50 transition-transform duration-150 ${
             open ? "rotate-180" : ""
@@ -118,7 +118,7 @@ function CustomSelect({
                       : "text-ink hover:bg-mist/60"
                   }`}
                 >
-                  <span className="truncate">{o.label}</span>
+                  <span className="min-w-0 truncate">{o.label}</span>
                   {selected && (
                     <svg
                       className="h-4 w-4 shrink-0"

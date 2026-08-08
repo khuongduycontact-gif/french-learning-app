@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Book } from "@/types";
@@ -8,8 +8,11 @@ import { formatVnd } from "@/lib/format";
 
 // Tốc độ tự chạy: pixel/giây
 const AUTO_SPEED = 45;
-// Sau bao lâu (ms) không có thao tác vuốt thì mới tự chạy lại
+// Sau bao lâu (ms) không có thao tác vuốt/kéo thì mới tự chạy lại
 const RESUME_DELAY = 2000;
+// Sai số cho phép khi so sánh chiều rộng nội dung với khung nhìn, tránh
+// bật/tắt liên tục ở ngưỡng biên (do làm tròn số).
+const OVERFLOW_TOLERANCE = 2;
 
 function BookTile({ book }: { book: Book }) {
   const initial = book.title.trim().slice(0, 1).toUpperCase();
@@ -51,6 +54,15 @@ export default function BookSlider({ books }: { books: Book[] }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
+  // Chỉ bật hiệu ứng chạy vòng (nhân đôi danh sách + tự trượt) khi nội
+  // dung đủ dài để tràn hết 1 hàng ngang. Nếu chưa đủ 1 hàng (ví dụ chỉ
+  // có 1-2 quyển sách) thì hiển thị tĩnh, không nhân đôi, không tự chạy.
+  const [loopEnabled, setLoopEnabled] = useState(false);
+  const loopEnabledRef = useRef(false);
+  useEffect(() => {
+    loopEnabledRef.current = loopEnabled;
+  }, [loopEnabled]);
+
   // Vị trí cuộn hiện tại (px, luôn <= 0), lưu trong ref để cập nhật mỗi
   // khung hình mà không phải render lại React.
   const positionRef = useRef(0);
@@ -82,10 +94,25 @@ export default function BookSlider({ books }: { books: Book[] }) {
     while (positionRef.current > 0) positionRef.current -= setWidth;
   }
 
+  // Đo chiều rộng nội dung để quyết định có bật chế độ chạy vòng hay
+  // không: chỉ bật khi 1 bộ danh sách rộng hơn khung nhìn (tràn 1 hàng).
   function measure() {
-    if (trackRef.current) {
-      // Track chứa 2 bộ danh sách liền nhau -> 1 bộ = 1 nửa tổng chiều rộng
-      setWidthRef.current = trackRef.current.scrollWidth / 2;
+    const track = trackRef.current;
+    const viewport = viewportRef.current;
+    if (!track || !viewport) return;
+
+    const viewportWidth = viewport.clientWidth;
+    // Khi đang ở chế độ chạy vòng, track chứa 2 bộ liền nhau -> 1 bộ = nửa
+    // tổng chiều rộng. Khi chưa bật, track chỉ chứa đúng 1 bộ.
+    const rawSetWidth = loopEnabledRef.current ? track.scrollWidth / 2 : track.scrollWidth;
+    setWidthRef.current = rawSetWidth;
+
+    const shouldLoop = rawSetWidth > viewportWidth + OVERFLOW_TOLERANCE;
+    if (shouldLoop !== loopEnabledRef.current) {
+      loopEnabledRef.current = shouldLoop;
+      setLoopEnabled(shouldLoop);
+      positionRef.current = 0;
+      applyTransform();
     }
   }
 
@@ -103,7 +130,10 @@ export default function BookSlider({ books }: { books: Book[] }) {
       lastTime = time;
 
       const shouldAutoPlay =
-        !draggingRef.current && !hoveringRef.current && !pausedByIdleRef.current;
+        loopEnabledRef.current &&
+        !draggingRef.current &&
+        !hoveringRef.current &&
+        !pausedByIdleRef.current;
 
       if (shouldAutoPlay && setWidthRef.current > 0) {
         positionRef.current -= AUTO_SPEED * dt;
@@ -121,7 +151,35 @@ export default function BookSlider({ books }: { books: Book[] }) {
       if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [books.length]);
+  }, [books.length, loopEnabled]);
+
+  // Cho phép vuốt ngang bằng trackpad (2 ngón) để kéo slider thủ công.
+  // Chỉ chặn hành vi cuộn mặc định khi rõ ràng là vuốt ngang (deltaX lớn
+  // hơn deltaY), để không cản trở việc cuộn dọc trang bằng chuột thường.
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    function onWheel(e: WheelEvent) {
+      if (!loopEnabledRef.current) return;
+      const absX = Math.abs(e.deltaX);
+      const absY = Math.abs(e.deltaY);
+      if (absX <= absY || absX < 2) return;
+
+      e.preventDefault();
+      positionRef.current -= e.deltaX;
+      wrapPosition();
+      applyTransform();
+
+      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
+      pausedByIdleRef.current = false;
+      scheduleResume();
+    }
+
+    viewport.addEventListener("wheel", onWheel, { passive: false });
+    return () => viewport.removeEventListener("wheel", onWheel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function scheduleResume() {
     pausedByIdleRef.current = true;
@@ -132,6 +190,8 @@ export default function BookSlider({ books }: { books: Book[] }) {
   }
 
   function handlePointerDown(e: React.PointerEvent) {
+    // Chưa đủ nội dung để cuộn thì không có gì để kéo cả.
+    if (!loopEnabledRef.current) return;
     // Chỉ theo dõi 1 điểm chạm/con trỏ tại 1 thời điểm
     draggingRef.current = true;
     dragStartXRef.current = e.clientX;
@@ -185,8 +245,9 @@ export default function BookSlider({ books }: { books: Book[] }) {
 
   if (books.length === 0) return null;
 
-  // Nhân đôi danh sách để tạo hiệu ứng cuộn vòng liền mạch (marquee).
-  const loopedBooks = [...books, ...books];
+  // Chỉ nhân đôi danh sách (để cuộn vòng liền mạch) khi đã xác định nội
+  // dung tràn quá 1 hàng ngang; nếu không, hiển thị đúng 1 bộ như thực tế.
+  const displayedBooks = loopEnabled ? [...books, ...books] : books;
 
   return (
     <div
@@ -202,10 +263,12 @@ export default function BookSlider({ books }: { books: Book[] }) {
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
         onClickCapture={handleClickCapture}
-        className="flex w-max cursor-grab gap-4 touch-pan-y select-none active:cursor-grabbing"
+        className={`flex w-max gap-4 touch-pan-y select-none ${
+          loopEnabled ? "cursor-grab active:cursor-grabbing" : ""
+        }`}
         style={{ willChange: "transform" }}
       >
-        {loopedBooks.map((b, i) => (
+        {displayedBooks.map((b, i) => (
           <BookTile key={`${b.id}-${i}`} book={b} />
         ))}
       </div>

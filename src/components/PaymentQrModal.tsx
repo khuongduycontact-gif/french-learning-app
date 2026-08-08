@@ -140,9 +140,9 @@ export default function PaymentQrModal({
               </div>
             )}
             {payment.accountName && (
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-ink/60">Chủ tài khoản</span>
-                <span className="truncate font-medium text-ink">{payment.accountName}</span>
+              <div className="flex min-w-0 items-center justify-between gap-3">
+                <span className="shrink-0 text-ink/60">Chủ tài khoản</span>
+                <span className="min-w-0 truncate font-medium text-ink">{payment.accountName}</span>
               </div>
             )}
             <div className="flex items-center justify-between gap-3 border-t border-mist pt-2">
