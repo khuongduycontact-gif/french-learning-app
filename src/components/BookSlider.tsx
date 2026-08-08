@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Book } from "@/types";
-import { formatVnd } from "@/lib/format";
+import { formatVnd, truncateOneLine } from "@/lib/format";
 import { stripRichText } from "@/lib/richtext";
 
 // Tốc độ tự chạy: pixel/giây
@@ -34,6 +34,7 @@ function TagIcon({ className }: { className?: string }) {
 function BookTile({ book }: { book: Book }) {
   const initial = book.title.trim().slice(0, 1).toUpperCase();
   const plainDescription = stripRichText(book.description);
+  const description = truncateOneLine(plainDescription, 28);
   return (
     <Link
       href={`/books/${book.id}`}
@@ -77,9 +78,17 @@ function BookTile({ book }: { book: Book }) {
             <span className="font-bold">{book.title}</span>
           </p>
           {plainDescription && (
-            <p className="min-w-0 text-xs text-ink/60">
-              <span className="font-semibold text-ink">Mô tả: </span>
-              {plainDescription}
+            <p className="min-w-0 text-xs text-ink/70">
+              <span className="text-ink/70">Mô tả: </span>
+              {description.text}
+              {description.truncated && (
+                <>
+                  {"... "}
+                  <span className="font-semibold text-bordeaux">
+                    Xem thêm
+                  </span>
+                </>
+              )}
             </p>
           )}
           <div className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-2 py-1.5">

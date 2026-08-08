@@ -404,7 +404,7 @@ export default async function CourseDetailPage({
 
           <p className="mt-4 border-t border-mist pt-4 text-sm text-ink/70">
             <span className="font-medium text-ink/70">Số bài giảng:</span>{" "}
-            {course.lessons} bài
+            {course.materials.length} bài
           </p>
 
           {/* Khoá học miễn phí: không hiện nút đăng ký nữa - học viên xem

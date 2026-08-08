@@ -28,7 +28,7 @@ function ClockIcon({ className }: { className?: string }) {
 const levels = ["A1", "A2", "B1", "B2", "C1"];
 const levelOptions = levels.map((l) => ({ value: l, label: l }));
 
-type NumberFieldKey = "price" | "lessons" | "freeLessons";
+type NumberFieldKey = "price" | "freeLessons";
 
 // Chuyển số giờ dạng thập phân (VD: 1.5) sang chuỗi "HH:MM" để đổ vào
 // input type="time" (trình duyệt tự hiện đồng hồ chọn, gõ số trực tiếp
@@ -63,7 +63,6 @@ export default function CourseForm({
     level: (initial?.level as any) || "A1",
     price: initial?.price ?? 0,
     duration: initial?.duration ?? 0,
-    lessons: initial?.lessons ?? 0,
     freeLessons: initial?.freeLessons ?? 0,
     videoUrl: initial?.videoUrl || "",
     published: initial?.published ?? true,
@@ -72,7 +71,6 @@ export default function CourseForm({
   // xoá trắng ô (kể cả số 0 mặc định) trong lúc gõ, không bị tự nhảy về 0.
   const [numText, setNumText] = useState<Record<NumberFieldKey, string>>({
     price: String(initial?.price ?? 0),
-    lessons: String(initial?.lessons ?? 0),
     freeLessons: String(initial?.freeLessons ?? 0),
   });
   // Thời lượng giờ học/buổi học: bấm vào icon đồng hồ mới hiện 2 ô nhập
@@ -192,8 +190,6 @@ export default function CourseForm({
     if (!form.description.trim()) nextErrors.description = "Vui lòng nhập mô tả.";
     if (!form.duration || form.duration <= 0)
       nextErrors.duration = "Vui lòng nhập thời lượng lớn hơn 0.";
-    if (!form.lessons || form.lessons <= 0)
-      nextErrors.lessons = "Vui lòng nhập số bài giảng lớn hơn 0.";
     if (!form.videoUrl) nextErrors.videoUrl = "Vui lòng chọn ảnh hoặc video giới thiệu.";
     return nextErrors;
   }
@@ -386,21 +382,6 @@ export default function CourseForm({
             )}
             {fieldErrors.duration && (
               <p className="mt-1 text-xs text-bordeaux">{fieldErrors.duration}</p>
-            )}
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-ink">Số bài giảng</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              value={numText.lessons}
-              onChange={(e) => updateNumber("lessons", e.target.value)}
-              onBlur={() => handleNumberBlur("lessons")}
-              onFocus={(e) => e.target.select()}
-              className="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm"
-            />
-            {fieldErrors.lessons && (
-              <p className="mt-1 text-xs text-bordeaux">{fieldErrors.lessons}</p>
             )}
           </div>
           <div>

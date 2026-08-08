@@ -35,3 +35,16 @@ export function formatDuration(duration: number): string {
   if (minutes === 0) return `${hours} giờ`;
   return `${hours} giờ ${minutes} phút`;
 }
+
+/** Cắt ngắn văn bản mô tả về đúng 1 dòng theo số ký tự tối đa (ước lượng
+ * theo kích thước thẻ), dùng cho phần "Mô tả" rút gọn trên các thẻ danh
+ * sách - line-clamp CSS thuần không cho phép chỉ chèn "Xem thêm" khi văn
+ * bản thực sự bị cắt, nên cắt thủ công theo số ký tự ở đây. */
+export function truncateOneLine(
+  text: string,
+  maxChars: number,
+): { text: string; truncated: boolean } {
+  const trimmed = text.trim();
+  if (trimmed.length <= maxChars) return { text: trimmed, truncated: false };
+  return { text: trimmed.slice(0, maxChars).trimEnd(), truncated: true };
+}

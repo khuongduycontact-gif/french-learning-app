@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Book } from "@/types";
 import { stripRichText } from "@/lib/richtext";
-import { formatVnd } from "@/lib/format";
+import { formatVnd, truncateOneLine } from "@/lib/format";
 
 function TagIcon({ className }: { className?: string }) {
   return (
@@ -127,6 +127,7 @@ export default function BookCard({
   statusBadge?: { label: string; tone: "pending" | "waiting" | "confirmed" };
 }) {
   const initial = book.title.trim().slice(0, 1).toUpperCase();
+  const description = truncateOneLine(stripRichText(book.description), 60);
 
   return (
     // Bọc ngoài (relative, KHÔNG overflow-hidden) chỉ giữ shadow/rounded-2xl/
@@ -165,9 +166,17 @@ export default function BookCard({
               <span className="font-bold">{book.title}</span>
             </h3>
 
-            <p className="min-w-0 text-sm text-ink/60">
-              <span className="font-semibold text-ink">Mô tả: </span>
-              {stripRichText(book.description)}
+            <p className="min-w-0 text-sm text-ink/70">
+              <span className="text-ink/70">Mô tả: </span>
+              {description.text}
+              {description.truncated && (
+                <>
+                  {"... "}
+                  <span className="font-semibold text-bordeaux">
+                    Xem thêm
+                  </span>
+                </>
+              )}
             </p>
 
             <div className="mt-auto flex items-center gap-2 border-t border-mist pt-3">

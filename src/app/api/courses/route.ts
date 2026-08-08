@@ -77,7 +77,6 @@ export async function POST(req: NextRequest) {
     level,
     price,
     duration,
-    lessons,
     freeLessons,
     videoUrl,
     published,
@@ -90,14 +89,12 @@ export async function POST(req: NextRequest) {
     !level ||
     !duration ||
     Number(duration) <= 0 ||
-    !lessons ||
-    Number(lessons) <= 0 ||
     !videoUrl
   ) {
     return NextResponse.json(
       {
         error:
-          "Vui lòng nhập đầy đủ tất cả các trường bắt buộc (tiêu đề, mô tả, trình độ, thời lượng, số bài giảng, ảnh/video giới thiệu).",
+          "Vui lòng nhập đầy đủ tất cả các trường bắt buộc (tiêu đề, mô tả, trình độ, thời lượng, ảnh/video giới thiệu).",
       },
       { status: 400 }
     );
@@ -140,7 +137,6 @@ export async function POST(req: NextRequest) {
       level,
       price: Number(price) || 0,
       duration: Number(duration) || 0,
-      lessons: Number(lessons) || 0,
       freeLessons: Math.max(0, Number(freeLessons) || 0),
       videoUrl: videoUrl || null,
       published: published ?? true,

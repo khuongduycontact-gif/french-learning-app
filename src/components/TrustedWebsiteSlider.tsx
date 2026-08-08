@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { TrustedWebsite } from "@/types";
 import { stripRichText } from "@/lib/richtext";
+import { truncateOneLine } from "@/lib/format";
 
 // Tốc độ tự chạy: pixel/giây
 const AUTO_SPEED = 45;
@@ -32,6 +33,7 @@ function LinkIcon({ className }: { className?: string }) {
 function WebsiteTile({ website }: { website: TrustedWebsite }) {
   const initial = website.name.trim().slice(0, 1).toUpperCase();
   const plainDescription = stripRichText(website.description);
+  const description = truncateOneLine(plainDescription, 28);
   return (
     <a
       href={website.link}
@@ -82,9 +84,17 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
             <span className="font-bold">{website.name}</span>
           </p>
           {plainDescription && (
-            <p className="min-w-0 text-xs text-ink/60">
-              <span className="font-semibold text-ink">Mô tả: </span>
-              {plainDescription}
+            <p className="min-w-0 text-xs text-ink/70">
+              <span className="text-ink/70">Mô tả: </span>
+              {description.text}
+              {description.truncated && (
+                <>
+                  {"... "}
+                  <span className="font-semibold text-bordeaux">
+                    Xem thêm
+                  </span>
+                </>
+              )}
             </p>
           )}
         </div>

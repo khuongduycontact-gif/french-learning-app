@@ -65,7 +65,6 @@ export async function PUT(
     level,
     price,
     duration,
-    lessons,
     freeLessons,
     videoUrl,
     published,
@@ -110,7 +109,6 @@ export async function PUT(
       ...(level !== undefined ? { level } : {}),
       ...(price !== undefined ? { price: Number(price) } : {}),
       ...(duration !== undefined ? { duration: Number(duration) } : {}),
-      ...(lessons !== undefined ? { lessons: Number(lessons) } : {}),
       ...(freeLessons !== undefined
         ? { freeLessons: Math.max(0, Number(freeLessons) || 0) }
         : {}),

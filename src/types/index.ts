@@ -30,7 +30,6 @@ export interface Course {
   price: number;
   duration: number;
   sessions: number;
-  lessons: number;
   // Số bài học đầu tiên được xem miễn phí, không cần đăng ký khoá học.
   freeLessons: number;
   videoUrl: string | null;
@@ -54,7 +53,6 @@ export interface CourseInput {
   level: Level;
   price: number;
   duration: number;
-  lessons: number;
   freeLessons: number;
   videoUrl?: string;
   published?: boolean;
