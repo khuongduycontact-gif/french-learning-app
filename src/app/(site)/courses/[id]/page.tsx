@@ -359,13 +359,11 @@ export default async function CourseDetailPage({
               <span className="font-bold">{course.title}</span>
             </h1>
 
-            <div className="mt-3 flex flex-col gap-0.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-indigo-500">
-                Mô tả
-              </span>
+            <div className="mt-3 flex flex-wrap items-baseline gap-x-1">
+              <span className="shrink-0 text-sm text-ink/70">Mô tả:</span>
               <RichText
                 content={course.description}
-                className="break-words text-lg text-ink/60"
+                className="min-w-0 break-words text-sm text-ink/70"
               />
             </div>
           </div>
