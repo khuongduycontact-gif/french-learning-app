@@ -75,9 +75,19 @@ function NavItemLink({
 function NavList({
   collapsed,
   onNavigate,
+  onGroupClickWhileCollapsed,
+  forceOpenGroup,
+  onForceOpenGroupHandled,
 }: {
   collapsed: boolean;
   onNavigate?: () => void;
+  // Được gọi khi bấm vào một nhóm lúc sidebar đang thu gọn: cha sẽ tự mở
+  // rộng sidebar ra để người dùng chọn mục con bên trong nhóm đó.
+  onGroupClickWhileCollapsed?: (label: string) => void;
+  // Nhãn nhóm cần tự mở ngay sau khi sidebar vừa được mở rộng từ trạng
+  // thái thu gọn (do bấm vào nhóm lúc đang collapsed).
+  forceOpenGroup?: string | null;
+  onForceOpenGroupHandled?: () => void;
 }) {
   const pathname = usePathname();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
@@ -96,38 +106,62 @@ function NavList({
     });
   }, [pathname]);
 
+  // Khi cha báo có nhóm cần mở ngay (vừa mở rộng sidebar từ lúc thu gọn),
+  // mở nhóm đó ra rồi báo lại cho cha là đã xử lý xong.
+  useEffect(() => {
+    if (!forceOpenGroup) return;
+    setOpenGroups((prev) => ({ ...prev, [forceOpenGroup]: true }));
+    onForceOpenGroupHandled?.();
+  }, [forceOpenGroup, onForceOpenGroupHandled]);
+
   function toggleGroup(label: string) {
     setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
   }
 
-  // Sidebar thu gọn (chỉ hiện icon): không đủ chỗ để hiện nhóm có thể mở/
-  // đóng, nên trải phẳng các mục con của từng nhóm thành icon riêng lẻ,
-  // giống hệt các mục đơn - vẫn điều hướng đúng, chỉ khác cách trình bày.
+  // Sidebar thu gọn (chỉ hiện icon): mục đơn bấm vào là chuyển trang luôn;
+  // còn nhóm thì bấm vào sẽ tự mở rộng sidebar ra để chọn mục con, vì
+  // dạng thu gọn không đủ chỗ hiện danh sách con để chọn trực tiếp.
   if (collapsed) {
-    const flatItems = adminNavLinks.flatMap((entry) =>
-      entry.type === "group"
-        ? entry.children.map((child) => ({
-            href: child.href,
-            label: child.label,
-            exact: child.exact,
-            icon: entry.icon,
-          }))
-        : [{ href: entry.href, label: entry.label, exact: entry.exact, icon: entry.icon }]
-    );
-
     return (
       <nav className="flex flex-col gap-1 text-sm">
-        {flatItems.map((item) => (
-          <NavItemLink
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            icon={item.icon}
-            active={isAdminNavActive(pathname, item.href, item.exact)}
-            collapsed
-            onNavigate={onNavigate}
-          />
-        ))}
+        {adminNavLinks.map((entry: AdminNavEntry) => {
+          if (entry.type === "link") {
+            return (
+              <NavItemLink
+                key={entry.href}
+                href={entry.href}
+                label={entry.label}
+                icon={entry.icon}
+                active={isAdminNavActive(pathname, entry.href, entry.exact)}
+                collapsed
+                onNavigate={onNavigate}
+              />
+            );
+          }
+
+          const groupActive = isAdminNavGroupActive(pathname, entry);
+          return (
+            <button
+              key={entry.label}
+              type="button"
+              title={entry.label}
+              aria-label={entry.label}
+              onClick={() => onGroupClickWhileCollapsed?.(entry.label)}
+              className={`group relative flex min-w-0 items-center justify-center rounded-xl px-3 py-2.5 font-medium transition-colors ${
+                groupActive
+                  ? "bg-gradient-to-r from-ink/10 via-white/80 to-bordeaux/10 text-ink ring-1 ring-inset ring-mist/70 shadow-sm"
+                  : "text-ink/80 hover:bg-mist/70 hover:text-ink"
+              }`}
+            >
+              <AdminNavIcon
+                name={entry.icon}
+                className={`h-5 w-5 shrink-0 transition-colors ${
+                  groupActive ? "text-bordeaux" : "text-ink/50 group-hover:text-ink"
+                }`}
+              />
+            </button>
+          );
+        })}
       </nav>
     );
   }
@@ -254,6 +288,9 @@ function CloseIcon({ className }: { className?: string }) {
 function DesktopSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [ready, setReady] = useState(false);
+  // Nhóm đang chờ được mở ra ngay sau khi sidebar vừa mở rộng (do bấm vào
+  // icon nhóm lúc đang thu gọn).
+  const [pendingOpenGroup, setPendingOpenGroup] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -274,6 +311,18 @@ function DesktopSidebar() {
       }
       return next;
     });
+  };
+
+  // Bấm vào một nhóm lúc sidebar đang thu gọn: tự động mở rộng sidebar ra
+  // và mở sẵn nhóm đó để người dùng chọn mục con, thay vì phải bấm 2 lần.
+  const expandForGroup = (label: string) => {
+    setCollapsed(false);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, "0");
+    } catch {
+      // bỏ qua nếu localStorage bị chặn
+    }
+    setPendingOpenGroup(label);
   };
 
   return (
@@ -304,7 +353,12 @@ function DesktopSidebar() {
         </button>
       </div>
 
-      <NavList collapsed={collapsed} />
+      <NavList
+        collapsed={collapsed}
+        onGroupClickWhileCollapsed={expandForGroup}
+        forceOpenGroup={pendingOpenGroup}
+        onForceOpenGroupHandled={() => setPendingOpenGroup(null)}
+      />
     </aside>
   );
 }
