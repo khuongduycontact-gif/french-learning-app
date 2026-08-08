@@ -25,18 +25,24 @@ export default async function AboutPage() {
           <p className="mt-3 text-ink/70">{about.heroDescription}</p>
         </div>
         <div className="relative mx-auto w-full max-w-[15rem] md:ml-auto md:mr-0 md:max-w-xs">
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-mist bg-white/50">
-            {about.heroImageUrl ? (
-              <Image
-                src={about.heroImageUrl}
-                alt={about.heroGreeting}
-                fill
-                sizes="320px"
-                className="object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center text-ink/30">Chưa có ảnh</div>
-            )}
+          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-mist bg-white">
+            <div className="h-full w-full p-2">
+              <div className="relative h-full w-full overflow-hidden rounded-2xl">
+                {about.heroImageUrl ? (
+                  <Image
+                    src={about.heroImageUrl}
+                    alt={about.heroGreeting}
+                    fill
+                    sizes="320px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-white/50 text-ink/30">
+                    Chưa có ảnh
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -101,14 +107,18 @@ export default async function AboutPage() {
             </h2>
             <div className="ribbon-rule mt-3" />
             {about.methodImageUrl && (
-              <div className="relative mx-auto mt-8 aspect-[21/9] w-full max-w-2xl overflow-hidden rounded-2xl border border-mist shadow-sm">
-                <Image
-                  src={about.methodImageUrl}
-                  alt={about.methodTitle}
-                  fill
-                  sizes="(min-width: 768px) 672px, 100vw"
-                  className="object-cover"
-                />
+              <div className="relative mx-auto mt-8 aspect-[21/9] w-full max-w-2xl overflow-hidden rounded-2xl border border-mist bg-white shadow-sm">
+                <div className="h-full w-full p-2 sm:p-3">
+                  <div className="relative h-full w-full overflow-hidden rounded-xl">
+                    <Image
+                      src={about.methodImageUrl}
+                      alt={about.methodTitle}
+                      fill
+                      sizes="(min-width: 768px) 672px, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
               </div>
             )}
             <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">

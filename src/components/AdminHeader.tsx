@@ -9,7 +9,7 @@ export default function AdminHeader() {
   const { isDrawerMode, openDrawer } = useAdminDrawer();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-mist bg-parchment shadow-sm">
+    <header className="sticky top-0 z-40 transform-gpu border-b border-mist bg-parchment shadow-sm">
       <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6 md:px-10">
         <div className="flex min-w-0 items-center gap-2">
           {isDrawerMode && (

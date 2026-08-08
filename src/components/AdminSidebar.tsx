@@ -327,7 +327,7 @@ function DesktopSidebar() {
 
   return (
     <aside
-      className={`sticky top-24 z-30 flex h-fit shrink-0 flex-col rounded-2xl border border-mist bg-white/60 p-3 shadow-sm transition-[width] duration-300 ease-out ${
+      className={`sticky top-24 z-30 flex h-fit shrink-0 transform-gpu flex-col rounded-2xl border border-mist bg-white/60 p-3 shadow-sm transition-[width] duration-300 ease-out ${
         collapsed ? "w-[76px]" : "w-64"
       } ${ready ? "" : "invisible"}`}
     >

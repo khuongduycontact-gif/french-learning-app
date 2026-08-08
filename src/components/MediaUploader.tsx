@@ -14,6 +14,9 @@ type Props = {
   error?: string;
   // Cho phép tuỳ biến kích thước/tỉ lệ khung xem trước ảnh (mặc định: ngang, cao 8rem)
   previewClassName?: string;
+  // Căn giữa nhãn, ảnh xem trước và nút bấm theo chiều ngang (dùng khi ảnh
+  // xem trước hẹp hơn cột chứa nó, để tránh nút "Chọn tệp" bị lệch trái)
+  centered?: boolean;
 };
 
 const acceptByKind: Record<Kind, string> = {
@@ -29,6 +32,7 @@ export default function MediaUploader({
   onChange,
   error: externalError,
   previewClassName,
+  centered = false,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -85,7 +89,7 @@ export default function MediaUploader({
   }
 
   return (
-    <div>
+    <div className={centered ? "flex flex-col items-center text-center" : undefined}>
       <label className="mb-1 block text-sm font-medium text-ink">{label}</label>
 
       {value && !isVideo && (
@@ -107,7 +111,7 @@ export default function MediaUploader({
         />
       )}
 
-      <div className="flex items-center gap-3">
+      <div className={`flex items-center gap-3 ${centered ? "justify-center" : ""}`}>
         <button
           type="button"
           onClick={handlePick}

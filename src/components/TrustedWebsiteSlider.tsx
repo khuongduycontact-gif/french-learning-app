@@ -25,7 +25,7 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
       title={plainDescription || website.name}
       className="group block w-[168px] shrink-0 select-none overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
     >
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-indigo-100">
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-white">
         <div className="h-full w-full p-2">
           <div className="relative h-full w-full overflow-hidden rounded-xl">
             {website.coverImage ? (

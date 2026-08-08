@@ -189,6 +189,7 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
               value={form.heroImageUrl || ""}
               onChange={(url) => set("heroImageUrl", url || null)}
               previewClassName="mb-2 aspect-[3/4] w-[180px] rounded-lg border border-mist object-cover"
+              centered
             />
           </div>
         </div>
@@ -327,7 +328,7 @@ export default function AboutForm({ initial }: { initial: AboutPage }) {
         </button>
       </section>
 
-      <div className="sticky bottom-4 z-10 flex justify-end">
+      <div className="sticky bottom-4 z-10 flex transform-gpu justify-end">
         <button
           type="submit"
           disabled={saving}

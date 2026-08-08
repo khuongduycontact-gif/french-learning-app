@@ -99,15 +99,19 @@ export default async function HomePage() {
             Khám phá khoá học
           </Link>
         </div>
-        <div className="relative aspect-square w-full max-w-[220px] justify-self-center overflow-hidden rounded-full border border-mist bg-white/50 md:justify-self-end">
-          <Image
-            src="/logo-app.png"
-            alt="Français avec Céline"
-            fill
-            sizes="220px"
-            quality={100}
-            className="object-cover"
-          />
+        <div className="relative aspect-square w-full max-w-[220px] justify-self-center overflow-hidden rounded-full border border-mist bg-white md:justify-self-end">
+          <div className="h-full w-full p-2">
+            <div className="relative h-full w-full overflow-hidden rounded-full">
+              <Image
+                src="/logo-app.png"
+                alt="Français avec Céline"
+                fill
+                sizes="220px"
+                quality={100}
+                className="object-cover"
+              />
+            </div>
+          </div>
         </div>
       </section>
 

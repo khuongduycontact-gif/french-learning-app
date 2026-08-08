@@ -131,7 +131,7 @@ export default function BookCard({
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <Link href={`/books/${book.id}`} className="contents">
-        <div className="relative h-48 w-full overflow-hidden bg-indigo-100">
+        <div className="relative h-48 w-full overflow-hidden bg-white">
           <div className="h-full w-full p-2">
             <div className="relative h-full w-full overflow-hidden rounded-xl">
               {book.coverImage ? (
