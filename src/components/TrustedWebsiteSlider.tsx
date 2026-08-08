@@ -39,7 +39,7 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
       rel="noopener noreferrer"
       draggable={false}
       title={plainDescription || website.name}
-      className="group block w-[168px] shrink-0 select-none transform-gpu rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
+      className="group block w-[168px] shrink-0 select-none transform-gpu rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 sm:w-[188px]"
     >
       {/* Khối bo góc + cắt nội dung (overflow-hidden) tách riêng khỏi thẻ
           <a> ở ngoài - thẻ ngoài chỉ giữ shadow/rounded-2xl/hover. Nếu
@@ -77,14 +77,10 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
             <LinkIcon className="h-2.5 w-2.5" />
             Tham khảo
           </span>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[9px] font-semibold uppercase tracking-wide text-ink">
-              Tên website
-            </span>
-            <p className="line-clamp-1 min-w-0 font-body text-xs font-bold text-ink">
-              {website.name}
-            </p>
-          </div>
+          <p className="min-w-0 font-body text-xs text-ink">
+            <span className="font-semibold">Tên website: </span>
+            <span className="font-bold">{website.name}</span>
+          </p>
           {plainDescription && (
             <div className="flex flex-col gap-0.5">
               <span className="text-[9px] font-semibold uppercase tracking-wide text-ink/40">

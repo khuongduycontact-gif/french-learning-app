@@ -177,7 +177,7 @@ export default async function HomePage() {
           <div className="mb-6 flex items-end justify-between">
             <div>
               <h2 className="font-display text-2xl font-semibold text-ink">
-                Website học tiếng Pháp tham khảo
+                Website học tiếng Pháp
               </h2>
               <div className="ribbon-rule mt-3" />
             </div>

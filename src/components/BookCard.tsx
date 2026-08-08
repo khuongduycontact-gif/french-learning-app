@@ -134,7 +134,7 @@ export default function BookCard({
     // hidden nằm chung khối với shadow, bóng đổ khi hover sẽ bị cắt/bó hẹp
     // sát viền dưới thẻ thay vì ôm đều quanh thẻ (đồng bộ với BookSlider và
     // TrustedWebsiteSlider - 2 nơi đã tách đúng theo cách này).
-    <div className="group relative rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <div className="group relative rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1">
       <div className="flex flex-col overflow-hidden rounded-2xl border border-mist bg-white">
         <Link href={`/books/${book.id}`} className="contents">
           <div className="relative h-48 w-full overflow-hidden bg-white">
@@ -160,14 +160,10 @@ export default function BookCard({
           </div>
 
           <div className="flex flex-1 flex-col gap-2 p-4">
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-ink">
-                Tên sách
-              </span>
-              <h3 className="line-clamp-1 min-w-0 font-body text-sm font-bold leading-snug text-ink">
-                {book.title}
-              </h3>
-            </div>
+            <h3 className="min-w-0 font-body text-sm leading-snug text-ink">
+              <span className="font-semibold">Tên sách: </span>
+              <span className="font-bold">{book.title}</span>
+            </h3>
 
             <div className="flex flex-col gap-0.5">
               <span className="text-[10px] font-semibold uppercase tracking-wide text-ink/40">
@@ -192,6 +188,10 @@ export default function BookCard({
           </div>
         </Link>
 
+        {/* Sách miễn phí: không hiện nút đăng ký/mua nữa, đồng bộ với trang
+          chi tiết sách (nơi sách miễn phí được coi như đã sở hữu và cho
+          tải luôn, không cần bấm nút mua). */}
+        {!statusBadge && book.price <= 0 ? null : (
         <div className="px-4 pb-4">
           {!statusBadge ? (
             <Link
@@ -226,6 +226,7 @@ export default function BookCard({
             </Link>
           )}
         </div>
+        )}
       </div>
     </div>
   );

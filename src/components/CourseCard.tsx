@@ -129,7 +129,7 @@ export default function CourseCard({
     // hidden nằm chung khối với shadow, bóng đổ khi hover sẽ bị cắt/bó hẹp
     // sát viền dưới thẻ thay vì ôm đều quanh thẻ (đồng bộ với BookSlider và
     // TrustedWebsiteSlider - 2 nơi đã tách đúng theo cách này).
-    <div className="group relative rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <div className="group relative rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1">
       <div className="flex flex-col overflow-hidden rounded-2xl border border-mist bg-white">
         <Link href={`/courses/${course.id}`} className="contents">
           {/* Vùng ảnh / minh hoạ đầu thẻ.
@@ -331,14 +331,10 @@ export default function CourseCard({
               {levelLabel[course.level] ?? course.level}
             </span>
 
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-ink">
-                Tên khoá học
-              </span>
-              <h3 className="line-clamp-1 min-w-0 font-body text-sm font-bold leading-snug text-ink">
-                {course.title}
-              </h3>
-            </div>
+            <h3 className="min-w-0 font-body text-sm leading-snug text-ink">
+              <span className="font-semibold">Tên khoá học: </span>
+              <span className="font-bold">{course.title}</span>
+            </h3>
 
             <div className="flex flex-col gap-0.5">
               <span className="text-[10px] font-semibold uppercase tracking-wide text-indigo-500">
@@ -383,6 +379,12 @@ export default function CourseCard({
             thái chờ riêng, không phải "đã đăng ký" - khớp với EnrollButton
             ở trang chi tiết
           - CONFIRMED (đã được admin xác nhận): "Bạn đã đăng ký khoá học này" */}
+        {/* Khoá học miễn phí: không hiện nút đăng ký nữa (học viên xem trực
+          tiếp các bài học miễn phí ở trang chi tiết, không cần đăng ký).
+          Chỉ ẩn khi CHƯA có trạng thái đăng ký nào - nếu học viên đã có
+          lượt đăng ký (VD: từng đăng ký trước khi khoá học đổi thành miễn
+          phí) thì vẫn hiện đúng trạng thái hiện tại của họ. */}
+        {!statusBadge && course.price <= 0 ? null : (
         <div className="px-4 pb-4">
           {!statusBadge ? (
             <Link
@@ -417,6 +419,7 @@ export default function CourseCard({
             </Link>
           )}
         </div>
+        )}
       </div>
     </div>
   );

@@ -123,14 +123,10 @@ export default async function BookDetailPage({
           </div>
 
           <div className="p-6 sm:p-8">
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-ink">
-                Tên sách
-              </span>
-              <h1 className="break-words font-display text-lg font-bold text-ink">
-                {book.title}
-              </h1>
-            </div>
+            <h1 className="break-words font-display text-lg text-ink">
+              <span className="font-semibold">Tên sách: </span>
+              <span className="font-bold">{book.title}</span>
+            </h1>
 
             <div className="mt-3 flex flex-col gap-0.5">
               <span className="text-[10px] font-semibold uppercase tracking-wide text-ink/40">

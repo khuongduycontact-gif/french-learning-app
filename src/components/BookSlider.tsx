@@ -38,7 +38,7 @@ function BookTile({ book }: { book: Book }) {
     <Link
       href={`/books/${book.id}`}
       draggable={false}
-      className="group block w-[168px] shrink-0 select-none transform-gpu rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
+      className="group block w-[168px] shrink-0 select-none transform-gpu rounded-2xl shadow-sm transition duration-300 hover:-translate-y-1 sm:w-[188px]"
     >
       {/* Khối bo góc + cắt nội dung (overflow-hidden) tách riêng khỏi thẻ
           <Link> ở ngoài - thẻ ngoài chỉ giữ shadow/rounded-2xl/hover. Nếu
@@ -72,14 +72,10 @@ function BookTile({ book }: { book: Book }) {
           </div>
         </div>
         <div className="flex flex-col gap-2 p-3">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[9px] font-semibold uppercase tracking-wide text-ink">
-              Tên sách
-            </span>
-            <p className="line-clamp-1 min-w-0 font-body text-xs font-bold text-ink">
-              {book.title}
-            </p>
-          </div>
+          <p className="min-w-0 font-body text-xs text-ink">
+            <span className="font-semibold">Tên sách: </span>
+            <span className="font-bold">{book.title}</span>
+          </p>
           {plainDescription && (
             <div className="flex flex-col gap-0.5">
               <span className="text-[9px] font-semibold uppercase tracking-wide text-ink/40">

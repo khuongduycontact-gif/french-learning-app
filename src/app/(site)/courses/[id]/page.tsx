@@ -354,14 +354,10 @@ export default async function CourseDetailPage({
               {levelLabel[course.level] ?? course.level}
             </span>
 
-            <div className="mt-3 flex flex-col gap-0.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-ink">
-                Tên khoá học
-              </span>
-              <h1 className="break-words font-display text-lg font-bold text-ink">
-                {course.title}
-              </h1>
-            </div>
+            <h1 className="mt-3 break-words font-display text-lg text-ink">
+              <span className="font-semibold">Tên khoá học: </span>
+              <span className="font-bold">{course.title}</span>
+            </h1>
 
             <div className="mt-3 flex flex-col gap-0.5">
               <span className="text-[10px] font-semibold uppercase tracking-wide text-indigo-500">
@@ -411,26 +407,26 @@ export default async function CourseDetailPage({
             {course.lessons} bài
           </p>
 
-          <div className="mt-4">
-            <EnrollButton
-              courseId={course.id}
-              courseTitle={course.title}
-              initialEnrollmentId={enrollment?.id ?? null}
-              initialStatus={(enrollment?.status as any) ?? null}
-              initialPayment={payment}
-              autoStart={searchParams?.enroll === "1"}
-            />
-          </div>
+          {/* Khoá học miễn phí: không hiện nút đăng ký nữa - học viên xem
+              trực tiếp các bài học miễn phí ở phần "Tài liệu học" bên dưới,
+              không cần đăng ký/đăng nhập. */}
+          {course.price > 0 && (
+            <div className="mt-4">
+              <EnrollButton
+                courseId={course.id}
+                courseTitle={course.title}
+                initialEnrollmentId={enrollment?.id ?? null}
+                initialStatus={(enrollment?.status as any) ?? null}
+                initialPayment={payment}
+                autoStart={searchParams?.enroll === "1"}
+              />
+            </div>
+          )}
 
-          {/* Bài học miễn phí xem thử không cần đăng nhập/đăng ký - nhắc rõ
-              để tránh hiểu lầm rằng nút "Đăng nhập để đăng ký" ở trên là bắt
-              buộc mới xem được nội dung, trong khi phần "Tài liệu học" bên
-              dưới đã cho xem trước các bài học miễn phí ngay không cần đăng
-              nhập. */}
+          {/* Bài học miễn phí xem thử không cần đăng nhập/đăng ký. */}
           {!isConfirmed && freeLessonCount > 0 && (
-            <p className="mt-3 text-center text-xs text-ink/50">
-              {freeLessonCount} bài học đầu miễn phí - xem thử ngay bên dưới,
-              không cần đăng nhập.
+            <p className="mt-3 text-center text-xs italic text-ink/50">
+              Bạn có thể xem {freeLessonCount} bài học đầu tiên miễn phí.
             </p>
           )}
         </aside>
@@ -459,7 +455,7 @@ export default async function CourseDetailPage({
               deadlinesByMaterial={deadlinesByMaterial}
             />
             {!isConfirmed && lockedLessonCount > 0 && (
-              <p className="mt-4 shrink-0 border-t border-mist pt-4 text-sm text-ink/60">
+              <p className="mt-4 shrink-0 border-t border-mist pt-4 text-xs italic text-ink/60">
                 Khoá học có tất cả {course.materials.length} bài, bạn sẽ
                 được xem miễn phí {freeLessonCount} bài, nếu muốn tiếp tục
                 hãy đăng ký khoá học.
@@ -477,7 +473,9 @@ export default async function CourseDetailPage({
               </h2>
               <div className="ribbon-rule my-3 shrink-0" />
               <p className="text-sm text-ink/60">
-                Đăng ký khoá học để xem toàn bộ các bài học.
+                {course.price > 0
+                  ? "Đăng ký khoá học để xem toàn bộ các bài học."
+                  : "Bài học xem trước sẽ sớm được cập nhật."}
               </p>
             </div>
           )}
