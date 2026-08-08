@@ -123,12 +123,12 @@ export default async function BookDetailPage({
           </div>
 
           <div className="p-6 sm:p-8">
-            <h1 className="break-words font-display text-2xl font-bold text-ink sm:text-3xl">
+            <h1 className="break-words font-display text-lg font-bold text-ink">
               {book.title}
             </h1>
             <RichText
               content={book.description}
-              className="mt-3 break-words text-ink/60"
+              className="mt-3 break-words text-lg text-ink/60"
             />
           </div>
         </div>

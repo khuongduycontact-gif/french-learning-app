@@ -354,13 +354,13 @@ export default async function CourseDetailPage({
               {levelLabel[course.level] ?? course.level}
             </span>
 
-            <h1 className="mt-3 break-words font-display text-2xl font-bold text-ink sm:text-3xl">
+            <h1 className="mt-3 break-words font-display text-lg font-bold text-ink">
               {course.title}
             </h1>
 
             <RichText
               content={course.description}
-              className="mt-3 break-words text-ink/60"
+              className="mt-3 break-words text-lg text-ink/60"
             />
           </div>
         </div>

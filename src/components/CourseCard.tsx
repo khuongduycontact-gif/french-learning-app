@@ -335,7 +335,7 @@ export default function CourseCard({
               <span className="text-[10px] font-semibold uppercase tracking-wide text-ink">
                 Tên khoá học
               </span>
-              <h3 className="line-clamp-1 min-w-0 font-body text-lg font-bold leading-snug text-ink">
+              <h3 className="line-clamp-1 min-w-0 font-body text-sm font-bold leading-snug text-ink">
                 {course.title}
               </h3>
             </div>
