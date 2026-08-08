@@ -226,7 +226,7 @@ export default function AdminSchedulesPage() {
                             className="cursor-pointer rounded-md border border-mist bg-white p-2.5 text-xs shadow-sm transition hover:border-bordeaux/40 hover:bg-mist/20"
                           >
                             <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-1">
-                              <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-gold/20 px-2 py-0.5 font-semibold text-ink">
+                              <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md bg-emerald-100 px-2 py-0.5 font-semibold text-ink">
                                 Ca {caNumber}
                                 {schedule.recurringId && (
                                   <svg
@@ -245,7 +245,22 @@ export default function AdminSchedulesPage() {
                                   </svg>
                                 )}
                               </span>
-                              <span className="shrink-0 whitespace-nowrap font-semibold text-bordeaux">
+                              <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap font-semibold text-bordeaux">
+                                <svg
+                                  className="h-3 w-3 shrink-0 text-bordeaux"
+                                  viewBox="0 0 20 20"
+                                  fill="none"
+                                  aria-hidden="true"
+                                >
+                                  <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.6" />
+                                  <path
+                                    d="M10 6.2V10l2.6 1.5"
+                                    stroke="currentColor"
+                                    strokeWidth="1.6"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
                                 {formatTime(start)} - {formatTime(end)}
                               </span>
                             </div>
