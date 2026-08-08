@@ -26,34 +26,46 @@ function WebsiteTile({ website }: { website: TrustedWebsite }) {
       className="group block w-[168px] shrink-0 select-none overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:w-[188px]"
     >
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-mist">
-        {website.coverImage ? (
-          <Image
-            src={website.coverImage}
-            alt={website.name}
-            fill
-            draggable={false}
-            sizes="188px"
-            className="object-cover transition duration-300 group-hover:scale-105 pointer-events-none"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
-            <span className="select-none font-body text-4xl font-bold text-indigo-400">
-              {initial}
-            </span>
+        <div className="h-full w-full p-2">
+          <div className="relative h-full w-full overflow-hidden rounded-xl">
+            {website.coverImage ? (
+              <Image
+                src={website.coverImage}
+                alt={website.name}
+                fill
+                draggable={false}
+                sizes="188px"
+                className="object-cover transition duration-300 group-hover:scale-105 pointer-events-none"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
+                <span className="select-none font-body text-4xl font-bold text-indigo-400">
+                  {initial}
+                </span>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
       <div className="p-3">
-        <p className="line-clamp-1 font-display text-sm font-bold text-ink">{website.name}</p>
+        <p className="line-clamp-1 font-display text-sm font-bold text-ink">
+          {website.name}
+        </p>
         {plainDescription && (
-          <p className="mt-0.5 line-clamp-1 text-xs text-ink/60">{plainDescription}</p>
+          <p className="mt-0.5 line-clamp-1 text-xs text-ink/60">
+            {plainDescription}
+          </p>
         )}
       </div>
     </a>
   );
 }
 
-export default function TrustedWebsiteSlider({ websites }: { websites: TrustedWebsite[] }) {
+export default function TrustedWebsiteSlider({
+  websites,
+}: {
+  websites: TrustedWebsite[];
+}) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -107,7 +119,9 @@ export default function TrustedWebsiteSlider({ websites }: { websites: TrustedWe
     const viewportWidth = viewport.clientWidth;
     // Khi đang ở chế độ chạy vòng, track chứa 2 bộ liền nhau -> 1 bộ = nửa
     // tổng chiều rộng. Khi chưa bật, track chỉ chứa đúng 1 bộ.
-    const rawSetWidth = loopEnabledRef.current ? track.scrollWidth / 2 : track.scrollWidth;
+    const rawSetWidth = loopEnabledRef.current
+      ? track.scrollWidth / 2
+      : track.scrollWidth;
     setWidthRef.current = rawSetWidth;
 
     const shouldLoop = rawSetWidth > viewportWidth + OVERFLOW_TOLERANCE;

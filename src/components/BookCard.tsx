@@ -35,8 +35,20 @@ function CheckIcon({ className }: { className?: string }) {
 function HourglassIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
-      <circle cx="10" cy="10" r="7.25" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M10 6v4l2.5 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle
+        cx="10"
+        cy="10"
+        r="7.25"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M10 6v4l2.5 2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -65,12 +77,21 @@ function WalletIcon({ className }: { className?: string }) {
 function BookPlaceholder({ initial }: { initial: string }) {
   return (
     <div className="relative h-full w-full overflow-hidden bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
-      <div className="absolute left-4 top-4 grid grid-cols-4 grid-rows-5 gap-[6px] opacity-40" aria-hidden>
+      <div
+        className="absolute left-4 top-4 grid grid-cols-4 grid-rows-5 gap-[6px] opacity-40"
+        aria-hidden
+      >
         {Array.from({ length: 20 }).map((_, i) => (
-          <span key={i} className="h-[3px] w-[3px] rounded-full bg-indigo-900" />
+          <span
+            key={i}
+            className="h-[3px] w-[3px] rounded-full bg-indigo-900"
+          />
         ))}
       </div>
-      <div className="pointer-events-none absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-indigo-200/45" aria-hidden />
+      <div
+        className="pointer-events-none absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-indigo-200/45"
+        aria-hidden
+      />
       <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none font-body text-7xl font-bold leading-none text-indigo-400">
         {initial}
       </span>
@@ -86,7 +107,13 @@ function BookPlaceholder({ initial }: { initial: string }) {
           strokeWidth="1.6"
           strokeLinejoin="round"
         />
-        <path d="M8 11h20M8 18h20M8 25h14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.6" />
+        <path
+          d="M8 11h20M8 18h20M8 25h14"
+          stroke="currentColor"
+          strokeWidth="1.4"
+          strokeLinecap="round"
+          opacity="0.6"
+        />
       </svg>
     </div>
   );
@@ -105,16 +132,20 @@ export default function BookCard({
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-mist bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <Link href={`/books/${book.id}`} className="contents">
         <div className="relative h-48 w-full overflow-hidden bg-mist">
-          {book.coverImage ? (
-            <Image
-              src={book.coverImage}
-              alt={book.title}
-              fill
-              className="object-cover transition duration-300 group-hover:scale-105"
-            />
-          ) : (
-            <BookPlaceholder initial={initial} />
-          )}
+          <div className="h-full w-full p-2">
+            <div className="relative h-full w-full overflow-hidden rounded-xl">
+              {book.coverImage ? (
+                <Image
+                  src={book.coverImage}
+                  alt={book.title}
+                  fill
+                  className="object-cover transition duration-300 group-hover:scale-105"
+                />
+              ) : (
+                <BookPlaceholder initial={initial} />
+              )}
+            </div>
+          </div>
           {!book.published && (
             <span className="absolute left-2.5 top-2.5 rounded-full bg-ink/85 px-2 py-0.5 text-[10px] font-medium text-parchment shadow-sm">
               Bản nháp
@@ -126,7 +157,9 @@ export default function BookCard({
           <h3 className="line-clamp-1 font-display text-lg font-bold leading-snug text-ink">
             {book.title}
           </h3>
-          <p className="line-clamp-2 text-sm text-ink/60">{stripRichText(book.description)}</p>
+          <p className="line-clamp-2 text-sm text-ink/60">
+            {stripRichText(book.description)}
+          </p>
 
           <div className="mt-auto flex items-center gap-2 border-t border-mist pt-3">
             <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl bg-amber-50 px-2.5 py-2">

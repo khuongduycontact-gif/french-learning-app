@@ -25,8 +25,19 @@ function TagIcon({ className }: { className?: string }) {
 function DownloadIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
-      <path d="M10 3v9.5M6.2 9 10 12.8 13.8 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M3.5 14.5v1.3c0 .7.55 1.2 1.2 1.2h10.6c.65 0 1.2-.55 1.2-1.2v-1.3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path
+        d="M10 3v9.5M6.2 9 10 12.8 13.8 9"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M3.5 14.5v1.3c0 .7.55 1.2 1.2 1.2h10.6c.65 0 1.2-.55 1.2-1.2v-1.3"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -62,7 +73,7 @@ export default async function BookDetailPage({
 
   const initial = book.title.trim().slice(0, 1).toUpperCase();
   const downloadHref = `/api/download?url=${encodeURIComponent(
-    book.contentUrl
+    book.contentUrl,
   )}&name=${encodeURIComponent(book.title)}.pdf`;
 
   return (
@@ -70,27 +81,39 @@ export default async function BookDetailPage({
       <div className="min-w-0 md:col-span-2">
         <div className="transform-gpu overflow-hidden rounded-2xl border border-mist bg-white shadow-sm">
           <div className="relative aspect-[16/9] w-full overflow-hidden bg-mist sm:aspect-[21/9]">
-            {book.coverImage ? (
-              <Image src={book.coverImage} alt={book.title} fill className="object-cover" />
-            ) : (
-              <div className="relative h-full w-full overflow-hidden bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
-                <div
-                  className="absolute left-6 top-6 grid grid-cols-4 grid-rows-5 gap-x-6 gap-y-3 opacity-50 sm:left-8 sm:top-8 sm:gap-x-7"
-                  aria-hidden
-                >
-                  {Array.from({ length: 20 }).map((_, i) => (
-                    <span key={i} className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
-                  ))}
-                </div>
-                <div
-                  className="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-indigo-200/45"
-                  aria-hidden
-                />
-                <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none font-body text-8xl font-bold leading-none text-indigo-400 sm:text-9xl">
-                  {initial}
-                </span>
+            <div className="h-full w-full p-2 sm:p-3">
+              <div className="relative h-full w-full overflow-hidden rounded-xl">
+                {book.coverImage ? (
+                  <Image
+                    src={book.coverImage}
+                    alt={book.title}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="relative h-full w-full overflow-hidden bg-gradient-to-br from-indigo-100 via-indigo-50/70 to-white">
+                    <div
+                      className="absolute left-6 top-6 grid grid-cols-4 grid-rows-5 gap-x-6 gap-y-3 opacity-50 sm:left-8 sm:top-8 sm:gap-x-7"
+                      aria-hidden
+                    >
+                      {Array.from({ length: 20 }).map((_, i) => (
+                        <span
+                          key={i}
+                          className="h-1.5 w-1.5 rounded-full bg-indigo-400"
+                        />
+                      ))}
+                    </div>
+                    <div
+                      className="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-indigo-200/45"
+                      aria-hidden
+                    />
+                    <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none font-body text-8xl font-bold leading-none text-indigo-400 sm:text-9xl">
+                      {initial}
+                    </span>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
             {!book.published && (
               <span className="absolute left-4 top-4 rounded-full bg-ink/85 px-2.5 py-1 text-[11px] font-medium text-parchment shadow-sm">
@@ -103,7 +126,10 @@ export default async function BookDetailPage({
             <h1 className="break-words font-display text-2xl font-bold text-ink sm:text-3xl">
               {book.title}
             </h1>
-            <RichText content={book.description} className="mt-3 break-words text-ink/60" />
+            <RichText
+              content={book.description}
+              className="mt-3 break-words text-ink/60"
+            />
           </div>
         </div>
       </div>
