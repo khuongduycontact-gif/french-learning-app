@@ -359,11 +359,17 @@ export default async function CourseDetailPage({
               <span className="font-bold">{course.title}</span>
             </h1>
 
-            <div className="mt-3 flex flex-wrap items-baseline gap-x-1">
-              <span className="shrink-0 text-sm text-ink/70">Mô tả:</span>
+            <div className="mt-3 flow-root text-sm text-ink/70">
+              {/* float-left: chữ "Mô tả:" nằm cùng dòng với phần đầu nội
+                  dung mô tả, nội dung tự chảy quanh nhãn (giống cách trình
+                  duyệt bao chữ quanh ảnh nổi) và chỉ xuống dòng khi hết chỗ
+                  - giống hệt cách "Tên khoá học:" đang hiển thị ở trên,
+                  thay vì trước đây flex-wrap đẩy cả khối mô tả xuống hẳn
+                  dòng riêng bên dưới nhãn dù vẫn còn thừa chỗ trên dòng. */}
+              <span className="float-left mr-1 shrink-0">Mô tả:</span>
               <RichText
                 content={course.description}
-                className="min-w-0 break-words text-sm text-ink/70"
+                className="break-words text-sm text-ink/70"
               />
             </div>
           </div>

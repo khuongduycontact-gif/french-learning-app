@@ -29,15 +29,22 @@ export const authOptions: AuthOptions = {
         const isAdmin = ADMIN_EMAILS.includes(
           (user.email || "").toLowerCase()
         );
-        // Đồng bộ role trong DB nếu email nằm trong danh sách ADMIN_EMAILS
-        if (isAdmin && (user as any).role !== "ADMIN") {
+        const currentRole = (user as any).role ?? "USER";
+        // Đồng bộ role trong DB theo đúng danh sách ADMIN_EMAILS hiện tại:
+        // - Email có trong danh sách nhưng DB chưa phải ADMIN -> nâng quyền.
+        // - Email KHÔNG còn trong danh sách nhưng DB vẫn đang là ADMIN ->
+        //   hạ quyền lại về USER (trường hợp admin bị gỡ khỏi ADMIN_EMAILS).
+        // Nếu không xử lý nhánh hạ quyền, một tài khoản từng là admin sẽ giữ
+        // quyền ADMIN vĩnh viễn trong DB dù đã bị xoá khỏi ADMIN_EMAILS.
+        const targetRole = isAdmin ? "ADMIN" : "USER";
+        if (currentRole !== targetRole) {
           await prisma.user.update({
             where: { id: user.id },
-            data: { role: "ADMIN" },
+            data: { role: targetRole },
           });
-          session.user.role = "ADMIN";
+          session.user.role = targetRole;
         } else {
-          session.user.role = (user as any).role ?? "USER";
+          session.user.role = currentRole;
         }
       }
       return session;

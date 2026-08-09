@@ -61,11 +61,25 @@ export async function POST(
     return NextResponse.json(existing);
   }
 
-  const deadline = await prisma.submissionDeadline.create({
-    data: {
-      materialId: params.id,
-      userId: session.user.id,
-    },
-  });
-  return NextResponse.json(deadline, { status: 201 });
+  // Hai lượt bấm xác nhận liên tiếp (double-click, mạng chậm) có thể cùng
+  // vượt qua bước kiểm tra "existing" ở trên trước khi bản ghi đầu tiên kịp
+  // ghi vào DB. Bắt riêng lỗi trùng khoá (P2002) và trả về bản ghi đã có
+  // thay vì để lộ lỗi 500, giữ đúng tính chất idempotent của endpoint này.
+  try {
+    const deadline = await prisma.submissionDeadline.create({
+      data: {
+        materialId: params.id,
+        userId: session.user.id,
+      },
+    });
+    return NextResponse.json(deadline, { status: 201 });
+  } catch (e: any) {
+    if (e.code === "P2002") {
+      const created = await prisma.submissionDeadline.findUnique({
+        where: { userId_materialId: { userId: session.user.id, materialId: params.id } },
+      });
+      if (created) return NextResponse.json(created);
+    }
+    throw e;
+  }
 }
