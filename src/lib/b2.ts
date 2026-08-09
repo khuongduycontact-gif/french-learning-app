@@ -64,6 +64,15 @@ function getClient(): S3Client {
     // Backblaze B2 cần path-style (https://endpoint/bucket/key) thay vì
     // virtual-hosted-style (https://bucket.endpoint/key) mà AWS S3 dùng mặc định.
     forcePathStyle: true,
+    // Từ @aws-sdk/client-s3 3.729.0 trở lên (bản đang cài: xem
+    // node_modules/@aws-sdk/client-s3/package.json), SDK mặc định tự thêm
+    // checksum CRC32 vào MỌI request PutObject — kể cả khi tạo presigned
+    // URL không có Body (như getPresignedUploadUrl bên dưới), SDK tính
+    // checksum "rỗng" rồi nhúng vào URL. Vì URL này dùng để PUT tệp thật,
+    // checksum rỗng đó không khớp, B2 sẽ từ chối request PUT (sau khi CORS
+    // đã được cấu hình đúng — xem CORS rules trên Bucket Settings/b2 CLI).
+    // "WHEN_REQUIRED" tắt hành vi tự thêm checksum này.
+    requestChecksumCalculation: "WHEN_REQUIRED",
   });
   return cachedClient;
 }

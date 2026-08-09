@@ -13,7 +13,8 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "b2:set-cors": "tsx scripts/set-b2-cors.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
