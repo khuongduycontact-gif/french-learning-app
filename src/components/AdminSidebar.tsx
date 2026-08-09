@@ -337,7 +337,7 @@ function DesktopSidebar() {
         }`}
       >
         {!collapsed && (
-          <p className="min-w-0 truncate text-xs font-semibold uppercase tracking-wide text-ink/50">
+          <p className="min-w-0 truncate text-lg font-bold uppercase tracking-wide text-bordeaux">
             Quản trị
           </p>
         )}
@@ -386,7 +386,7 @@ function DrawerSidebar() {
         }`}
       >
         <div className="mb-3 flex items-center justify-between px-1 pb-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+          <p className="text-lg font-bold uppercase tracking-wide text-bordeaux">
             Quản trị
           </p>
           <button

@@ -34,14 +34,16 @@ export default function AdminHeader() {
           )}
           <Link
             href="/admin"
-            className="min-w-0 truncate font-display text-lg font-semibold tracking-tight text-ink transition hover:text-bordeaux sm:text-xl"
+            className="min-w-0 truncate font-display text-lg font-semibold tracking-tight transition sm:text-xl"
           >
-            <span className="hidden md:inline">Quản trị</span>
-            <span className="font-display text-base md:ml-2">
-              <span className="not-italic text-ink md:italic md:text-bordeaux">
-                Français
-              </span>{" "}
-              <span className="italic text-bordeaux">avec Céline</span>
+            {/* Màu chữ lấy theo 3 màu lá cờ Pháp (xanh lam - trắng - đỏ),
+                chạy gradient trái sang phải qua bg-clip-text. Sắc "trắng"
+                dùng tông trắng ngả xanh nhạt (#EAF3FB) thay vì trắng thuần
+                vì nền header là màu kem (parchment) - trắng thuần sẽ gần
+                như biến mất trên nền đó, còn tông trắng-xanh nhạt vẫn nổi
+                rõ nhờ khác tông màu (lạnh) so với nền (ấm). */}
+            <span className="bg-gradient-to-r from-[#0055A4] via-[#EAF3FB] to-[#EF4135] bg-clip-text text-transparent">
+              Français <span className="italic">avec Céline</span>
             </span>
           </Link>
         </div>
