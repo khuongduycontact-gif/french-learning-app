@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { upload } from "@vercel/blob/client";
-import { sanitizeBlobFilename } from "@/lib/blobFilename";
+import { uploadDocToB2 } from "@/lib/uploadToB2";
 
 export type MaterialFileCategory = "lecture" | "exercise";
 
@@ -218,7 +217,7 @@ export default function CourseMaterialsEditor({
   }
 
   // Tài liệu học (PDF, Word, PowerPoint, âm thanh, file nén...) — mọi thứ
-  // không phải ảnh/video giới thiệu. Nhóm này tải THẲNG lên Vercel Blob từ
+  // không phải ảnh/video giới thiệu. Nhóm này tải THẲNG lên Backblaze B2 từ
   // trình duyệt (xem uploadDocFile) thay vì đi qua /api/upload, để tránh
   // giới hạn 4.5MB body request của Vercel Functions (lỗi 413 với PDF lớn).
   function isDocFile(file: File) {
@@ -253,23 +252,17 @@ export default function CourseMaterialsEditor({
 
   async function uploadDocFile(materialKey: string, fileKey: string, file: File) {
     try {
-      const blob = await upload(
-        `bonjour-francais/materials/${sanitizeBlobFilename(file.name)}`,
+      const { key } = await uploadDocToB2({
         file,
-        {
-          access: "public",
-          handleUploadUrl: "/api/upload/client",
-          contentType: file.type || undefined,
-          multipart: true,
-          onUploadProgress: ({ percentage }) => {
-            setUploadStatus((s) => ({
-              ...s,
-              [fileKey]: { uploading: true, progress: Math.round(percentage), error: "" },
-            }));
-          },
-        }
-      );
-      applyUploadResult(materialKey, fileKey, blob.url, file.type, file.name);
+        handleUploadUrl: "/api/upload/client",
+        onUploadProgress: (percentage) => {
+          setUploadStatus((s) => ({
+            ...s,
+            [fileKey]: { uploading: true, progress: percentage, error: "" },
+          }));
+        },
+      });
+      applyUploadResult(materialKey, fileKey, key, file.type, file.name);
     } catch (err: any) {
       applyUploadError(fileKey, err?.message || "Tải lên thất bại, vui lòng thử lại.");
     }

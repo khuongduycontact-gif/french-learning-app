@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { upload } from "@vercel/blob/client";
-import { sanitizeBlobFilename } from "@/lib/blobFilename";
+import { uploadDocToB2 } from "@/lib/uploadToB2";
 
 type Props = {
   label: string;
@@ -40,23 +39,17 @@ export default function PdfUploader({ label, value, onChange, error: externalErr
     setUploading(true);
     setProgress(0);
 
-    // Tải thẳng từ trình duyệt lên Vercel Blob (không đi qua server) — tránh
+    // Tải thẳng từ trình duyệt lên Backblaze B2 (không đi qua server) — tránh
     // giới hạn 4.5MB body request của Vercel Functions vốn hay gặp với PDF
-    // dung lượng lớn. Route /api/upload/client chỉ cấp token, không nhận
-    // nội dung file.
+    // dung lượng lớn. Route /api/upload/client chỉ cấp presigned URL, không
+    // nhận nội dung file.
     try {
-      const blob = await upload(
-        `bonjour-francais/materials/${sanitizeBlobFilename(file.name)}`,
+      const { key } = await uploadDocToB2({
         file,
-        {
-          access: "public",
-          handleUploadUrl: "/api/upload/client",
-          contentType: file.type || undefined,
-          multipart: true,
-          onUploadProgress: ({ percentage }) => setProgress(Math.round(percentage)),
-        }
-      );
-      onChange(blob.url, file.name);
+        handleUploadUrl: "/api/upload/client",
+        onUploadProgress: setProgress,
+      });
+      onChange(key, file.name);
     } catch (err: any) {
       setError(err?.message || "Tải lên thất bại, vui lòng thử lại.");
     } finally {

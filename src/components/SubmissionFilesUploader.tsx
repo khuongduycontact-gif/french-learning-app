@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { upload } from "@vercel/blob/client";
-import { sanitizeBlobFilename } from "@/lib/blobFilename";
+import { uploadDocToB2 } from "@/lib/uploadToB2";
 import type { SubmissionFile } from "@/types";
 
 type Props = {
@@ -13,10 +12,11 @@ type Props = {
 };
 
 // Tệp dạng tài liệu (PDF, Word, PowerPoint, âm thanh, file nén...) tải
-// THẲNG lên Vercel Blob từ trình duyệt (route /api/submissions/upload/client
-// chỉ cấp token, không nhận nội dung file) — tránh giới hạn 4.5MB body
-// request của Vercel Functions (lỗi 413) hay gặp với bài nộp dung lượng lớn.
-// Ảnh/video vẫn đi qua /api/submissions/upload lên Cloudinary như trước.
+// THẲNG lên Backblaze B2 từ trình duyệt (route /api/submissions/upload/client
+// chỉ cấp presigned URL, không nhận nội dung file) — tránh giới hạn 4.5MB
+// body request của Vercel Functions (lỗi 413) hay gặp với bài nộp dung
+// lượng lớn. Ảnh/video vẫn đi qua /api/submissions/upload lên Cloudinary
+// như trước.
 function isDocFile(file: File) {
   return !file.type.startsWith("image/") && !file.type.startsWith("video/");
 }
@@ -46,22 +46,16 @@ function uploadViaCloudinary(file: File): Promise<SubmissionFile> {
   });
 }
 
-async function uploadViaBlob(file: File): Promise<SubmissionFile> {
-  const blob = await upload(
-    `bonjour-francais/submissions/${sanitizeBlobFilename(file.name)}`,
+async function uploadViaB2(file: File): Promise<SubmissionFile> {
+  const { key } = await uploadDocToB2({
     file,
-    {
-      access: "public",
-      handleUploadUrl: "/api/submissions/upload/client",
-      contentType: file.type || undefined,
-      multipart: true,
-    }
-  );
-  return { url: blob.url, name: file.name, type: file.type };
+    handleUploadUrl: "/api/submissions/upload/client",
+  });
+  return { url: key, name: file.name, type: file.type };
 }
 
 function uploadOne(file: File): Promise<SubmissionFile> {
-  return isDocFile(file) ? uploadViaBlob(file) : uploadViaCloudinary(file);
+  return isDocFile(file) ? uploadViaB2(file) : uploadViaCloudinary(file);
 }
 
 export default function SubmissionFilesUploader({ label, values, onChange, error: externalError }: Props) {

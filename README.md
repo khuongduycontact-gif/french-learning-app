@@ -14,6 +14,7 @@ Dự án Next.js (App Router) viết bằng TypeScript (.tsx), gồm 2 phía:
 | Xác thực     | NextAuth.js (Google Provider)      |
 | Cơ sở dữ liệu| Prisma ORM + MySQL                 |
 | Lưu trữ ảnh/video | Cloudinary (upload qua API server, không giới hạn bởi trình duyệt) |
+| Lưu trữ tài liệu (raw) | Backblaze B2 (bucket Private, API tương thích S3) — tài liệu học, sách, bài tập giao, bài tập học sinh nộp |
 
 ## Cấu trúc thư mục chính
 
@@ -35,9 +36,13 @@ src/
       courses/route.ts             → GET (tìm kiếm/lọc), POST (tạo - admin)
       courses/[id]/route.ts        → GET, PUT (sửa - admin), DELETE (xoá - admin)
       enrollments/route.ts         → GET (khoá học đã đăng ký), POST (đăng ký)
-      upload/route.ts              → POST (admin) - nhận file, đẩy lên Cloudinary, trả về URL
-  components/                 → Navbar, AuthButton, CourseCard, SearchBar, CourseForm, EnrollButton, MediaUploader
-  lib/                        → auth.ts (cấu hình NextAuth), prisma.ts, slug.ts, cloudinary.ts
+      upload/route.ts              → POST (admin) - nhận file, đẩy ảnh/video lên Cloudinary, trả về URL
+      upload/client/route.ts       → POST (admin) - cấp presigned URL để trình duyệt PUT tài liệu (raw) thẳng lên Backblaze B2
+      submissions/upload/route.ts  → POST (đã đăng nhập) - ảnh/video bài nộp lên Cloudinary
+      submissions/upload/client/route.ts → POST (đã đăng nhập) - cấp presigned URL để PUT tài liệu bài nộp/bài đã chữa thẳng lên B2
+      download/route.ts            → GET - proxy tải tài liệu từ Backblaze B2 (presigned URL)/Cloudinary/Vercel Blob (tệp cũ) kèm đúng tên và đuôi tệp
+  components/                 → Navbar, AuthButton, CourseCard, SearchBar, CourseForm, EnrollButton, MediaUploader, PdfUploader
+  lib/                        → auth.ts (cấu hình NextAuth), prisma.ts, slug.ts, cloudinary.ts (ảnh/video), b2.ts (tài liệu raw trên Backblaze B2), uploadToB2.ts (helper phía client)
 prisma/
   schema.prisma               → User, Account, Session, Course (có imageUrl/videoUrl từ Cloudinary), Enrollment
   seed.ts                     → Dữ liệu mẫu (4 khoá học A1-B2)
@@ -67,7 +72,14 @@ cp .env.example .env
   - Loại: **OAuth client ID** → **Web application**
   - Authorized redirect URI: `http://localhost:3000/api/auth/callback/google`
 - `ADMIN_EMAILS`: danh sách email (cách nhau bởi dấu phẩy) sẽ tự động được cấp quyền **ADMIN** ngay khi đăng nhập lần đầu bằng Google. Ví dụ: `ban@gmail.com,dongnghiep@gmail.com`.
-- `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET`: lấy tại [Cloudinary Console](https://console.cloudinary.com) → trang **Dashboard** ngay sau khi đăng ký tài khoản miễn phí. Ba giá trị này hiển thị sẵn, chỉ cần copy.
+- `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET`: lấy tại [Cloudinary Console](https://console.cloudinary.com) → trang **Dashboard** ngay sau khi đăng ký tài khoản miễn phí. Ba giá trị này hiển thị sẵn, chỉ cần copy. Chỉ còn dùng cho ảnh/video giới thiệu khoá học.
+- `B2_KEY_ID` / `B2_APPLICATION_KEY` / `B2_BUCKET_NAME` / `B2_ENDPOINT`: dùng để lưu tài liệu học, sách, bài tập giao và bài tập học sinh nộp trên **Backblaze B2**. Vào [Backblaze B2 Cloud Storage](https://secure.backblaze.com/b2_buckets.htm):
+  1. Tạo 1 bucket (VD: `french-learning-app`), chọn **Files in Bucket: Private**.
+  2. Vào **Application Keys** → **Add a New Application Key** → chọn đúng bucket vừa tạo (không dùng Master Application Key cho app) → cấp quyền Read and Write → bấm tạo.
+  3. Copy `keyID` vào `B2_KEY_ID`, `applicationKey` vào `B2_APPLICATION_KEY` (chỉ hiển thị **1 lần duy nhất** lúc tạo, mất thì phải tạo key mới).
+  4. Vào trang chi tiết bucket, copy tên bucket vào `B2_BUCKET_NAME` và **Endpoint** (dạng `s3.<region>.backblazeb2.com`, nhớ thêm `https://` phía trước) vào `B2_ENDPOINT`.
+
+  Vì bucket ở chế độ Private, tài liệu không có URL công khai — mọi lượt tải xuống đều đi qua `/api/download`, route này tự tạo URL tạm thời có chữ ký (presigned URL) ngay trước khi lấy nội dung tệp (xem `src/lib/b2.ts`).
 
 ### 3. Khởi tạo cơ sở dữ liệu
 
@@ -106,6 +118,30 @@ Giới hạn mặc định đã cấu hình sẵn trong `src/app/api/upload/rout
 - Nâng gói dịch vụ hosting để tăng giới hạn, hoặc
 - Tự host bằng `next start` trên VPS/Node server riêng (không bị giới hạn này), hoặc
 - Chuyển sang tải trực tiếp từ trình duyệt lên Cloudinary bằng **unsigned upload preset** (bỏ qua route `/api/upload`) — có thể hỏi mình nếu muốn triển khai phương án này.
+
+## Tải tài liệu lên Backblaze B2
+
+Tài liệu học, sách (PDF), bài tập giao và bài tập học sinh nộp/bài đã chữa
+đều là tệp "raw" (không phải ảnh/video giới thiệu khoá học), được lưu trên
+**Backblaze B2** (bucket **Private**, API tương thích S3) thay vì Cloudinary.
+Luồng xử lý:
+
+1. Trình duyệt xin 1 "URL PUT có chữ ký tạm thời" (presigned URL) từ `POST /api/upload/client` (tài liệu học, sách — chỉ admin) hoặc `POST /api/submissions/upload/client` (bài nộp/bài đã chữa — mọi người dùng đã đăng nhập). Route này dùng `@aws-sdk/s3-request-presigner` (xem `src/lib/b2.ts`), đặt object key trong "thư mục" ảo `bonjour-francais/materials` hoặc `bonjour-francais/submissions`, kèm hậu tố ngẫu nhiên để tránh trùng tên.
+2. Trình duyệt PUT thẳng nội dung tệp lên presigned URL đó (xem `src/lib/uploadToB2.ts`) — không đi qua server Next.js, nên không bị giới hạn body request 4.5MB của Vercel Functions dù tệp lớn.
+3. Vì bucket Private nên B2 **không** trả về URL công khai — object key (VD: `bonjour-francais/materials/giao-trinh-a1-x7k2p9.pdf`) được lưu vào cột `files`/`contentUrl`/`gradedFiles` tương ứng trong MySQL.
+4. Khi học viên bấm tải xuống, request đi qua `GET /api/download` — route này tạo 1 "URL GET có chữ ký tạm thời" khác (hết hạn sau ~60 giây) để đọc nội dung tệp từ B2, rồi trả lại cho trình duyệt kèm đúng tên tệp/đuôi mở rộng (xem `src/app/api/download/route.ts`). Route này chỉ chấp nhận object key do chính app tạo ra (tiền tố `bonjour-francais/`) hoặc URL từ host Cloudinary/Vercel Blob đã biết trước, tránh SSRF.
+
+Không giới hạn dung lượng tài liệu học/sách ở phía ứng dụng (chỉ còn phụ
+thuộc gói Backblaze B2 và giới hạn body request của nền tảng hosting, xem
+lưu ý ở mục trên). Bài nộp của học viên vẫn giữ giới hạn 50MB/tệp như trước,
+nhưng lưu ý giới hạn này hiện chỉ được kiểm tra dựa trên dung lượng do trình
+duyệt khai báo (chưa enforce chắc chắn ở phía B2) — xem ghi chú trong
+`src/app/api/submissions/upload/client/route.ts`.
+
+Những tệp tài liệu đã tải lên từ trước (thời còn dùng Cloudinary hoặc Vercel
+Blob) vẫn còn nằm ở nơi cũ và tiếp tục hoạt động bình thường — route
+`/api/download` vẫn nhận proxy từ cả 3 nguồn. Muốn dọn hẳn dữ liệu cũ sang B2
+cần 1 script di chuyển riêng (không nằm trong phạm vi thay đổi này).
 
 ## Triển khai (deploy)
 
