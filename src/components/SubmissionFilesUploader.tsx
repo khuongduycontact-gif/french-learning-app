@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { upload } from "@vercel/blob/client";
+import { sanitizeBlobFilename } from "@/lib/blobFilename";
 import type { SubmissionFile } from "@/types";
 
 type Props = {
@@ -10,7 +12,16 @@ type Props = {
   error?: string;
 };
 
-function uploadOne(file: File): Promise<SubmissionFile> {
+// Tệp dạng tài liệu (PDF, Word, PowerPoint, âm thanh, file nén...) tải
+// THẲNG lên Vercel Blob từ trình duyệt (route /api/submissions/upload/client
+// chỉ cấp token, không nhận nội dung file) — tránh giới hạn 4.5MB body
+// request của Vercel Functions (lỗi 413) hay gặp với bài nộp dung lượng lớn.
+// Ảnh/video vẫn đi qua /api/submissions/upload lên Cloudinary như trước.
+function isDocFile(file: File) {
+  return !file.type.startsWith("image/") && !file.type.startsWith("video/");
+}
+
+function uploadViaCloudinary(file: File): Promise<SubmissionFile> {
   return new Promise((resolve, reject) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -33,6 +44,24 @@ function uploadOne(file: File): Promise<SubmissionFile> {
     xhr.onerror = () => reject(new Error("Lỗi kết nối, vui lòng thử lại."));
     xhr.send(formData);
   });
+}
+
+async function uploadViaBlob(file: File): Promise<SubmissionFile> {
+  const blob = await upload(
+    `bonjour-francais/submissions/${sanitizeBlobFilename(file.name)}`,
+    file,
+    {
+      access: "public",
+      handleUploadUrl: "/api/submissions/upload/client",
+      contentType: file.type || undefined,
+      multipart: true,
+    }
+  );
+  return { url: blob.url, name: file.name, type: file.type };
+}
+
+function uploadOne(file: File): Promise<SubmissionFile> {
+  return isDocFile(file) ? uploadViaBlob(file) : uploadViaCloudinary(file);
 }
 
 export default function SubmissionFilesUploader({ label, values, onChange, error: externalError }: Props) {

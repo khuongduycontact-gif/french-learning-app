@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { upload } from "@vercel/blob/client";
+import { sanitizeBlobFilename } from "@/lib/blobFilename";
 
 export type MaterialFileCategory = "lecture" | "exercise";
 
@@ -215,10 +217,65 @@ export default function CourseMaterialsEditor({
     });
   }
 
-  // Tải 1 tệp lên và gắn kết quả vào đúng tệp (theo fileKey) trong đúng tài liệu (theo materialKey)
-  function uploadFile(materialKey: string, fileKey: string, file: File) {
-    setUploadStatus((s) => ({ ...s, [fileKey]: { uploading: true, progress: 0, error: "" } }));
+  // Tài liệu học (PDF, Word, PowerPoint, âm thanh, file nén...) — mọi thứ
+  // không phải ảnh/video giới thiệu. Nhóm này tải THẲNG lên Vercel Blob từ
+  // trình duyệt (xem uploadDocFile) thay vì đi qua /api/upload, để tránh
+  // giới hạn 4.5MB body request của Vercel Functions (lỗi 413 với PDF lớn).
+  function isDocFile(file: File) {
+    return !file.type.startsWith("image/") && !file.type.startsWith("video/");
+  }
 
+  function applyUploadResult(
+    materialKey: string,
+    fileKey: string,
+    url: string,
+    fileType: string,
+    fileName: string
+  ) {
+    const next = valueRef.current.map((m) =>
+      m.key === materialKey
+        ? {
+            ...m,
+            files: m.files.map((f) =>
+              f.key === fileKey ? { ...f, url, type: fileType, name: fileName } : f
+            ),
+          }
+        : m
+    );
+    valueRef.current = next;
+    onChange(next);
+    setUploadStatus((s) => ({ ...s, [fileKey]: { uploading: false, progress: 100, error: "" } }));
+  }
+
+  function applyUploadError(fileKey: string, message: string) {
+    setUploadStatus((s) => ({ ...s, [fileKey]: { uploading: false, progress: 0, error: message } }));
+  }
+
+  async function uploadDocFile(materialKey: string, fileKey: string, file: File) {
+    try {
+      const blob = await upload(
+        `bonjour-francais/materials/${sanitizeBlobFilename(file.name)}`,
+        file,
+        {
+          access: "public",
+          handleUploadUrl: "/api/upload/client",
+          contentType: file.type || undefined,
+          multipart: true,
+          onUploadProgress: ({ percentage }) => {
+            setUploadStatus((s) => ({
+              ...s,
+              [fileKey]: { uploading: true, progress: Math.round(percentage), error: "" },
+            }));
+          },
+        }
+      );
+      applyUploadResult(materialKey, fileKey, blob.url, file.type, file.name);
+    } catch (err: any) {
+      applyUploadError(fileKey, err?.message || "Tải lên thất bại, vui lòng thử lại.");
+    }
+  }
+
+  function uploadMediaFile(materialKey: string, fileKey: string, file: File) {
     const formData = new FormData();
     formData.append("file", file);
 
@@ -236,48 +293,29 @@ export default function CourseMaterialsEditor({
       try {
         const data = JSON.parse(xhr.responseText);
         if (xhr.status >= 200 && xhr.status < 300) {
-          const next = valueRef.current.map((m) =>
-            m.key === materialKey
-              ? {
-                  ...m,
-                  files: m.files.map((f) =>
-                    f.key === fileKey
-                      ? {
-                          ...f,
-                          url: data.url,
-                          type: data.fileType || file.type,
-                          name: data.fileName || file.name,
-                        }
-                      : f
-                  ),
-                }
-              : m
-          );
-          valueRef.current = next;
-          onChange(next);
-          setUploadStatus((s) => ({ ...s, [fileKey]: { uploading: false, progress: 100, error: "" } }));
+          applyUploadResult(materialKey, fileKey, data.url, data.fileType || file.type, data.fileName || file.name);
         } else {
-          setUploadStatus((s) => ({
-            ...s,
-            [fileKey]: { uploading: false, progress: 0, error: data.error || "Tải lên thất bại, vui lòng thử lại." },
-          }));
+          applyUploadError(fileKey, data.error || "Tải lên thất bại, vui lòng thử lại.");
         }
       } catch {
-        setUploadStatus((s) => ({
-          ...s,
-          [fileKey]: { uploading: false, progress: 0, error: "Tải lên thất bại, vui lòng thử lại." },
-        }));
+        applyUploadError(fileKey, "Tải lên thất bại, vui lòng thử lại.");
       }
     };
 
-    xhr.onerror = () => {
-      setUploadStatus((s) => ({
-        ...s,
-        [fileKey]: { uploading: false, progress: 0, error: "Lỗi kết nối, vui lòng thử lại." },
-      }));
-    };
+    xhr.onerror = () => applyUploadError(fileKey, "Lỗi kết nối, vui lòng thử lại.");
 
     xhr.send(formData);
+  }
+
+  // Tải 1 tệp lên và gắn kết quả vào đúng tệp (theo fileKey) trong đúng tài liệu (theo materialKey)
+  function uploadFile(materialKey: string, fileKey: string, file: File) {
+    setUploadStatus((s) => ({ ...s, [fileKey]: { uploading: true, progress: 0, error: "" } }));
+
+    if (isDocFile(file)) {
+      uploadDocFile(materialKey, fileKey, file);
+    } else {
+      uploadMediaFile(materialKey, fileKey, file);
+    }
   }
 
   // Chọn nhiều tệp cùng lúc cho 1 tài liệu (thuộc 1 trong 2 nhóm: bài giảng

@@ -2,19 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import cloudinary from "@/lib/cloudinary";
-import { uploadRawToBlob } from "@/lib/blob";
 
 // Bắt buộc chạy trên Node.js runtime (dùng Buffer/stream), không dùng được Edge runtime
 export const runtime = "nodejs";
 
 // Dùng riêng cho tệp bài nộp / bài đã chữa: khác với /api/upload (chỉ admin
-// được dùng, cho ảnh/video/tài liệu khoá học), route này cho phép bất kỳ
-// người dùng đã đăng nhập nào tải lên (học viên nộp bài, admin gửi bài đã
-// chữa), và lưu vào một thư mục riêng.
+// được dùng, cho ảnh/video khoá học), route này cho phép bất kỳ người dùng
+// đã đăng nhập nào tải lên (học viên nộp bài, admin gửi bài đã chữa).
+//
+// Route này giờ chỉ còn xử lý ẢNH/VIDEO (lưu trên Cloudinary). Tệp dạng tài
+// liệu (PDF, Word, PowerPoint, âm thanh, file nén...) đã chuyển sang tải
+// THẲNG từ trình duyệt lên Vercel Blob — xem
+// src/app/api/submissions/upload/client/route.ts — để tránh giới hạn 4.5MB
+// body request của Vercel Functions (lỗi 413).
 
 const MAX_BYTES = 50 * 1024 * 1024; // 50MB / tệp bài tập
-
-const DOC_EXTENSIONS = /\.(pdf|docx?|pptx?|xlsx?|txt|zip|rar|7z|mp3|wav|m4a|aac|ogg|flac|wma|jpe?g|png|gif|webp)$/i;
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -43,47 +45,14 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const isAdmin = session.user.role === "ADMIN";
   const isImage = file.type.startsWith("image/");
   const isVideo = file.type.startsWith("video/");
-  const isAudio = file.type.startsWith("audio/");
-  // Admin (gửi bài đã chữa) được tải lên bất kỳ định dạng tệp nào — chỉ
-  // giới hạn định dạng ở phía học viên (nộp bài làm).
-  const isDoc = !isImage && !isVideo && (isAdmin || isAudio || DOC_EXTENSIONS.test(file.name));
 
-  if (!isAdmin && !isImage && !isVideo && !isDoc) {
+  if (!isImage && !isVideo) {
     return NextResponse.json(
-      { error: "Định dạng tệp không được hỗ trợ" },
+      { error: "Định dạng tệp không được hỗ trợ ở route này." },
       { status: 400 }
     );
-  }
-
-  // Tệp bài tập / bài đã chữa dạng tài liệu (PDF, Word, PowerPoint, file
-  // nén, âm thanh...) lưu trên Vercel Blob; ảnh/video học viên nộp (hoặc
-  // admin gửi lại) vẫn lưu trên Cloudinary như trước.
-  if (isDoc) {
-    try {
-      const { url } = await uploadRawToBlob("submissions", file);
-      return NextResponse.json({
-        url,
-        fileName: file.name,
-        fileType: file.type,
-      });
-    } catch (err) {
-      console.error("Lỗi tải lên Vercel Blob:", err);
-      const detail =
-        err && typeof err === "object" && "message" in err
-          ? String((err as { message?: unknown }).message)
-          : "";
-      return NextResponse.json(
-        {
-          error: detail
-            ? `Tải lên thất bại: ${detail}`
-            : "Tải lên thất bại, vui lòng thử lại.",
-        },
-        { status: 500 }
-      );
-    }
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());

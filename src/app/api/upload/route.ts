@@ -2,16 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import cloudinary from "@/lib/cloudinary";
-import { uploadRawToBlob } from "@/lib/blob";
 
 // Bắt buộc chạy trên Node.js runtime (dùng Buffer/stream), không dùng được Edge runtime
 export const runtime = "nodejs";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_BYTES = 200 * 1024 * 1024; // 200MB
-// Tệp tài liệu học (PDF, Word, PowerPoint, âm thanh...) không giới hạn dung
-// lượng ở phía ứng dụng — chỉ còn phụ thuộc vào giới hạn của gói Vercel Blob
-// và của nền tảng hosting (xem ghi chú trong README).
+
+// Route này giờ chỉ còn xử lý ẢNH/VIDEO giới thiệu khoá học (lưu trên
+// Cloudinary). Tài liệu học / sách (PDF, Word, PowerPoint, âm thanh, file
+// nén...) đã chuyển sang tải THẲNG từ trình duyệt lên Vercel Blob — xem
+// src/app/api/upload/client/route.ts — vì tải qua route này (server đọc hết
+// file vào bộ nhớ từ POST body) sẽ luôn dính giới hạn 4.5MB body request của
+// Vercel Functions (lỗi 413), bất kể app có giới hạn gì hay không.
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -35,49 +38,22 @@ export async function POST(req: NextRequest) {
 
   const isImage = file.type.startsWith("image/");
   const isVideo = file.type.startsWith("video/");
-  // Admin được tải lên bất kỳ định dạng tệp nào cho tài liệu khoá học
-  // (Word, PowerPoint, PDF, âm thanh, file nén, hoặc bất kỳ định dạng nào
-  // khác) — không còn giới hạn theo danh sách đuôi tệp.
-  const isDoc = !isImage && !isVideo;
 
-  // Tài liệu học (bao gồm âm thanh) không giới hạn dung lượng ở đây; chỉ ảnh
-  // và video giới thiệu khoá học mới bị giới hạn.
-  const maxBytes = isDoc ? null : isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
-  if (maxBytes && file.size > maxBytes) {
+  if (!isImage && !isVideo) {
+    return NextResponse.json(
+      { error: "Định dạng tệp không được hỗ trợ ở route này." },
+      { status: 400 }
+    );
+  }
+
+  const maxBytes = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+  if (file.size > maxBytes) {
     return NextResponse.json(
       {
         error: `Tệp quá lớn. Giới hạn ${Math.round(maxBytes / 1024 / 1024)}MB.`,
       },
       { status: 400 }
     );
-  }
-
-  // Tài liệu học / sách (PDF, Word, PowerPoint, file nén, âm thanh, bài tập
-  // giao...) lưu trên Vercel Blob; ảnh/video giới thiệu khoá học vẫn lưu
-  // trên Cloudinary như trước (xem lib/cloudinary.ts và lib/blob.ts).
-  if (isDoc) {
-    try {
-      const { url } = await uploadRawToBlob("materials", file);
-      return NextResponse.json({
-        url,
-        fileName: file.name,
-        fileType: file.type,
-      });
-    } catch (err) {
-      console.error("Lỗi tải lên Vercel Blob:", err);
-      const detail =
-        err && typeof err === "object" && "message" in err
-          ? String((err as { message?: unknown }).message)
-          : "";
-      return NextResponse.json(
-        {
-          error: detail
-            ? `Tải lên thất bại: ${detail}`
-            : "Tải lên thất bại, vui lòng thử lại.",
-        },
-        { status: 500 }
-      );
-    }
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());

@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { upload } from "@vercel/blob/client";
+import { sanitizeBlobFilename } from "@/lib/blobFilename";
 
 type Props = {
   label: string;
@@ -31,46 +33,36 @@ export default function PdfUploader({ label, value, onChange, error: externalErr
     inputRef.current?.click();
   }
 
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setError("");
     setUploading(true);
     setProgress(0);
 
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/upload");
-
-    xhr.upload.onprogress = (evt) => {
-      if (evt.lengthComputable) {
-        setProgress(Math.round((evt.loaded / evt.total) * 100));
-      }
-    };
-
-    xhr.onload = () => {
-      setUploading(false);
-      try {
-        const data = JSON.parse(xhr.responseText);
-        if (xhr.status >= 200 && xhr.status < 300) {
-          onChange(data.url, data.fileName);
-        } else {
-          setError(data.error || "Tải lên thất bại, vui lòng thử lại.");
+    // Tải thẳng từ trình duyệt lên Vercel Blob (không đi qua server) — tránh
+    // giới hạn 4.5MB body request của Vercel Functions vốn hay gặp với PDF
+    // dung lượng lớn. Route /api/upload/client chỉ cấp token, không nhận
+    // nội dung file.
+    try {
+      const blob = await upload(
+        `bonjour-francais/materials/${sanitizeBlobFilename(file.name)}`,
+        file,
+        {
+          access: "public",
+          handleUploadUrl: "/api/upload/client",
+          contentType: file.type || undefined,
+          multipart: true,
+          onUploadProgress: ({ percentage }) => setProgress(Math.round(percentage)),
         }
-      } catch {
-        setError("Tải lên thất bại, vui lòng thử lại.");
-      }
-    };
-
-    xhr.onerror = () => {
+      );
+      onChange(blob.url, file.name);
+    } catch (err: any) {
+      setError(err?.message || "Tải lên thất bại, vui lòng thử lại.");
+    } finally {
       setUploading(false);
-      setError("Lỗi kết nối, vui lòng thử lại.");
-    };
-
-    xhr.send(formData);
-    e.target.value = "";
+      e.target.value = "";
+    }
   }
 
   return (

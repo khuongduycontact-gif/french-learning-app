@@ -1,4 +1,7 @@
 import { put } from "@vercel/blob";
+import { sanitizeBlobFilename } from "./blobFilename";
+
+export { sanitizeBlobFilename };
 
 // Vercel Blob dùng để lưu các tệp "raw" (tài liệu học, sách, bài tập giao,
 // bài tập học sinh nộp / bài đã chữa) — thay cho Cloudinary trước đây. Ảnh
@@ -17,34 +20,18 @@ export function isVercelBlobUrl(hostname: string): boolean {
   return hostname.toLowerCase().endsWith(VERCEL_BLOB_HOSTNAME_SUFFIX);
 }
 
-// Rút gọn tên tệp gốc (có thể có dấu tiếng Việt, khoảng trắng, ký tự đặc
-// biệt...) thành pathname an toàn để lưu trên Vercel Blob. Tên tệp gốc hiển
-// thị cho người dùng (VD: "Bài 1 - Ngữ pháp.docx") vẫn được lưu riêng ở cột
-// name/fileName trong cơ sở dữ liệu nên không bị ảnh hưởng bởi bước rút gọn
-// này.
-export function sanitizeBlobFilename(filename: string): string {
-  const idx = filename.lastIndexOf(".");
-  const base = idx > 0 ? filename.slice(0, idx) : filename;
-  const ext = idx > 0 ? filename.slice(idx).replace(/[^a-zA-Z0-9.]/g, "") : "";
-
-  const safeBase =
-    base
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "") // bỏ dấu (chữ cái Latin có dấu)
-      .replace(/[đĐ]/g, "d") // "đ" không tách dấu được bằng NFD
-      .replace(/[^a-zA-Z0-9-_]+/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 80) || "tep";
-
-  return `${safeBase}${ext}`;
-}
-
 // Tải 1 tệp raw (PDF, Word, PowerPoint, file nén, âm thanh...) lên Vercel
 // Blob, đặt trong "thư mục" ảo (prefix) theo mục đích sử dụng, ví dụ:
 // "materials" (tài liệu học/bài tập giao/sách), "submissions" (bài nộp/bài
 // đã chữa). Dùng addRandomSuffix để tránh trùng tên giữa nhiều lượt tải lên,
 // tương đương unique_filename: true trước đây bên Cloudinary.
+//
+// LƯU Ý: kể từ khi chuyển sang client upload trực tiếp (xem
+// src/app/api/upload/client/route.ts và src/app/api/submissions/upload/client/route.ts),
+// hàm này không còn được các route /api/upload và /api/submissions/upload
+// gọi cho nhánh tài liệu (isDoc) nữa — vì tải qua server sẽ dính giới hạn
+// body 4.5MB của Vercel Functions. Giữ lại đây vì vẫn là tiện ích hợp lệ nếu
+// sau này cần upload tài liệu từ phía server (script, cron...).
 export async function uploadRawToBlob(
   folder: string,
   file: File
