@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import cloudinary from "@/lib/cloudinary";
+import { uploadRawToBlob } from "@/lib/blob";
 
 // Bắt buộc chạy trên Node.js runtime (dùng Buffer/stream), không dùng được Edge runtime
 export const runtime = "nodejs";
@@ -9,7 +10,7 @@ export const runtime = "nodejs";
 // Dùng riêng cho tệp bài nộp / bài đã chữa: khác với /api/upload (chỉ admin
 // được dùng, cho ảnh/video/tài liệu khoá học), route này cho phép bất kỳ
 // người dùng đã đăng nhập nào tải lên (học viên nộp bài, admin gửi bài đã
-// chữa), và lưu vào một thư mục riêng trên Cloudinary.
+// chữa), và lưu vào một thư mục riêng.
 
 const MAX_BYTES = 50 * 1024 * 1024; // 50MB / tệp bài tập
 
@@ -57,8 +58,36 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Tệp bài tập / bài đã chữa dạng tài liệu (PDF, Word, PowerPoint, file
+  // nén, âm thanh...) lưu trên Vercel Blob; ảnh/video học viên nộp (hoặc
+  // admin gửi lại) vẫn lưu trên Cloudinary như trước.
+  if (isDoc) {
+    try {
+      const { url } = await uploadRawToBlob("submissions", file);
+      return NextResponse.json({
+        url,
+        fileName: file.name,
+        fileType: file.type,
+      });
+    } catch (err) {
+      console.error("Lỗi tải lên Vercel Blob:", err);
+      const detail =
+        err && typeof err === "object" && "message" in err
+          ? String((err as { message?: unknown }).message)
+          : "";
+      return NextResponse.json(
+        {
+          error: detail
+            ? `Tải lên thất bại: ${detail}`
+            : "Tải lên thất bại, vui lòng thử lại.",
+        },
+        { status: 500 }
+      );
+    }
+  }
+
   const buffer = Buffer.from(await file.arrayBuffer());
-  const resourceType = isVideo ? "video" : isImage ? "image" : "raw";
+  const resourceType = isVideo ? "video" : "image";
 
   try {
     const result = await new Promise<any>((resolve, reject) => {

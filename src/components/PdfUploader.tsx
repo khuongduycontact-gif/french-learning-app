@@ -9,7 +9,7 @@ type Props = {
   error?: string;
 };
 
-// Lấy tên tệp từ URL Cloudinary (dùng khi chưa biết tên tệp gốc, VD: đang
+// Lấy tên tệp từ URL đã tải lên (dùng khi chưa biết tên tệp gốc, VD: đang
 // chỉnh sửa sách đã có sẵn tệp).
 function fileNameFromUrl(url: string): string {
   try {

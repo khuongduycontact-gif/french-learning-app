@@ -24,7 +24,8 @@ export default function MaterialFileAction({
   // Tệp không phải ảnh/video (PDF, Word, PowerPoint, file nén...) vẫn cho
   // tải xuống bình thường như trước — nhưng đi qua proxy /api/download để
   // trình duyệt luôn nhận đúng tên tệp, đúng đuôi mở rộng và tải xuống
-  // (thay vì Cloudinary trả về thiếu đuôi khiến tệp tải về không mở được).
+  // (thay vì Vercel Blob/Cloudinary trả về thiếu đuôi khiến tệp tải về
+  // không mở được).
   if (kind === "other") {
     const downloadHref = `/api/download?url=${encodeURIComponent(
       url

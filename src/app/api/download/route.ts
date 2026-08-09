@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isVercelBlobUrl } from "@/lib/blob";
 
 // Bắt buộc chạy trên Node.js runtime để dùng được stream khi proxy tệp
 export const runtime = "nodejs";
 
 // LÝ DO CẦN ROUTE NÀY: các tệp tài liệu (Word, PowerPoint, PDF, file nén...)
-// được lưu trên Cloudinary dưới dạng "raw". Nếu cho học viên bấm thẳng vào
-// đường dẫn Cloudinary, trình duyệt không nhận diện được đúng đuôi tệp/
-// loại tệp (Content-Type), nên khi tải về máy tệp bị thiếu đuôi mở rộng
-// hoặc bị trình duyệt cố mở luôn trong tab thay vì tải xuống — kết quả là
-// tệp tải về không mở được. Route này tải tệp gốc về từ server rồi trả lại
-// cho trình duyệt kèm đúng tên tệp, đúng đuôi mở rộng và header
+// được lưu trên Vercel Blob dưới dạng "raw" (tệp cũ tải lên trước đây vẫn
+// còn nằm trên Cloudinary, xem lib/blob.ts). Nếu cho học viên bấm thẳng vào
+// đường dẫn gốc, trình duyệt không nhận diện được đúng đuôi tệp/loại tệp
+// (Content-Type), nên khi tải về máy tệp bị thiếu đuôi mở rộng hoặc bị
+// trình duyệt cố mở luôn trong tab thay vì tải xuống — kết quả là tệp tải
+// về không mở được. Route này tải tệp gốc về từ server rồi trả lại cho
+// trình duyệt kèm đúng tên tệp, đúng đuôi mở rộng và header
 // Content-Disposition: attachment để trình duyệt luôn tải xuống đúng định
 // dạng, mở ra xem được ngay.
 
@@ -76,9 +78,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Đường dẫn tệp không hợp lệ" }, { status: 400 });
   }
 
-  // Chỉ cho phép proxy tải tệp từ Cloudinary của ứng dụng, tránh bị lợi
-  // dụng làm proxy tải tệp tuỳ ý từ nơi khác (SSRF).
-  if (!/(^|\.)res\.cloudinary\.com$/i.test(parsed.hostname)) {
+  // Chỉ cho phép proxy tải tệp từ Vercel Blob (nơi lưu tài liệu hiện tại)
+  // hoặc Cloudinary (giữ lại để tương thích các tệp tài liệu đã tải lên từ
+  // trước khi chuyển sang Vercel Blob), tránh bị lợi dụng làm proxy tải tệp
+  // tuỳ ý từ nơi khác (SSRF).
+  const isAllowedHost =
+    /(^|\.)res\.cloudinary\.com$/i.test(parsed.hostname) || isVercelBlobUrl(parsed.hostname);
+  if (!isAllowedHost) {
     return NextResponse.json({ error: "Đường dẫn tệp không hợp lệ" }, { status: 400 });
   }
 

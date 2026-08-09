@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import cloudinary from "@/lib/cloudinary";
+import { uploadRawToBlob } from "@/lib/blob";
 
 // Bắt buộc chạy trên Node.js runtime (dùng Buffer/stream), không dùng được Edge runtime
 export const runtime = "nodejs";
@@ -9,7 +10,7 @@ export const runtime = "nodejs";
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_BYTES = 200 * 1024 * 1024; // 200MB
 // Tệp tài liệu học (PDF, Word, PowerPoint, âm thanh...) không giới hạn dung
-// lượng ở phía ứng dụng — chỉ còn phụ thuộc vào giới hạn của gói Cloudinary
+// lượng ở phía ứng dụng — chỉ còn phụ thuộc vào giới hạn của gói Vercel Blob
 // và của nền tảng hosting (xem ghi chú trong README).
 
 export async function POST(req: NextRequest) {
@@ -51,16 +52,42 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Tài liệu học / sách (PDF, Word, PowerPoint, file nén, âm thanh, bài tập
+  // giao...) lưu trên Vercel Blob; ảnh/video giới thiệu khoá học vẫn lưu
+  // trên Cloudinary như trước (xem lib/cloudinary.ts và lib/blob.ts).
+  if (isDoc) {
+    try {
+      const { url } = await uploadRawToBlob("materials", file);
+      return NextResponse.json({
+        url,
+        fileName: file.name,
+        fileType: file.type,
+      });
+    } catch (err) {
+      console.error("Lỗi tải lên Vercel Blob:", err);
+      const detail =
+        err && typeof err === "object" && "message" in err
+          ? String((err as { message?: unknown }).message)
+          : "";
+      return NextResponse.json(
+        {
+          error: detail
+            ? `Tải lên thất bại: ${detail}`
+            : "Tải lên thất bại, vui lòng thử lại.",
+        },
+        { status: 500 }
+      );
+    }
+  }
+
   const buffer = Buffer.from(await file.arrayBuffer());
-  const resourceType = isVideo ? "video" : isDoc ? "raw" : "image";
+  const resourceType = isVideo ? "video" : "image";
 
   try {
     const result = await new Promise<any>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: isDoc
-            ? "bonjour-francais/materials"
-            : "bonjour-francais/courses",
+          folder: "bonjour-francais/courses",
           resource_type: resourceType,
           use_filename: true,
           unique_filename: true,
